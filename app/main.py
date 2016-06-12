@@ -1,11 +1,14 @@
 """ main  """
 from flask import Flask, render_template
-from flask_restful import Api
+from restful_api_extension import Api
 from scavenger import TwilioHandler
+from views.story import StoryHandler
 
 app = Flask(__name__)
+app.config['BUNDLE_ERRORS'] = True
 api = Api(app)
 api.add_resource(TwilioHandler, '/')
+api.add_resource(StoryHandler, '/story/<string:id>')
 
 
 @app.route('/index')

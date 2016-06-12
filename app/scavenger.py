@@ -1,7 +1,9 @@
 from flask import request, abort
 from flask_restful import Resource
 from twilio import twiml
-from models import User, Group, Story
+from models.user import User
+from models.group import Group
+from models.story import Story
 import re
 
 
