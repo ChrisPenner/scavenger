@@ -4,16 +4,31 @@ from app.models.user import User
 
 class Group(ndb.Model):
     name = ndb.StringProperty()
-    story = ndb.KeyProperty("Story")
+    story_key = ndb.KeyProperty("Story")
     created_at = ndb.DateTimeProperty(auto_now_add=True)
     hints_used = ndb.IntegerProperty(default=0)
     completed_at = ndb.DateTimeProperty()
-    current_clue = ndb.KeyProperty("Clue")
     users = ndb.KeyProperty("User", repeated=True)
+    current_clue_key = ndb.StringProperty(required=True)
 
-    def __init__(self, story):
-        self.current_clue = story.first_clue
-        self.story = story.key()
+    # def __init__(self, story):
+        # self.story = story.key()
 
     def users(self):
         return User.query(User.group == self.key()).fetch()
+
+    @property
+    def current_clue(self):
+        return self.story.clues[self.current_clue_key]
+
+    @current_clue.setter
+    def current_clue(self, value):
+        self.current_clue_key = value
+
+    @property
+    def story(self):
+        return self.story_key.get()
+
+    @story.setter
+    def story(self, value):
+        self.story_key = ndb.Key("Story", value.id)
