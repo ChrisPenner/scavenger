@@ -1,15 +1,14 @@
 """ main  """
 from flask import Flask, render_template
 from flask_restful import Api
-
-import resources
+from scavenger import TwilioHandler
 
 app = Flask(__name__)
 api = Api(app)
-resources.register(api)
+api.add_resource(TwilioHandler, '/')
 
 
-@app.route('/')
+@app.route('/index')
 def hello():
     """Return a friendly HTTP greeting."""
     return render_template('index.html')

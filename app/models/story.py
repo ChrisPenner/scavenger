@@ -3,9 +3,7 @@ from clue import Clue
 from hint import Hint
 
 
-class Hunt(ndb.model):
-    # id = ndb.IntegerProperty()
-    # state = ndb.IntegerProperty(default=1)
+class Hunt(ndb.Model):
     name = ndb.StringProperty()
     description = ndb.StringProperty()
     first_clue = ndb.KeyProperty(Clue)

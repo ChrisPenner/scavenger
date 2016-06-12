@@ -1,12 +1,12 @@
 from google.appengine.ext import ndb
-from story import Story
 from hint import Hint
+from answer import Answer
 
 
-class Clue(ndb.model):
+class Clue(ndb.Model):
     name = ndb.StringProperty()
     text = ndb.StringProperty()
-    next_clue = ndb.KeyProperty(Clue)
+    next_clue = ndb.KeyProperty()
     hints = ndb.StructuredProperty(Hint)
     answers = ndb.StructuredProperty(Answer)
 
@@ -18,5 +18,5 @@ class Clue(ndb.model):
         return self.text
 
     def match_answer(self, message, has_media):
-        return next(a for a in self.answers
-                    if a.match(self.message, has_media=self.has_media), None)
+        return next((a for a in self.answers
+                    if a.match(self.message, has_media=self.has_media)), None)

@@ -10,11 +10,22 @@ def twiml_response(f):
         message = f(*args, **kwargs)
         resp = twiml.Response()
         resp.message(str(message))
+        # recipients = [user.phone for user in self.group.users]
         return str(resp)
     return wrapped
 
 
-class ScavengerHandler(Resource):
+class TwilioHandler(Resource):
+    @twiml_response
+    def get(self):
+        if not self.user:
+            return ("Hello! I don't recognize you, text \"start %\""
+                    "where % is your adventure's code if you'd like to begin!")
+        response = self.match_global_message()
+        if response:
+            return response
+        return self.answer_clue()
+
     @property
     def user(self):
         if self._user:
@@ -42,39 +53,17 @@ class ScavengerHandler(Resource):
     def has_media(self):
         return bool(request.values.get('MediaUrl0'))
 
-    @property
-    def recipients(self):
-        return [user.phone for user in self.group.users]
-
-    @twiml_response
-    def get(self):
-        if not self.user:
-            return "Sign up first!"
-        response = self.match_global_message()
-        if response:
-            return response
-        return self.try_answer()
-
     def join_group(self):
         """ Join group by code """
-        group_code = re.find("^join (.+)", self.message)
+        match = re.search("^join (.+)", self.message)
+        group_code = next(match.groups()).strip().lower() if match else None
         if not group_code or not Group.get_by_id(group_code):
             return "Sorry I don't know that group!"
         self.user.group = Group.get_by_id(group_code)
+        self.user.put()
         return "You've joined the group! Glad to have you!"
 
-    @staticmethod
-    def get_default_hint(story_id=1):
-        story = Story.find("story", story_id)
-        return story.get_default_hint()
-
-    @staticmethod
-    def get_end_message(story_id=1):
-        story = Story.find("Story", story_id)
-        return story.get_end_message()
-
     def match_global_message(self):
-
         commands = {
             r'/^quit\s?group/i': self.quit_group,
             r'/^start\.?/i': self.start,
@@ -93,10 +82,15 @@ class ScavengerHandler(Resource):
         return "You've left your group"
 
     def start_story(self):
-        """ Start a Story """
+        """ Start a Story for a given code """
         user = self.user
-        story_code = re.find(r"start (.+)", self.message)
-        user.group = Group(Story.get_by_id(story_code))
+        story_code = next(re.find_all(r"start (.+)", self.message), None)
+        story = Story.get_by_id(story_code)
+        if not story:
+            return "Sorry, can't find anything by that name, are you sure it's spelled correctly?"
+        group = Group(story=story)
+        group.put()
+        user.group = group
         user.put()
         return user.group.clue
 
@@ -111,11 +105,12 @@ class ScavengerHandler(Resource):
         self.group.current_clue = self.story.first_clue
         return self.group.current_clue
 
-    def try_answer(self):
+    def answer_clue(self):
         answer = self.clue.match_answer(self.message, has_media=self.has_media)
         if answer:
             self.group.current_clue = answer.next_clue
             self.group.put()
+            return self.group.current_clue
         else:
             # They got the answer wrong - send them a hint
             # If we don't have hints then suggest that they skip the question

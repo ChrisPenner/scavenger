@@ -1,5 +1,5 @@
 from google.appengine.ext import ndb
-from party import Party
+from group import Group
 
 
 class User(ndb.model):
@@ -8,6 +8,5 @@ class User(ndb.model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
     phone = ndb.StringProperty()
-    parties = ndb.KeyProperty(Party,
-                                    repeated=True)
+    group = ndb.KeyProperty(Group)
     registration_date = ndb.DateTimeProperty(auto_now_add=True)

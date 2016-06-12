@@ -1,7 +1,7 @@
 from google.appengine.ext import ndb
 
 
-class Hint(ndb.model):
+class Hint(ndb.Model):
     name = ndb.StringProperty()
     priority = ndb.IntegerProperty(default=5)
     text = ndb.StringProperty()
