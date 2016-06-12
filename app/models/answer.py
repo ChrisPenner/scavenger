@@ -8,5 +8,5 @@ class Answer(ndb.model):
     # state = ndb.IntegerProperty(default=1)
     name = ndb.StringProperty()
     value = ndb.StringProperty()
-    clue = ndb.ReferenceProperty(Clue)
-    story = ndb.ReferenceProperty(Story)
+    clue = ndb.KeyProperty(Clue)
+    story = ndb.KeyProperty(Story)

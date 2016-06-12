@@ -8,7 +8,6 @@ class User(ndb.model):
     name = ndb.StringProperty()
     email = ndb.StringProperty()
     phone = ndb.StringProperty()
-    parties = ndb.ReferenceProperty(Party,
-                                    collection_name="users",
+    parties = ndb.KeyProperty(Party,
                                     repeated=True)
     registration_date = ndb.DateTimeProperty(auto_now_add=True)

@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 from clue import Clue
+from hint import Hint
 
 
 class Hunt(ndb.model):
@@ -7,9 +8,9 @@ class Hunt(ndb.model):
     # state = ndb.IntegerProperty(default=1)
     name = ndb.StringProperty()
     description = ndb.StringProperty()
-    first_clue = ndb.ReferenceProperty(Clue)
+    first_clue = ndb.KeyProperty(Clue)
+    default_hint = ndb.KeyProperty(Hint)
     end_message = ndb.StringProperty()
-    default_hint = ndb.StringProperty
     code = ndb.StringProperty()
     max_users = ndb.IntegerProperty()
     type = ndb.StringProperty()

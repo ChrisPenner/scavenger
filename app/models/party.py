@@ -6,6 +6,5 @@ class Party(ndb.model):
     # id = ndb.IntegerProperty()
     # state = ndb.IntegerProperty(default=1)
     name = ndb.StringProperty()
-    hunts = ndb.ReferenceProperty(Hunt,
-                                  collection_name="parties",
-                                  repeated=True)
+    hunts = ndb.KeyProperty(Hunt,
+                            repeated=True)

@@ -7,12 +7,11 @@ from Story import Story
 class Hunt(ndb.model):
     # id = ndb.IntegerProperty()
     # state = ndb.IntegerProperty(default=1)
-    story = ndb.ReferenceProperty(Story,
-                                  collection_name="hunts")
+    story = ndb.KeyProperty(Story)
     start = ndb.DateTimeProperty(auto_now_add=True)
     hints_used = ndb.IntegerProperty(default=0)
     end = ndb.DateTimeProperty()
     code = ndb.StringProperty()
     max_users = ndb.IntegerProperty(default=-1)
-    current_clue = ndb.ReferenceProperty(Clue)
-    party = ndb.ReferenceProperty(Party)
+    current_clue = ndb.KeyProperty(Clue)
+    party = ndb.KeyProperty(Party)
