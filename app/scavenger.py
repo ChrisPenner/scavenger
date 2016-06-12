@@ -17,17 +17,18 @@ def twiml_response(f):
 
 class TwilioHandler(Resource):
     @twiml_response
-    def get(self):
+    def post(self):
         if not self.from_phone or not self.message:
             abort(400)
+
+        response = self.match_global_message()
+        if response:
+            return response
 
         if not self.user:
             return ("Hello! I don't recognize you, text \"start %\""
                     "where % is your adventure's code if you'd like to begin!")
 
-        response = self.match_global_message()
-        if response:
-            return response
         return self.answer_clue()
 
     @property
@@ -69,16 +70,18 @@ class TwilioHandler(Resource):
 
     def match_global_message(self):
         commands = {
-            r'/^quit\s?group/i': self.quit_group,
-            r'/^start\.?/i': self.start,
-            r'/^hint/i': self.give_hint,
-            r'/^restart/i': self.restart,
-            r'/^clue/i': lambda: self.clue,
-            r'/^join/i': self.join_group,
+            r'quit group': self.quit_group,
+            r'start (.*)': self.start_story,
+            r'hint': self.give_hint,
+            r'restart': self.restart,
+            r'clue': lambda: self.clue,
+            r'join': self.join_group,
         }
 
-        action = next(action for pattern, action in commands.iteritems() if re.match(pattern, self.message))
-        return action()
+        action = next((action for pattern, action in commands.iteritems() if re.match(pattern, self.message)), None)
+        if action:
+            return action()
+        return None
 
     def quit_group(self):
         self.user.group = None
@@ -88,10 +91,10 @@ class TwilioHandler(Resource):
     def start_story(self):
         """ Start a Story for a given code """
         user = self.user
-        story_code = next(re.find_all(r"start (.+)", self.message), None)
+        story_code = next(iter(re.findall(r"start (.+)", self.message)), None)
         story = Story.get_by_id(story_code)
         if not story:
-            return "Sorry, can't find anything by that name, are you sure it's spelled correctly?"
+            return "Sorry, can't find any adventures by that name, are you sure it's spelled correctly?"
         group = Group(story=story)
         group.put()
         user.group = group
