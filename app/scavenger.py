@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, abort
 from flask_restful import Resource
 from twilio import twiml
 from models import User, Group, Story
@@ -18,9 +18,13 @@ def twiml_response(f):
 class TwilioHandler(Resource):
     @twiml_response
     def get(self):
+        if not self.from_phone or not self.message:
+            abort(400)
+
         if not self.user:
             return ("Hello! I don't recognize you, text \"start %\""
                     "where % is your adventure's code if you'd like to begin!")
+
         response = self.match_global_message()
         if response:
             return response
@@ -28,7 +32,7 @@ class TwilioHandler(Resource):
 
     @property
     def user(self):
-        if self._user:
+        if hasattr(self, '_user'):
             return self._user
         self._user = User.get_by_id(self.from_phone)
         return self._user
