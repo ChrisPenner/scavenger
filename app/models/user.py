@@ -3,6 +3,7 @@ from google.appengine.ext import ndb
 
 class User(ndb.Model):
     group_key = ndb.KeyProperty("Group")
+    data = ndb.JsonProperty(default={})
     registration_date = ndb.DateTimeProperty(auto_now_add=True)
 
     @property

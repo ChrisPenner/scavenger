@@ -4,6 +4,7 @@ from app.models.user import User
 
 class Group(ndb.Model):
     name = ndb.StringProperty()
+    data = ndb.JsonProperty(default={})
     story_key = ndb.KeyProperty("Story")
     created_at = ndb.DateTimeProperty(auto_now_add=True)
     hints_used = ndb.IntegerProperty(default=0)

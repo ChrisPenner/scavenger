@@ -20,6 +20,17 @@ def twiml_response(f):
     return wrapped
 
 
+def split_data(data):
+    user_data = {}
+    group_data = {}
+    for key, value in data.iteritems():
+        if key.startswith('user.'):
+            user_data[key.replace('user.', '')] = value
+        elif key.startswith('group.'):
+            group_data[key.replace('group.', '')] = value
+    return user_data, group_data
+
+
 @restful_api('text/xml')
 class TwilioHandler(RequestHandler):
     @twiml_response
@@ -131,10 +142,15 @@ class TwilioHandler(RequestHandler):
     def answer_clue(self):
         if not self.clue['answers']:
             return "Looks like you've hit the end of the story, text 'restart' to try again!"
-        next_clue = next((next_clue for pattern, next_clue in self.clue['answers']
-                         if re.match(pattern, self.message)), None)
+        next_clue, answer_data = next(((next_clue, re.match(pattern, self.message).groupdict())
+                                       for pattern, next_clue in self.clue['answers']
+                                       if re.match(pattern, self.message)), (None, None))
         if next_clue:
             self.group.current_clue = next_clue
+            user_data, group_data = split_data(answer_data)
+            self.user.data.update(user_data)
+            self.user.put()
+            self.group.data.update(group_data)
             self.group.put()
             return self.group.current_clue['text']
         # They got the answer wrong - send them a hint
