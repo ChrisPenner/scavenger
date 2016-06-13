@@ -4,10 +4,15 @@ from webapp2 import abort
 
 
 def parse_args(params, args):
+    results = {}
     for name, type, required in args:
         if name not in params:
             abort(400, '{name} is required'.format(name=name))
-    return params
+        if type is dict:
+            results[name] = json.loads(params[name])
+        else:
+            results[name] = type(params[name])
+    return results
 
 
 class restful_api(object):

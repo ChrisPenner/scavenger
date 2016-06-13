@@ -24,8 +24,8 @@ class StoryHandler(RequestHandler):
         return story.to_dict()
 
     def post(self, id):
-        if Story.get_by_id(id):
-            abort(409, message='Record already exists')
+        # if Story.get_by_id(id):
+        #     abort(409, message='Record already exists')
         story_args = parse_args(self.request.params, required_story_args)
         story = Story(id=id, **story_args)
         story.put()

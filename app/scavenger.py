@@ -24,11 +24,18 @@ def split_data(data):
     user_data = {}
     group_data = {}
     for key, value in data.iteritems():
-        if key.startswith('user.'):
-            user_data[key.replace('user.', '')] = value
-        elif key.startswith('group.'):
-            group_data[key.replace('group.', '')] = value
+        if key.startswith('user_'):
+            user_data[key] = value
+        elif key.startswith('group_'):
+            group_data[key] = value
     return user_data, group_data
+
+
+def format_clue(message, user_data, group_data):
+    data = {}
+    data.update(user_data)
+    data.update(group_data)
+    return message.format(**data)
 
 
 @restful_api('text/xml')
@@ -121,11 +128,11 @@ class TwilioHandler(RequestHandler):
         story = Story.get_by_id(code)
         if not story:
             return "Sorry, can't find any adventures by that name, are you sure it's spelled correctly?"
-        group = Group(current_clue_key='first_clue', story_key=story.key)
+        group = Group(current_clue_key='start', story_key=story.key)
         group.put()
         user.group_key = group.key
         user.put()
-        return user.group.current_clue['text']
+        return format_clue(user.group.current_clue['text'], user.data, group.data)
 
     def give_hint(self):
         hint = next(self.clue.hints, None)
@@ -135,9 +142,12 @@ class TwilioHandler(RequestHandler):
             return self.story.default_hint.text
 
     def restart(self):
-        self.group.current_clue = 'first_clue'
+        self.group.current_clue = 'start'
+        self.group.data = {}
         self.group.put()
-        return self.group.current_clue['text']
+        self.user.data = {}
+        self.user.put()
+        return format_clue(self.group.current_clue['text'], self.user.data, self.group.data)
 
     def answer_clue(self):
         if not self.clue['answers']:
@@ -152,7 +162,7 @@ class TwilioHandler(RequestHandler):
             self.user.put()
             self.group.data.update(group_data)
             self.group.put()
-            return self.group.current_clue['text']
+            return format_clue(self.group.current_clue['text'], self.user.data, self.group.data)
         # They got the answer wrong - send them a hint
         if self.clue['hint']:
             return self.clue['hint']
