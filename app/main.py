@@ -1,29 +1,27 @@
 """ main  """
-from flask import Flask, render_template
-from restful_api_extension import Api
+from webapp2 import Route, WSGIApplication
+import logging
+
 from scavenger import TwilioHandler
 from views.story import StoryHandler
 
-app = Flask(__name__)
-app.config['BUNDLE_ERRORS'] = True
-api = Api(app)
-api.add_resource(TwilioHandler, '/')
-api.add_resource(StoryHandler, '/story/<string:id>')
+
+def handle_404(request, response, exception):
+    logging.exception(exception)
+    response.write('Page not found')
+    response.set_status(404)
 
 
-@app.route('/index')
-def hello():
-    """Return a friendly HTTP greeting."""
-    return render_template('index.html')
+def handle_500(request, response, exception):
+    logging.exception(exception)
+    response.write('A server error occurred!')
+    response.set_status(500)
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """Return a custom 404 error."""
-    return 'Sorry, Nothing at this URL.', 404
+app = WSGIApplication([
+    Route('/story/<id:[^/]+>', StoryHandler),
+    Route('/', TwilioHandler),
+], debug=True)
 
-
-@app.errorhandler(500)
-def application_error(e):
-    """Return a custom 500 error."""
-    return 'Sorry, unexpected error: {}'.format(e), 500
+app.error_handlers[404] = handle_404
+# app.error_handlers[500] = handle_500

@@ -11,9 +11,6 @@ class Group(ndb.Model):
     users = ndb.KeyProperty("User", repeated=True)
     current_clue_key = ndb.StringProperty(required=True)
 
-    # def __init__(self, story):
-        # self.story = story.key()
-
     def users(self):
         return User.query(User.group == self.key()).fetch()
 

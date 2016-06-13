@@ -1,5 +1,5 @@
-from flask import request
-from flask_restful import Resource
+from webapp2 import RequestHandler
+
 from twilio import twiml
 from models.user import User
 from models.group import Group
@@ -19,10 +19,10 @@ def twiml_response(f):
     return wrapped
 
 
-class TwilioHandler(Resource):
+class TwilioHandler(RequestHandler):
     @twiml_response
     def post(self):
-        if not request.values.get('Body') or not request.values.get('From'):
+        if not self.request.get('Body') or not self.request.get('From'):
             return 'Body and From params required', 400
 
         response = self.check_setup()
@@ -55,15 +55,15 @@ class TwilioHandler(Resource):
 
     @property
     def from_phone(self):
-        return request.values.get('From')
+        return self.request.get('From')
 
     @property
     def message(self):
-        return request.values.get('Body').strip().lower()
+        return self.request.get('Body').strip().lower()
 
     @property
     def has_media(self):
-        return bool(request.values.get('MediaUrl0'))
+        return bool(self.request.get('MediaUrl0'))
 
     def check_setup(self):
         match = re.match('^start (?P<code>.+)', self.message)
