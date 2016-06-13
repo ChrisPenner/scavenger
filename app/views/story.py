@@ -1,8 +1,8 @@
 from collections import namedtuple
 
 from webapp2 import RequestHandler, abort
-from google.appengine.ext.ndb import Key
 from webapp2_extensions import restful_api, parse_args
+from google.appengine.ext.ndb import Key
 
 from app.models.story import Story
 
@@ -15,7 +15,7 @@ required_story_args = [
 ]
 
 
-@restful_api
+@restful_api('/application/json')
 class StoryHandler(RequestHandler):
     def get(self, id):
         story = Story.get_by_id(id)

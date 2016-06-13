@@ -10,22 +10,25 @@ def parse_args(params, args):
     return params
 
 
-def restful_api(cls):
-    def format_response(f):
-        def wrapped(handler, *args, **kwargs):
-            response = f(handler, *args, **kwargs)
-            print 'RESPONSE:', response
-            if not response:
-                return
-            handler.response.headers['Content-Type'] = 'application/json'
-            if isinstance(response, basestring):
-                handler.response.body = response
-            else:
-                handler.response.body = json.dumps(response)
-        return wrapped
+class restful_api(object):
+    def __init__(self, content_type):
+        self.content_type = content_type
 
-    for method in ['get', 'post', 'put', 'patch', 'delete']:
-        if hasattr(cls, method):
-            wrapped = format_response(getattr(cls, method))
-            setattr(cls, method, wrapped)
-    return cls
+    def __call__(self, cls):
+        def format_response(f):
+            def wrapped(handler, *args, **kwargs):
+                response = f(handler, *args, **kwargs)
+                if not response:
+                    return
+                handler.response.headers['Content-Type'] = self.content_type
+                if isinstance(response, basestring):
+                    handler.response.body = response
+                else:
+                    handler.response.body = json.dumps(response)
+            return wrapped
+
+        for method in ['get', 'post', 'put', 'patch', 'delete']:
+            if hasattr(cls, method):
+                wrapped = format_response(getattr(cls, method))
+                setattr(cls, method, wrapped)
+        return cls

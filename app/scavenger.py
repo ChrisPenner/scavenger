@@ -1,4 +1,5 @@
-from webapp2 import RequestHandler
+from webapp2 import RequestHandler, abort
+from webapp2_extensions import restful_api
 
 from twilio import twiml
 from models.user import User
@@ -19,11 +20,12 @@ def twiml_response(f):
     return wrapped
 
 
+@restful_api('text/xml')
 class TwilioHandler(RequestHandler):
     @twiml_response
     def post(self):
         if not self.request.get('Body') or not self.request.get('From'):
-            return 'Body and From params required', 400
+            abort(400, 'Body and From params required')
 
         response = self.check_setup()
         if response:
