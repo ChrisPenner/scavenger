@@ -115,12 +115,12 @@ class TwilioHandler(RequestHandler):
             return {'texts': ["Sorry I don't know that group!"]}
         if self.user.group_code == code.upper():
             return {'texts': ["You're already a part of that group!",
-                          self.group.current_clue['text']]}
+                              self.group.current_clue['text']]}
         self.group = Group.from_code(code)
         self.group.user_keys.append(self.user.key)
         self.group.put()
         self.user.group_code = code.upper()
-        print self.user.group_code,  code.upper()
+        print self.user.group_code, code.upper()
         self.user.put()
         return {'texts': ["You've joined the group! Glad to have you!",
                           self.group.current_clue['text']]}
