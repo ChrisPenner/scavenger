@@ -2,18 +2,20 @@ from google.appengine.ext import ndb
 
 
 class User(ndb.Model):
-    group_key = ndb.KeyProperty("Group")
+    group_code = ndb.StringProperty()
     data = ndb.JsonProperty(default={})
     registration_date = ndb.DateTimeProperty(auto_now_add=True)
 
     @property
     def group(self):
-        return self.group_key.get()
+        if not self.group_code:
+            return None
+        return ndb.Key('Group', self.group_code).get()
 
     @group.setter
     def group(self, value):
-        self.group_key = ndb.Key("Group", value.id)
+        self.group_code = value.key.id()
 
     @property
     def phone(self):
-        return self.id
+        return self.key.id()

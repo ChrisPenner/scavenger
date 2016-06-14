@@ -1,4 +1,5 @@
 from webapp2 import RequestHandler, abort
+
 from webapp2_extensions import restful_api
 
 from twilio import twiml
@@ -7,15 +8,25 @@ from models.group import Group
 from models.story import Story
 import re
 
+ALL = 'ALL'
+USER = 'USER'
+CLUE = 'CLUE'
+HINT = 'HINT'
+
 
 def twiml_response(f):
-    def wrapped(*args, **kwargs):
-        message = f(*args, **kwargs)
-        if isinstance(message, tuple):
-            return str(message)
+    def wrapped(self, *args, **kwargs):
+        message = f(self, *args, **kwargs)
+        recipients = [self.user.phone]
+        if message.get('type') == CLUE:
+            message['texts'] = [format_clue(m, self.user.data, self.group.data)
+                                for m in message['texts']]
+        if (message.get('type') == CLUE or message.get('type') == HINT) and self.group:
+            recipients = [user.phone for user in self.group.users]
         resp = twiml.Response()
-        resp.message(str(message))
-        # recipients = [user.phone for user in self.group.users]
+        for recipient in recipients:
+            for m in message['texts']:
+                resp.message(str(m), to=recipient)
         return str(resp)
     return wrapped
 
@@ -48,9 +59,11 @@ class TwilioHandler(RequestHandler):
         response = self.check_setup()
         if response:
             return response
-        if not self.user:
-            return ("Hello! I don't recognize you, text \"start %\""
-                    "where % is your adventure's code if you'd like to begin!")
+        if not self.user.group:
+            return {
+                'texts': ["Hello! I don't recognize you, text \"start %\" "
+                          "where % is your adventure's code if you'd like to begin!"],
+            }
 
         response = self.match_global_message()
         if response:
@@ -58,16 +71,13 @@ class TwilioHandler(RequestHandler):
 
         return self.answer_clue()
 
-    @property
-    def user(self):
-        if hasattr(self, '_user'):
-            return self._user
-        self._user = User.get_by_id(self.from_phone)
-        return self._user
-
-    @property
-    def group(self):
-        return self.user.group
+    def __init__(self, *args, **kwargs):
+        super(TwilioHandler, self).__init__(*args, **kwargs)
+        self.user = User.get_by_id(self.from_phone)
+        if not self.user:
+            self.user = User(id=self.from_phone)
+            self.user.put()
+        self.group = self.user.group
 
     @property
     def clue(self):
@@ -79,27 +89,38 @@ class TwilioHandler(RequestHandler):
 
     @property
     def message(self):
-        return self.request.get('Body').strip().lower()
+        message = self.request.get('Body').strip().lower()
+        if self.has_media:
+            message = 'has-media:' + message
+        return message
 
     @property
     def has_media(self):
         return bool(self.request.get('MediaUrl0'))
 
     def check_setup(self):
-        match = re.match('^start (?P<code>.+)', self.message)
-        if match:
-            return self.start_story(match.groupdict()['code'])
-        match = re.match('^join (?P<code>.+)', self.message)
-        if match:
-            return self.join_group(match.groupdict()['code'])
+        commands = {
+            r'^start (?P<code>.+)': self.start_story,
+            r'^join (?P<code>.+)': self.join_group,
+        }
+        for pattern, action in commands.iteritems():
+            match = re.match(pattern, self.message)
+            if match:
+                self.create_user()
+                return action(match.groupdict()['code'])
 
     def join_group(self, code):
         """ Join group by code """
         if not code or not Group.get_by_id(code):
-            return "Sorry I don't know that group!"
-        self.user.group = Group.get_by_id(code)
+            return {'texts': ["Sorry I don't know that group!"]}
+        if self.user.group_code == code:
+            return {'texts': ["You're already a part of that group!"]}
+        self.group = Group.get_by_id(code)
+        self.user.group_code = self.group.key.id()
         self.user.put()
-        return "You've joined the group! Glad to have you!"
+        self.group.user_keys.append(self.user.key)
+        self.group.put()
+        return {'texts': ["You've joined the group! Glad to have you!"]}
 
     def match_global_message(self):
         commands = {
@@ -113,33 +134,36 @@ class TwilioHandler(RequestHandler):
             return action()
         return None
 
+    def create_user(self):
+        self.user = User(id=self.from_phone)
+        self.user.put()
+
     def quit_group(self):
         self.user.group = None
         self.user.put()
-        return "You've left your group"
+        return {'texts': ["You've left your group"]}
 
     def start_story(self, code):
         """ Start a Story for a given code """
-        user = self.user
-        if not user:
-            group = Group()
-            user = User(id=self.from_phone)
-
         story = Story.get_by_id(code)
         if not story:
-            return "Sorry, can't find any adventures by that name, are you sure it's spelled correctly?"
-        group = Group(current_clue_key='start', story_key=story.key)
-        group.put()
-        user.group_key = group.key
-        user.put()
-        return format_clue(user.group.current_clue['text'], user.data, group.data)
+            return {'texts': ["Sorry, can't find any adventures by that name, are you sure it's spelled correctly?"]}
+        self.group = Group(current_clue_key='start', story_key=story.key, user_keys=[self.user.key])
+        self.group.put()
+        self.user.group_code = self.group.key.id()
+        self.user.put()
+        return {
+            'texts': ["You've started your adventure! Your friends can text 'join {}' to join your group!".format(self.group.key.id()),
+                      self.group.current_clue['text']],
+            'type': CLUE,
+        }
 
     def give_hint(self):
         hint = next(self.clue.hints, None)
         if hint is not None:
-            return hint.text
+            return {'texts': [hint.text], 'type': HINT}
         else:
-            return self.story.default_hint.text
+            return {'texts': [self.story.default_hint.text], 'type': HINT}
 
     def restart(self):
         self.group.current_clue = 'start'
@@ -147,11 +171,11 @@ class TwilioHandler(RequestHandler):
         self.group.put()
         self.user.data = {}
         self.user.put()
-        return format_clue(self.group.current_clue['text'], self.user.data, self.group.data)
+        return {'texts': [self.group.current_clue['text']], 'type': CLUE}
 
     def answer_clue(self):
         if not self.clue['answers']:
-            return "Looks like you've hit the end of the story, text 'restart' to try again!"
+            return {'texts': ["Looks like you've hit the end of the story, text 'restart' to try again!"]}
         next_clue, answer_data = next(((next_clue, re.match(pattern, self.message).groupdict())
                                        for pattern, next_clue in self.clue['answers']
                                        if re.match(pattern, self.message)), (None, None))
@@ -162,8 +186,8 @@ class TwilioHandler(RequestHandler):
             self.user.put()
             self.group.data.update(group_data)
             self.group.put()
-            return format_clue(self.group.current_clue['text'], self.user.data, self.group.data)
+            return {'texts': [self.group.current_clue['text']], 'type': CLUE}
         # They got the answer wrong - send them a hint
         if self.clue['hint']:
-            return self.clue['hint']
-        return self.story.default_hint
+            return {'texts': [self.clue['hint']], 'type': HINT}
+        return {'texts': [self.story.default_hint], 'type': HINT}
