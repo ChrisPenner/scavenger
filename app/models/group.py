@@ -40,3 +40,7 @@ class Group(ndb.Model):
     @story.setter
     def story(self, value):
         self.story_key = ndb.Key("Story", value.id)
+
+    @classmethod
+    def from_code(cls, code):
+        return ndb.Key(cls, code.upper()).get()

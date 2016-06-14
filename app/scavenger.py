@@ -106,21 +106,24 @@ class TwilioHandler(RequestHandler):
         for pattern, action in commands.iteritems():
             match = re.match(pattern, self.message)
             if match:
-                self.create_user()
+                self.ensure_user()
                 return action(match.groupdict()['code'])
 
     def join_group(self, code):
         """ Join group by code """
-        if not code or not Group.get_by_id(code):
+        if not code or not Group.from_code(code):
             return {'texts': ["Sorry I don't know that group!"]}
-        if self.user.group_code == code:
-            return {'texts': ["You're already a part of that group!"]}
-        self.group = Group.get_by_id(code)
-        self.user.group_code = self.group.key.id()
-        self.user.put()
+        if self.user.group_code == code.upper():
+            return {'texts': ["You're already a part of that group!",
+                          self.group.current_clue['text']]}
+        self.group = Group.from_code(code)
         self.group.user_keys.append(self.user.key)
         self.group.put()
-        return {'texts': ["You've joined the group! Glad to have you!"]}
+        self.user.group_code = code.upper()
+        print self.user.group_code,  code.upper()
+        self.user.put()
+        return {'texts': ["You've joined the group! Glad to have you!",
+                          self.group.current_clue['text']]}
 
     def match_global_message(self):
         commands = {
@@ -134,9 +137,10 @@ class TwilioHandler(RequestHandler):
             return action()
         return None
 
-    def create_user(self):
-        self.user = User(id=self.from_phone)
-        self.user.put()
+    def ensure_user(self):
+        if not self.user:
+            self.user = User(id=self.from_phone)
+            self.user.put()
 
     def quit_group(self):
         self.user.group = None
