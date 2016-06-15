@@ -8,13 +8,17 @@ class User(ndb.Model):
 
     @property
     def group(self):
+        if self.__dict__.get('group'):
+            return self.__dict__.get('group')
         if not self.group_code:
             return None
-        return ndb.Key('Group', self.group_code).get()
+        self.__dict__['group'] = ndb.Key('Group', self.group_code).get()
+        return self.__dict__['group']
 
     @group.setter
     def group(self, value):
         self.group_code = value.key.id()
+        self.__dict__['group'] = value
 
     @property
     def phone(self):

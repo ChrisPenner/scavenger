@@ -12,14 +12,15 @@ class Group(ndb.Model):
     created_at = ndb.DateTimeProperty(auto_now_add=True)
     hints_used = ndb.IntegerProperty(default=0)
     completed_at = ndb.DateTimeProperty()
-    current_clue_key = ndb.StringProperty(required=True)
+    current_clue_key = ndb.StringProperty()
     user_keys = ndb.KeyProperty(User, repeated=True)
 
-    def __init__(self, *args, **kwargs):
+    @classmethod
+    def gen_code(cls):
         code = uuid4().hex[:6].upper()
         while Group.get_by_id(code):
             code = uuid4().hex[:6].upper()
-        super(Group, self).__init__(id=code, *args, **kwargs)
+        return code
 
     @property
     def users(self):
@@ -40,7 +41,3 @@ class Group(ndb.Model):
     @story.setter
     def story(self, value):
         self.story_key = ndb.Key("Story", value.id)
-
-    @classmethod
-    def from_code(cls, code):
-        return ndb.Key(cls, code.upper()).get()

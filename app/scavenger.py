@@ -1,34 +1,29 @@
 from webapp2 import RequestHandler, abort
 
-from webapp2_extensions import restful_api
-
 from twilio import twiml
 from models.user import User
 from models.group import Group
 from models.story import Story
 import re
 
-ALL = 'ALL'
-USER = 'USER'
 CLUE = 'CLUE'
 HINT = 'HINT'
 
+START_STORY = 'START_STORY'
+JOIN_GROUP = 'JOIN_GROUP'
+RESTART = 'RESTART'
+ANSWER = 'ANSWER'
 
-def twiml_response(f):
-    def wrapped(self, *args, **kwargs):
-        message = f(self, *args, **kwargs)
-        recipients = [self.user.phone]
-        if message.get('type') == CLUE:
-            message['texts'] = [format_clue(m, self.user.data, self.group.data)
-                                for m in message['texts']]
-        if (message.get('type') == CLUE or message.get('type') == HINT) and self.group:
-            recipients = [user.phone for user in self.group.users]
-        resp = twiml.Response()
-        for recipient in recipients:
-            for m in message['texts']:
-                resp.message(str(m), to=recipient)
-        return str(resp)
-    return wrapped
+
+def twiml_response(user, message_type, messages):
+    recipients = [user.phone]
+    if user.group and user.group.users and message_type == CLUE or message_type == HINT:
+        recipients = user.group.users
+    resp = twiml.Response()
+    for recipient in recipients:
+        for m in messages:
+            resp.message(str(m), to=recipient)
+    return str(resp)
 
 
 def split_data(data):
@@ -42,19 +37,110 @@ def split_data(data):
     return user_data, group_data
 
 
-def format_clue(message, user_data, group_data):
+def format_response(message, user):
     data = {}
-    data.update(user_data)
-    data.update(group_data)
+    data.update(user.data)
+    if user.group:
+        data.update(user.group.data)
     return message.format(**data)
 
 
-@restful_api('text/xml')
+def determine_message_type(message):
+    if message.lower().startswith('start'):
+        return START_STORY
+    elif message.lower().startswith('join'):
+        return JOIN_GROUP
+    elif message.lower().startswith('restart'):
+        return RESTART
+    else:
+        return ANSWER
+
+
+def perform_action(message_type, message, user):
+    if message_type == START_STORY:
+        return start_story(message, user)
+    elif message_type == JOIN_GROUP:
+        return join_group(message, user)
+    if (not user.group) or (not user.group.story):
+        return user, ["Text 'start CODE' with your story code to start and adventure!"]
+    elif message_type == RESTART:
+        return restart(user)
+    else:  # ANSWER
+        return answer(message, user)
+
+
+def start_story(message, user):
+    match = re.match(r'^start (?P<code>.+)', message.lower())
+    code = match.groupdict().get('code')
+    story = Story.get_by_id(code.upper()) if code else None
+    if not story:
+        return user, ["Story not found"]
+    group_code = Group.gen_code()
+    group = Group(id=group_code, current_clue_key='start', story_key=story.key, user_keys=[user.key])
+    user.group = group
+    return user, ["Starting the adventure! Your friends can text 'join {}' to join you.".format(group_code),
+                  user.group.current_clue['text']]
+
+
+def join_group(message, user):
+    """ Join group by code """
+    match = re.match(r'^join (?P<code>.+)', message.lower())
+    code = match.groupdict().get('code')
+    if not code or not Group.get_by_id(code):
+        return user, ["No group found for code {}".format(code)]
+    if user.group_code == code:
+        return user, ["You're already in that group"]
+    group = Group.get_by_id(code.upper())
+    group.user_keys.append(user.key)
+    user.group = group
+    return user, ["You've joined the group! Here's the last message:", user.group.current_clue['text']]
+
+
+def restart(user):
+    user.group.current_clue = 'start'
+    user.group.data = {}
+    user.data = {}
+    return user, ["Restarted", user.group.current_clue['text']]
+
+
+def answer(message, user):
+    if (not user.group) or (not user.group.current_clue) or (not user.group.current_clue['answers']):
+        return user, ["Looks like you've hit the end of the story, text 'restart' to try again!"]
+    next_clue, answer_data = next(((next_clue, re.match(pattern, message).groupdict())
+                                   for pattern, next_clue in user.group.current_clue['answers']
+                                   if re.match(pattern, message)), (None, None))
+    if next_clue:
+        user.group.current_clue = next_clue
+        user_data, group_data = split_data(answer_data)
+        user.data.update(user_data)
+        user.group.data.update(group_data)
+        return user, [user.group.current_clue['text']]
+    # They got the answer wrong - send them a hint
+    if user.group.current_clue.get('hint'):
+        return user, [user.group.current_clue.get('hint')]
+    return user, [user.group.story.default_hint]
+
+
 class TwilioHandler(RequestHandler):
-    @twiml_response
     def post(self):
         if not self.request.get('Body') or not self.request.get('From'):
             abort(400, 'Body and From params required')
+
+        message = self.request.get('Body').strip()
+        from_phone = self.request.get('From')
+
+        user = User.get_by_id(from_phone) or User(id=from_phone)
+        message_type = determine_message_type(message)
+        user, responses = perform_action(message_type, message, user)
+        responses = [format_response(r, user) for r in responses]
+        self.response.body = twiml_response(user, message_type, responses)
+        self.response.headers['Content-Type'] = 'text/xml'
+        if user.group:
+            user.group.put()
+        user.put()
+        return
+
+        # -----
 
         response = self.check_setup()
         if response:
@@ -97,101 +183,3 @@ class TwilioHandler(RequestHandler):
     @property
     def has_media(self):
         return bool(self.request.get('MediaUrl0'))
-
-    def check_setup(self):
-        commands = {
-            r'^start (?P<code>.+)': self.start_story,
-            r'^join (?P<code>.+)': self.join_group,
-        }
-        for pattern, action in commands.iteritems():
-            match = re.match(pattern, self.message)
-            if match:
-                self.ensure_user()
-                return action(match.groupdict()['code'])
-
-    def join_group(self, code):
-        """ Join group by code """
-        if not code or not Group.from_code(code):
-            return {'texts': ["Sorry I don't know that group!"]}
-        if self.user.group_code == code.upper():
-            return {'texts': ["You're already a part of that group!",
-                              self.group.current_clue['text']]}
-        self.group = Group.from_code(code)
-        self.group.user_keys.append(self.user.key)
-        self.group.put()
-        self.user.group_code = code.upper()
-        print self.user.group_code, code.upper()
-        self.user.put()
-        return {'texts': ["You've joined the group! Glad to have you!",
-                          self.group.current_clue['text']]}
-
-    def match_global_message(self):
-        commands = {
-            r'quit group': self.quit_group,
-            r'restart': self.restart,
-            r'clue': lambda: self.clue,
-        }
-
-        action = next((action for pattern, action in commands.iteritems() if re.match(pattern, self.message)), None)
-        if action:
-            return action()
-        return None
-
-    def ensure_user(self):
-        if not self.user:
-            self.user = User(id=self.from_phone)
-            self.user.put()
-
-    def quit_group(self):
-        self.user.group = None
-        self.user.put()
-        return {'texts': ["You've left your group"]}
-
-    def start_story(self, code):
-        """ Start a Story for a given code """
-        story = Story.get_by_id(code)
-        if not story:
-            return {'texts': ["Sorry, can't find any adventures by that name, are you sure it's spelled correctly?"]}
-        self.group = Group(current_clue_key='start', story_key=story.key, user_keys=[self.user.key])
-        self.group.put()
-        self.user.group_code = self.group.key.id()
-        self.user.put()
-        return {
-            'texts': ["You've started your adventure! Your friends can text 'join {}' to join your group!".format(self.group.key.id()),
-                      self.group.current_clue['text']],
-            'type': CLUE,
-        }
-
-    def give_hint(self):
-        hint = next(self.clue.hints, None)
-        if hint is not None:
-            return {'texts': [hint.text], 'type': HINT}
-        else:
-            return {'texts': [self.story.default_hint.text], 'type': HINT}
-
-    def restart(self):
-        self.group.current_clue = 'start'
-        self.group.data = {}
-        self.group.put()
-        self.user.data = {}
-        self.user.put()
-        return {'texts': [self.group.current_clue['text']], 'type': CLUE}
-
-    def answer_clue(self):
-        if not self.clue['answers']:
-            return {'texts': ["Looks like you've hit the end of the story, text 'restart' to try again!"]}
-        next_clue, answer_data = next(((next_clue, re.match(pattern, self.message).groupdict())
-                                       for pattern, next_clue in self.clue['answers']
-                                       if re.match(pattern, self.message)), (None, None))
-        if next_clue:
-            self.group.current_clue = next_clue
-            user_data, group_data = split_data(answer_data)
-            self.user.data.update(user_data)
-            self.user.put()
-            self.group.data.update(group_data)
-            self.group.put()
-            return {'texts': [self.group.current_clue['text']], 'type': CLUE}
-        # They got the answer wrong - send them a hint
-        if self.clue['hint']:
-            return {'texts': [self.clue['hint']], 'type': HINT}
-        return {'texts': [self.story.default_hint], 'type': HINT}
