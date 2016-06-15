@@ -1,4 +1,5 @@
 from collections import namedtuple
+import json
 
 from webapp2 import RequestHandler, abort
 from webapp2_extensions import restful_api, parse_args
@@ -26,9 +27,9 @@ class StoryHandler(RequestHandler):
     def post(self, id):
         # if Story.get_by_id(id):
         #     abort(409, message='Record already exists')
-        print self.request.get('name')
-        story_args = parse_args(self.request.params, required_story_args)
-        story = Story(id=id.upper(), **story_args)
+        data = json.loads(self.request.body)
+        print data
+        story = Story(id=id.upper(), **data)
         story.put()
         return story.to_dict()
 
