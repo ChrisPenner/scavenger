@@ -11,7 +11,7 @@ from app.messages import HOW_TO_START, STORY_NOT_FOUND, STARTING_NEW_STORY, NO_G
                      ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER
 
-from app.scavenger import twiml_response
+from app.scavenger import twiml_response, format_response, determine_message_type
 
 
 class TestScavenger(TestCase):
@@ -61,3 +61,31 @@ class TestTwimlResponse(TestCase):
         response = twiml_response(self.user, HINT, messages)
         for p in phones:
             self.assertIn(p, response)
+
+
+class TestFormatData(TestCase):
+    def test_formats_user_data(self):
+        data = {'user_name': 'bob', 'user_color': 'red'}
+        user = Mock()
+        user.data = data
+        user.group.data = {}
+        message = 'Hello {user_name}, you like {user_color}?'
+        response = format_response(message, user)
+        self.assertEqual(message.format(**data), response)
+
+    def test_formats_group_data(self):
+        data = {'group_name': 'bob', 'group_color': 'red'}
+        user = Mock()
+        user.data = {}
+        user.group.data = data
+        message = 'Hello {group_name}, you like {group_color}?'
+        response = format_response(message, user)
+        self.assertEqual(message.format(**data), response)
+
+
+class TestDetermineMessageType(TestCase):
+    def test_returns_proper_type(self):
+        self.assertEqual(START_STORY, determine_message_type('STart something'))
+        self.assertEqual(JOIN_GROUP, determine_message_type('joiN something'))
+        self.assertEqual(RESTART, determine_message_type('restART'))
+        self.assertEqual(ANSWER, determine_message_type('This is my Answer'))
