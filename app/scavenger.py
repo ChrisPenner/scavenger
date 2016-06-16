@@ -8,7 +8,7 @@ from models.user import User
 from models.group import Group
 from models.story import Story
 from messages import HOW_TO_START, STORY_NOT_FOUND, STARTING_NEW_STORY, NO_GROUP_FOUND, \
-                     ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, SEPARATOR_STRING
 
 CLUE = 'CLUE'
 HINT = 'HINT'
@@ -27,8 +27,8 @@ def twiml_response(user, message_type, messages):
         recipients = user.group.users
     resp = twiml.Response()
     for recipient in recipients:
-        for m in messages:
-            resp.message(str(m), to=recipient)
+        joined_messages = SEPARATOR_STRING.join(messages)
+        resp.message(joined_messages, to=recipient)
     return str(resp)
 
 
@@ -103,14 +103,14 @@ def join_group(message, user):
 
 
 def restart(user):
-    user.group.current_clue = 'start'
+    user.group.current_clue_key = 'start'
     user.group.data = {}
     user.data = {}
     return [RESTARTED, user.group.current_clue['text']]
 
 
 def answer(message, user):
-    if (not user.group) or (not user.group.current_clue) or (not user.group.current_clue['answers']):
+    if (not user.group.current_clue) or (not user.group.current_clue['answers']):
         return [END_OF_STORY]
     next_clue, answer_data = next(((next_clue, regex_match(pattern, message).groupdict())
                                    for pattern, next_clue in user.group.current_clue['answers']
@@ -146,7 +146,3 @@ class TwilioHandler(RequestHandler):
             user.group.put()
         user.put()
         return
-
-    # @property
-    # def has_media(self):
-    #     return bool(self.request.get('MediaUrl0'))

@@ -1,22 +1,22 @@
 from unittest import TestCase
 from webapp2 import Request
-from mock import Mock
+from mock import Mock, patch
 
 from google.appengine.ext import testbed, ndb
 
 from app.main import app
 
-from app.models.user import User
 from app.messages import HOW_TO_START, STORY_NOT_FOUND, STARTING_NEW_STORY, NO_GROUP_FOUND, \
-                     ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER
 
-from app.scavenger import twiml_response, format_response, determine_message_type
+from app.scavenger import twiml_response, format_response, determine_message_type, perform_action, \
+    split_data
 
 
 class TestScavenger(TestCase):
     def setUp(self):
-        self.request = Request.blank('/')
+        self.request = Request.blank('/twilio')
         self.request.method = 'POST'
         self.request.POST.update({
             'From': '+5555551234',
@@ -41,6 +41,25 @@ class TestScavenger(TestCase):
         response = self.request.get_response(app)
         self.assertEqual(400, response.status_int)
 
+
+class TestSplitData(TestCase):
+    def test_splits_data(self):
+        user_data = {
+            'user_key': 'user stuff',
+            'user_more': 'more user stuff',
+        }
+        group_data = {
+            'group_key': 'group stuff',
+            'group_more': 'more group stuff',
+        }
+        combined = {}
+        combined.update(user_data)
+        combined.update(group_data)
+        user_result, group_result = split_data(combined)
+        self.assertEqual(user_data, user_result)
+        self.assertEqual(group_data, group_result)
+
+
 class TestTwimlResponse(TestCase):
     def setUp(self):
         self.user = Mock(phone='+1111')
@@ -63,7 +82,7 @@ class TestTwimlResponse(TestCase):
             self.assertIn(p, response)
 
 
-class TestFormatData(TestCase):
+class TestFormatResponse(TestCase):
     def test_formats_user_data(self):
         data = {'user_name': 'bob', 'user_color': 'red'}
         user = Mock()
@@ -89,3 +108,61 @@ class TestDetermineMessageType(TestCase):
         self.assertEqual(JOIN_GROUP, determine_message_type('joiN something'))
         self.assertEqual(RESTART, determine_message_type('restART'))
         self.assertEqual(ANSWER, determine_message_type('This is my Answer'))
+
+
+class TestPerformAction(TestCase):
+    def test_returns_expected_how_to_start(self):
+        user = Mock(group=None)
+        result = perform_action(ANSWER, 'blah', user)
+        self.assertEqual([HOW_TO_START], result)
+
+    @patch('app.scavenger.Story')
+    def test_returns_expected_story_not_found(self, story_mock):
+        story_mock.get_by_id.return_value = None
+        user = Mock(group=None)
+        result = perform_action(START_STORY, 'start blah', user)
+        self.assertEqual([STORY_NOT_FOUND], result)
+
+    @patch('app.scavenger.Group')
+    @patch('app.scavenger.Story')
+    def test_returns_expected_starting_new_story(self, story_mock, group_mock):
+        group_mock.return_value.current_clue = {'text': 'test'}
+        group_mock.gen_code.return_value = 'abcd'
+        user = Mock(group=None)
+        result = perform_action(START_STORY, 'start blah', user)
+        self.assertEqual([STARTING_NEW_STORY.format('abcd'), 'test'], result)
+
+    @patch('app.scavenger.Group')
+    def test_returns_expected_group_not_found(self, group_mock):
+        group_mock.get_by_id.return_value = None
+        user = Mock(group=None)
+        result = perform_action(JOIN_GROUP, 'join blah', user)
+        self.assertEqual([NO_GROUP_FOUND.format('blah')], result)
+
+    @patch('app.scavenger.Group')
+    def test_returns_expected_already_in_group(self, group_mock):
+        user = Mock(group_code='code')
+        result = perform_action(JOIN_GROUP, 'join code', user)
+        self.assertEqual([ALREADY_IN_GROUP], result)
+
+    @patch('app.scavenger.Group')
+    def test_returns_expected_joined_group(self, group_mock):
+        group_mock.current_clue = {'text': 'clue'}
+        group_mock.get_by_id.return_value = group_mock
+        user = Mock()
+        result = perform_action(JOIN_GROUP, 'join code', user)
+        self.assertEqual([JOINED_GROUP, 'clue'], result)
+
+    @patch('app.scavenger.Group')
+    def test_returns_expected_restarted(self, group_mock):
+        user = Mock()
+        user.group.current_clue = {'text': 'clue'}
+        result = perform_action(RESTART, 'restart', user)
+        self.assertEqual([RESTARTED, 'clue'], result)
+
+    @patch('app.scavenger.Group')
+    def test_returns_expected_end_of_story(self, group_mock):
+        user = Mock()
+        user.group.current_clue = None
+        result = perform_action(ANSWER, 'asdf', user)
+        self.assertEqual([END_OF_STORY], result)
