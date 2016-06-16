@@ -6,3 +6,4 @@ ALREADY_IN_GROUP = "You're already in that group"
 JOINED_GROUP = "You've joined the group! Here's the last message:"
 RESTARTED = "Restarted"
 END_OF_STORY = "Looks like you've hit the end of the story, text 'restart' to try again!"
+SEPARATOR_STRING = '\n---\n'

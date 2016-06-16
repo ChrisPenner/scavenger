@@ -19,7 +19,7 @@ def handle_500(request, response, exception):
 
 
 app = WSGIApplication([
-    Route('/', TwilioHandler),
+    Route('/twilio', TwilioHandler),
     Route('/story/<id:[^/]+>', StoryHandler),
 ], debug=True)
 
