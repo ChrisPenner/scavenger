@@ -1,2 +1,3 @@
 *.pyc
 app/secrets.py*
+images/media/

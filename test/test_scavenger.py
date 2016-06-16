@@ -81,6 +81,18 @@ class TestTwimlResponse(TestCase):
         for p in phones:
             self.assertIn(p, response)
 
+    def test_sends_media_urls_from_clues(self):
+        messages = ['HELLO!!', {'text': 'my_clue', 'media_url': 'picture.com/my.png'}, {'text': 'my_other_clue', 'media_url': 'second.com/my.jpg'}]
+        response = twiml_response(self.user, START_STORY, messages)
+        self.assertIn('<Media>picture.com/my.png</Media>', response)
+        self.assertIn('<Media>second.com/my.jpg</Media>', response)
+
+    def test_extracts_text_from_clues(self):
+        messages = ['HELLO!!', {'text': 'my_clue'}, {'text': 'my_other_clue'}]
+        response = twiml_response(self.user, START_STORY, messages)
+        self.assertIn('my_clue', response)
+        self.assertIn('my_other_clue', response)
+
 
 class TestFormatResponse(TestCase):
     def test_formats_user_data(self):
@@ -126,11 +138,12 @@ class TestPerformAction(TestCase):
     @patch('app.scavenger.Group')
     @patch('app.scavenger.Story')
     def test_returns_expected_starting_new_story(self, story_mock, group_mock):
-        group_mock.return_value.current_clue = {'text': 'test'}
+        clue = {'text': 'test'}
+        group_mock.return_value.current_clue = clue
         group_mock.gen_code.return_value = 'abcd'
         user = Mock(group=None)
         result = perform_action(START_STORY, 'start blah', user)
-        self.assertEqual([STARTING_NEW_STORY.format('abcd'), 'test'], result)
+        self.assertEqual([STARTING_NEW_STORY.format('abcd'), clue], result)
 
     @patch('app.scavenger.Group')
     def test_returns_expected_group_not_found(self, group_mock):
@@ -147,18 +160,20 @@ class TestPerformAction(TestCase):
 
     @patch('app.scavenger.Group')
     def test_returns_expected_joined_group(self, group_mock):
-        group_mock.current_clue = {'text': 'clue'}
+        clue = {'text': 'clue'}
+        group_mock.current_clue = clue
         group_mock.get_by_id.return_value = group_mock
         user = Mock()
         result = perform_action(JOIN_GROUP, 'join code', user)
-        self.assertEqual([JOINED_GROUP, 'clue'], result)
+        self.assertEqual([JOINED_GROUP, clue], result)
 
     @patch('app.scavenger.Group')
     def test_returns_expected_restarted(self, group_mock):
         user = Mock()
-        user.group.current_clue = {'text': 'clue'}
+        clue = {'text': 'clue'}
+        user.group.current_clue = clue
         result = perform_action(RESTART, 'restart', user)
-        self.assertEqual([RESTARTED, 'clue'], result)
+        self.assertEqual([RESTARTED, clue], result)
 
     @patch('app.scavenger.Group')
     def test_returns_expected_end_of_story(self, group_mock):

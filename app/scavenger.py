@@ -22,14 +22,27 @@ regex_match = partial(re.match, flags=re.IGNORECASE)
 
 
 def twiml_response(user, message_type, messages):
+    media_urls = [m['media_url'] for m in messages
+                  if not isinstance(m, basestring) and m.get('media_url')]
+    messages = [get_text_message_from_clue(m) for m in messages]
     recipients = [user.phone]
+    joined_messages = SEPARATOR_STRING.join(messages)
     if user.group and user.group.users and message_type == CLUE or message_type == HINT:
         recipients = user.group.users
     resp = twiml.Response()
     for recipient in recipients:
-        joined_messages = SEPARATOR_STRING.join(messages)
-        resp.message(joined_messages, to=recipient)
+        message = twiml.Message(msg=joined_messages, to=recipient)
+        for media_url in media_urls:
+            message.append(twiml.Media(url=media_url))
+        resp.append(message)
     return str(resp)
+
+
+def get_text_message_from_clue(message):
+    if isinstance(message, basestring):
+        return message
+    else:  # Must be clue
+        return message['text']
 
 
 def split_data(data):
@@ -85,7 +98,7 @@ def start_story(message, user):
     group = Group(id=group_code, current_clue_key='start', story_key=story.key, user_keys=[user.key])
     user.group = group
     return [STARTING_NEW_STORY.format(group_code),
-            user.group.current_clue['text']]
+            user.group.current_clue]
 
 
 def join_group(message, user):
@@ -99,14 +112,14 @@ def join_group(message, user):
     group = Group.get_by_id(code.upper())
     group.user_keys.append(user.key)
     user.group = group
-    return [JOINED_GROUP, user.group.current_clue['text']]
+    return [JOINED_GROUP, user.group.current_clue]
 
 
 def restart(user):
     user.group.current_clue_key = 'start'
     user.group.data = {}
     user.data = {}
-    return [RESTARTED, user.group.current_clue['text']]
+    return [RESTARTED, user.group.current_clue]
 
 
 def answer(message, user):
@@ -120,7 +133,7 @@ def answer(message, user):
         user_data, group_data = split_data(answer_data)
         user.data.update(user_data)
         user.group.data.update(group_data)
-        return [user.group.current_clue['text']]
+        return [user.group.current_clue]
     # They got the answer wrong - send them a hint
     if user.group.current_clue.get('hint'):
         return [user.group.current_clue.get('hint')]
