@@ -6,8 +6,8 @@ from google.appengine.ext import testbed, ndb
 
 from app.main import app
 
-from app.messages import HOW_TO_START, STORY_NOT_FOUND, STARTING_NEW_STORY, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY
+from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER
 
 from app.scavenger import twiml_response, format_response, determine_message_type, perform_action, \
@@ -82,7 +82,8 @@ class TestTwimlResponse(TestCase):
             self.assertIn(p, response)
 
     def test_sends_media_urls_from_clues(self):
-        messages = ['HELLO!!', {'text': 'my_clue', 'media_url': 'picture.com/my.png'}, {'text': 'my_other_clue', 'media_url': 'second.com/my.jpg'}]
+        messages = ['HELLO!!', {'text': 'my_clue', 'media_url': 'picture.com/my.png'},
+                    {'text': 'my_other_clue', 'media_url': 'second.com/my.jpg'}]
         response = twiml_response(self.user, START_STORY, messages)
         self.assertIn('<Media>picture.com/my.png</Media>', response)
         self.assertIn('<Media>second.com/my.jpg</Media>', response)
@@ -100,18 +101,18 @@ class TestFormatResponse(TestCase):
         user = Mock()
         user.data = data
         user.group.data = {}
-        message = 'Hello {user_name}, you like {user_color}?'
+        message = {'text': 'Hello {user_name}, you like {user_color}?'}
         response = format_response(message, user)
-        self.assertEqual(message.format(**data), response)
+        self.assertEqual({'text': 'Hello bob, you like red?'}, response)
 
     def test_formats_group_data(self):
         data = {'group_name': 'bob', 'group_color': 'red'}
         user = Mock()
         user.data = {}
         user.group.data = data
-        message = 'Hello {group_name}, you like {group_color}?'
+        message = {'text': 'Hello {group_name}, you like {group_color}?'}
         response = format_response(message, user)
-        self.assertEqual(message.format(**data), response)
+        self.assertEqual({'text': 'Hello bob, you like red?'}, response)
 
 
 class TestDetermineMessageType(TestCase):
@@ -143,14 +144,14 @@ class TestPerformAction(TestCase):
         group_mock.gen_code.return_value = 'abcd'
         user = Mock(group=None)
         result = perform_action(START_STORY, 'start blah', user)
-        self.assertEqual([STARTING_NEW_STORY.format('abcd'), clue], result)
+        self.assertEqual([start_new_story('abcd'), clue], result)
 
     @patch('app.scavenger.Group')
     def test_returns_expected_group_not_found(self, group_mock):
         group_mock.get_by_id.return_value = None
         user = Mock(group=None)
         result = perform_action(JOIN_GROUP, 'join blah', user)
-        self.assertEqual([NO_GROUP_FOUND.format('blah')], result)
+        self.assertEqual([NO_GROUP_FOUND], result)
 
     @patch('app.scavenger.Group')
     def test_returns_expected_already_in_group(self, group_mock):

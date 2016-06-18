@@ -7,8 +7,8 @@ from twilio import twiml
 from models.user import User
 from models.group import Group
 from models.story import Story
-from messages import HOW_TO_START, STORY_NOT_FOUND, STARTING_NEW_STORY, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, SEPARATOR_STRING
+from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, SEPARATOR_STRING, start_new_story
 
 CLUE = 'CLUE'
 HINT = 'HINT'
@@ -61,7 +61,8 @@ def format_response(message, user):
     data.update(user.data)
     if user.group:
         data.update(user.group.data)
-    return message.format(**data)
+    message['text'] = message['text'].format(**data)
+    return message
 
 
 def determine_message_type(message):
@@ -97,7 +98,7 @@ def start_story(message, user):
     group_code = Group.gen_code()
     group = Group(id=group_code, current_clue_key='start', story_key=story.key, user_keys=[user.key])
     user.group = group
-    return [STARTING_NEW_STORY.format(group_code),
+    return [start_new_story(group_code),
             user.group.current_clue]
 
 
@@ -106,7 +107,7 @@ def join_group(message, user):
     match = regex_match(r'^join (?P<code>.+)', message.lower())
     code = match.groupdict().get('code')
     if not code or not Group.get_by_id(code):
-        return [NO_GROUP_FOUND.format(code)]
+        return [NO_GROUP_FOUND]
     if user.group_code == code:
         return [ALREADY_IN_GROUP]
     group = Group.get_by_id(code.upper())
