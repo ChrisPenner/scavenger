@@ -18,7 +18,7 @@ JOIN_GROUP = 'JOIN_GROUP'
 RESTART = 'RESTART'
 ANSWER = 'ANSWER'
 
-regex_match = partial(re.search, flags=re.IGNORECASE)
+regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
 
 
 def twiml_response(user, message_type, messages):
@@ -123,12 +123,17 @@ def restart(user):
     return [RESTARTED, user.group.current_clue]
 
 
-def answer(message, user):
-    if (not user.group.current_clue) or (not user.group.current_clue['answers']):
-        return [END_OF_STORY]
+def get_next_clue(message, user):
     next_clue, answer_data = next(((next_clue, regex_match(pattern, message).groupdict())
                                    for pattern, next_clue in user.group.current_clue['answers']
                                    if regex_match(pattern, message)), (None, None))
+    return next_clue, answer_data
+
+
+def answer(message, user):
+    if (not user.group.current_clue) or (not user.group.current_clue['answers']):
+        return [END_OF_STORY]
+    next_clue, answer_data = get_next_clue(message, user)
     if next_clue:
         user.group.current_clue = next_clue
         user_data, group_data = split_data(answer_data)

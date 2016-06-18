@@ -11,7 +11,7 @@ from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER
 
 from app.scavenger import twiml_response, format_response, determine_message_type, perform_action, \
-    split_data
+    split_data, get_next_clue, answer
 
 
 class TestScavenger(TestCase):
@@ -168,17 +168,65 @@ class TestPerformAction(TestCase):
         result = perform_action(JOIN_GROUP, 'join code', user)
         self.assertEqual([JOINED_GROUP, clue], result)
 
-    @patch('app.scavenger.Group')
-    def test_returns_expected_restarted(self, group_mock):
+    def test_returns_expected_restarted(self):
         user = Mock()
         clue = {'text': 'clue'}
         user.group.current_clue = clue
         result = perform_action(RESTART, 'restart', user)
         self.assertEqual([RESTARTED, clue], result)
 
-    @patch('app.scavenger.Group')
-    def test_returns_expected_end_of_story(self, group_mock):
+    def test_returns_expected_end_of_story(self):
         user = Mock()
         user.group.current_clue = None
         result = perform_action(ANSWER, 'asdf', user)
         self.assertEqual([END_OF_STORY], result)
+
+
+class TestGetNextClue(TestCase):
+    def test_answers_clue_properly(self):
+        user = Mock()
+        user.group.current_clue = {
+            'text': 'hi',
+            'answers': [
+                [r'\w+\s+(?P<second_word>\w+)', "two-words"],
+                [r'steve', "steve"],
+                [r'.*', "catch-all"],
+            ],
+        }
+        message = 'test answer'
+        next_clue, answer_data = get_next_clue(message, user)
+        self.assertEqual('two-words', next_clue)
+        self.assertEqual({'second_word': 'answer'}, answer_data)
+
+
+class TestAnswerClue(TestCase):
+    def test_sets_next_clue_on_group(self):
+        user = Mock()
+        user.group.current_clue = {
+            'text': 'hi',
+            'answers': [
+                [r'\w+\s+(?P<group_word>\w+)', "two-words"],
+                [r'steve', "steve"],
+                [r'.*', "catch-all"],
+            ],
+        }
+        user.group.data = {}
+        message = 'test answer'
+        responses = answer(message, user)
+        self.assertEqual(['two-words'], responses)
+        self.assertEqual("two-words", user.group.current_clue)
+        self.assertEqual({'group_word': 'answer'}, user.group.data)
+
+    def test_gives_hints_if_incorrect(self):
+        hint = {'text': 'My hint'},
+        user = Mock()
+        user.group.current_clue = {
+            'text': 'hi',
+            'hint': hint,
+            'answers': [
+                [r'blah', "blah"],
+            ],
+        }
+        message = 'test answer'
+        responses = answer(message, user)
+        self.assertEqual([hint], responses)
