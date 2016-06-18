@@ -15,8 +15,8 @@ handlers:
 - url: /js
   static_dir: js
 
-- url: /images
-  static_dir: content/images
+- url: /media
+  static_dir: media
 
 - url: .*
   script: app.main.app
