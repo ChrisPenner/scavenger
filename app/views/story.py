@@ -25,10 +25,7 @@ class StoryHandler(RequestHandler):
         return story.to_dict()
 
     def post(self, id):
-        # if Story.get_by_id(id):
-        #     abort(409, message='Record already exists')
         data = json.loads(self.request.body)
-        print data
         story = Story(id=id.upper(), **data)
         story.put()
         return story.to_dict()

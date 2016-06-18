@@ -18,7 +18,7 @@ JOIN_GROUP = 'JOIN_GROUP'
 RESTART = 'RESTART'
 ANSWER = 'ANSWER'
 
-regex_match = partial(re.match, flags=re.IGNORECASE)
+regex_match = partial(re.search, flags=re.IGNORECASE)
 
 
 def twiml_response(user, message_type, messages):
