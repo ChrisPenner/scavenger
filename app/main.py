@@ -4,6 +4,7 @@ import logging
 
 from scavenger import TwilioHandler
 from views.story import StoryHandler
+from views.form import FormHandler
 
 
 def handle_404(request, response, exception):
@@ -21,6 +22,7 @@ def handle_500(request, response, exception):
 app = WSGIApplication([
     Route('/twilio', TwilioHandler),
     Route('/story/<id:[^/]+>', StoryHandler),
+    Route('/', FormHandler),
 ], debug=True)
 
 app.error_handlers[404] = handle_404

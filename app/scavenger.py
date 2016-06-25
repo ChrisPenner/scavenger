@@ -1,5 +1,6 @@
 from functools import partial
 import re
+import logging
 
 from webapp2 import RequestHandler, abort
 
@@ -94,6 +95,7 @@ def start_story(message, user):
     code = match.groupdict().get('code')
     story = Story.get_by_id(code.upper()) if code else None
     if not story:
+        logging.info("Couldn't find story for code: %s", code)
         return [STORY_NOT_FOUND]
     group_code = Group.gen_code()
     group = Group(id=group_code, current_clue_key='start', story_key=story.key, user_keys=[user.key])
@@ -107,8 +109,10 @@ def join_group(message, user):
     match = regex_match(r'^join (?P<code>.+)', message.lower())
     code = match.groupdict().get('code')
     if not code or not Group.get_by_id(code):
+        logging.info("Couldn't find group for code: %s", code)
         return [NO_GROUP_FOUND]
     if user.group_code == code:
+        logging.info("Already in group for code: %s", code)
         return [ALREADY_IN_GROUP]
     group = Group.get_by_id(code.upper())
     group.user_keys.append(user.key)
@@ -117,6 +121,7 @@ def join_group(message, user):
 
 
 def restart(user):
+    logging.info("Restarting story")
     user.group.current_clue_key = 'start'
     user.group.data = {}
     user.data = {}
@@ -141,6 +146,7 @@ def answer(message, user):
         user.group.data.update(group_data)
         return [user.group.current_clue]
     # They got the answer wrong - send them a hint
+    logging.info('Sending hint')
     if user.group.current_clue.get('hint'):
         return [user.group.current_clue.get('hint')]
     return [user.group.story.default_hint]
@@ -149,19 +155,28 @@ def answer(message, user):
 class TwilioHandler(RequestHandler):
     def post(self):
         if not self.request.get('Body') or not self.request.get('From'):
+            logging.error('Body and From params required')
             abort(400, 'Body and From params required')
 
         message = self.request.get('Body').strip()
         from_phone = self.request.get('From')
+        logging.info('Received text from %s with message:\n%s', from_phone, message)
 
-        user = User.get_by_id(from_phone) or User(id=from_phone)
+        user = User.get_by_id(from_phone)
+        if user:
+            logging.info('Found existing user')
+        else:
+            logging.info('Creating new user')
+            user = User(id=from_phone)
 
         message_type = determine_message_type(message)
+        logging.info('Message of type: %s', message_type)
         responses = perform_action(message_type, message, user)
         responses = [format_response(r, user) for r in responses]
+        logging.info('Responding with: %s', responses)
         self.response.body = twiml_response(user, message_type, responses)
         self.response.headers['Content-Type'] = 'text/xml'
+        logging.info('Responding: %s', self.response.body)
         if user.group:
             user.group.put()
         user.put()
-        return
