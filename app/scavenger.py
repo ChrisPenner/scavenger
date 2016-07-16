@@ -154,11 +154,35 @@ def answer(message, user):
 
 class TwilioHandler(RequestHandler):
     def post(self):
+        logging.info(self.request.params)
+        if bool(self.request.get('MediaUrl0')):
+            resp = twiml.Response()
+            from random import choice
+            resp.message(choice([
+                "Eww... don't wear that.",
+                "No. no NOOOO. no.",
+                "Which leprechaun did you steal that from???",
+                "The 80s called, they want their clothes back",
+                "You go out in public like that!?",
+                "... seriously, are you trying right now?",
+                "I hope that was just a gift...",
+                "You should go see an eye doctor about your colour blindness",
+                "That style is all the rage in Latvia right now!",
+                "I suggest not existing for a while",
+                ("Your great, great, great, great, great, great, great, great, great, great, great,"
+                 "great grandmother would be proud!"),
+                "I used to have a shirt like that until I burned it. Glad someone's getting some use out of it now.",
+                "It's not nice to steal clothes from homeless people",
+            ]))
+
+            self.response.body = str(resp)
+            return
         if not self.request.get('Body') or not self.request.get('From'):
             logging.error('Body and From params required')
             abort(400, 'Body and From params required')
 
         message = self.request.get('Body').strip()
+
         from_phone = self.request.get('From')
         logging.info('Received text from %s with message:\n%s', from_phone, message)
 

@@ -1,10 +1,16 @@
 """ main  """
-from webapp2 import Route, WSGIApplication
+from webapp2 import Route, WSGIApplication, RequestHandler
 import logging
 
+from app.base import BaseHandler
 from scavenger import TwilioHandler
 from views.story import StoryHandler
 from views.form import FormHandler
+
+
+class AppHandler(BaseHandler):
+    def get(self):
+        self.render('app.html')
 
 
 def handle_404(request, response, exception):
@@ -20,9 +26,9 @@ def handle_500(request, response, exception):
 
 
 app = WSGIApplication([
+    Route('/', AppHandler),
     Route('/twilio', TwilioHandler),
     Route('/story/<id:[^/]+>', StoryHandler),
-    Route('/', FormHandler),
 ], debug=True)
 
 app.error_handlers[404] = handle_404

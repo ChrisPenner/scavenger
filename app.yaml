@@ -9,14 +9,9 @@ handlers:
   static_files: images/favicon.png
   upload: images/favicon.png
 
-- url: /css
-  static_dir: css
-
-- url: /js
-  static_dir: js
-
-- url: /media
-  static_dir: media
+- url: /bundle.js
+  static_files: bundle.js
+  upload: bundle.js
 
 - url: .*
   script: app.main.app
