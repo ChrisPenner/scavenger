@@ -5,6 +5,15 @@ module.exports = {
     output: {
         path: __dirname,
         filename: "bundle.js",
+        sourceMapFilename: "bundle.map.js",
+    },
+    devtool: 'sourceMap',
+    devServer: {
+        port: 3000,
+        inline: true,
+        historyApiFallback: {
+            index: 'index.html'
+        }
     },
     module: {
         loaders: [
