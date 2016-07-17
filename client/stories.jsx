@@ -13,7 +13,6 @@ class Stories extends React.Component {
         fetch(`/stories.json`)
         .then(resp => resp.json())
         .then(stories => this.setStories(stories))
-        .catch(err => console.error(`Failed to get Stories: ${err}`))
     }
 
     setStories(stories) {
@@ -50,8 +49,29 @@ const Story = ({ story }) => {
     if (!story) {
         return <div>Loading...</div>
     }
+    const clueHTML = Object.keys(story.clues).map(clueID => {
+        const answers = (story.clues[clueID].answers || []).map((answer, i) => {
+            const [pattern, nextClueID] = answer;
+            return (
+                <div key={i}>
+                    <div>Pattern: {pattern} </div>
+                    <div>Next Clue ID: {nextClueID} </div>
+                </div>
+            )
+        })
+        return (
+            <div key={clueID}>
+                <div> ID: {clueID} </div>
+                <div> {answers} </div>
+            </div>
+        )
+    })
+
     return (
-        <h1> {story.name} </h1>
+        <div>
+            <h1> {story.name} </h1>
+            <div> {clueHTML} </div>
+        </div>
     )}
 
 export {Story, Stories}
