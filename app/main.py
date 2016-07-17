@@ -1,11 +1,10 @@
 """ main  """
-from webapp2 import SimpleRoute, Route, WSGIApplication, RequestHandler
+from webapp2 import SimpleRoute, Route, WSGIApplication
 import logging
 
 from app.base import BaseHandler
 from scavenger import TwilioHandler
-from api.story import StoryHandler
-from api.form import FormHandler
+from api.stories import StoryHandler
 
 
 class AppHandler(BaseHandler):
@@ -27,8 +26,8 @@ def handle_500(request, response, exception):
 
 app = WSGIApplication([
     Route('/twilio', TwilioHandler),
-    Route('/story/<id:[^/]+>', StoryHandler),
-    Route('/story.json', StoryHandler),
+    Route('/stories.json', handler=StoryHandler, handler_method='index'),
+    Route('/stories/<id:[^/]+>.json', StoryHandler),
     SimpleRoute('/.*', AppHandler),
 ], debug=True)
 

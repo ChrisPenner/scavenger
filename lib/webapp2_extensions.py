@@ -32,7 +32,7 @@ class restful_api(object):
                     handler.response.body = json.dumps(response)
             return wrapped
 
-        for method in ['get', 'post', 'put', 'patch', 'delete']:
+        for method in ['index', 'get', 'post', 'put', 'patch', 'delete']:
             if hasattr(cls, method):
                 wrapped = format_response(getattr(cls, method))
                 setattr(cls, method, wrapped)

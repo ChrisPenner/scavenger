@@ -1,37 +1,35 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, Link, browserHistory } from 'react-router'
+import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 
-// import Story from './story'
+import { Stories, Story } from './stories'
+import Routes from './routes'
 
-const Contents = () => (
-    <div>
-        <Link to="/story"> Story </Link>
-    </div>
+const App = ({children}) => (
+    <div> {children} </div>
 )
 
-const Index = ({children}) => {
-    const child = children || <Contents/>;
-    return (
-        <div>
-            {child}
-        </div>
-    )}
+const Index = () => (
+    <div>
+        <Link to={Routes.stories()}> Stories </Link>
+    </div>
+)
 
 const My404 = () => (
     <div> 404 :'( </div>
 )
 
-const App = () => (
+ReactDOM.render(
     <Router history={browserHistory}>
-        <Route path="/" component={Index}>
+        <Route path="/" component={App}>
+            <IndexRoute component={Index}/>
+            <Route path={Routes.stories()} component={Stories}>
+                <IndexRoute component={Stories}/>
+                <Route path=':storyID' component={Story}/>
+            </Route>
             <Route path="*" component={My404}></Route>
         </Route>
-    </Router>
-)
-
-ReactDOM.render(
-    <App/>,
+    </Router>,
     document.getElementById('app')
 )
 

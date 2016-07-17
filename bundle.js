@@ -68,30 +68,34 @@
 
 	var _reactRouter = __webpack_require__(173);
 
+	var _stories = __webpack_require__(235);
+
+	var _routes = __webpack_require__(236);
+
+	var _routes2 = _interopRequireDefault(_routes);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// import Story from './story'
+	var App = function App(_ref) {
+	    var children = _ref.children;
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        ' ',
+	        children,
+	        ' '
+	    );
+	};
 
-	var Contents = function Contents() {
+	var Index = function Index() {
 	    return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
 	            _reactRouter.Link,
-	            { to: '/story' },
-	            ' Story '
+	            { to: _routes2.default.stories() },
+	            ' Stories '
 	        )
-	    );
-	};
-
-	var Index = function Index(_ref) {
-	    var children = _ref.children;
-
-	    var child = children || _react2.default.createElement(Contents, null);
-	    return _react2.default.createElement(
-	        'div',
-	        null,
-	        child
 	    );
 	};
 
@@ -103,19 +107,22 @@
 	    );
 	};
 
-	var App = function App() {
-	    return _react2.default.createElement(
-	        _reactRouter.Router,
-	        { history: _reactRouter.browserHistory },
+	_reactDom2.default.render(_react2.default.createElement(
+	    _reactRouter.Router,
+	    { history: _reactRouter.browserHistory },
+	    _react2.default.createElement(
+	        _reactRouter.Route,
+	        { path: '/', component: App },
+	        _react2.default.createElement(_reactRouter.IndexRoute, { component: Index }),
 	        _react2.default.createElement(
 	            _reactRouter.Route,
-	            { path: '/', component: Index },
-	            _react2.default.createElement(_reactRouter.Route, { path: '*', component: My404 })
-	        )
-	    );
-	};
-
-	_reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
+	            { path: _routes2.default.stories(), component: _stories.Stories },
+	            _react2.default.createElement(_reactRouter.IndexRoute, { component: _stories.Stories }),
+	            _react2.default.createElement(_reactRouter.Route, { path: ':storyID', component: _stories.Story })
+	        ),
+	        _react2.default.createElement(_reactRouter.Route, { path: '*', component: My404 })
+	    )
+	), document.getElementById('app'));
 
 	exports.default = App;
 
@@ -26704,6 +26711,202 @@
 
 	exports.default = (0, _createRouterHistory2.default)(_createHashHistory2.default);
 	module.exports = exports['default'];
+
+/***/ },
+/* 235 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Stories = exports.Story = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(173);
+
+	var _routes = __webpack_require__(236);
+
+	var _routes2 = _interopRequireDefault(_routes);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Stories = function (_React$Component) {
+	    _inherits(Stories, _React$Component);
+
+	    function Stories(props, context) {
+	        _classCallCheck(this, Stories);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Stories).call(this, props, context));
+
+	        _this.state = {
+	            stories: []
+	        };
+	        return _this;
+	    }
+
+	    _createClass(Stories, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var _this2 = this;
+
+	            fetch('/stories.json').then(function (resp) {
+	                return resp.json();
+	            }).then(function (stories) {
+	                return _this2.setStories(stories);
+	            }).catch(function (err) {
+	                return console.error('Failed to get Stories: ' + err);
+	            });
+	        }
+	    }, {
+	        key: 'setStories',
+	        value: function setStories(stories) {
+	            this.setState({ stories: stories });
+	        }
+	    }, {
+	        key: 'getStory',
+	        value: function getStory(storyID) {
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = this.state.stories[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var story = _step.value;
+
+	                    if (story.name === storyID) {
+	                        return story;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var Story = _props.children;
+	            var storyID = _props.params.storyID;
+
+	            if (Story) {
+	                return _react2.default.cloneElement(Story, { story: this.getStory(storyID) });
+	            }
+	            var stories = this.state.stories.map(function (story) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { key: story.name },
+	                    _react2.default.createElement(
+	                        _reactRouter.Link,
+	                        { to: _routes2.default.story(story.name) },
+	                        ' ',
+	                        story.name,
+	                        ' '
+	                    )
+	                );
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                ' My Stories:',
+	                stories
+	            );
+	        }
+	    }]);
+
+	    return Stories;
+	}(_react2.default.Component);
+
+	var Story = function Story(_ref) {
+	    var story = _ref.story;
+
+	    if (!story) {
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            'Loading...'
+	        );
+	    }
+	    return _react2.default.createElement(
+	        'h1',
+	        null,
+	        ' ',
+	        story.name,
+	        ' '
+	    );
+	};
+
+	exports.Story = Story;
+	exports.Stories = Stories;
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _api = __webpack_require__(237);
+
+	Object.defineProperty(exports, 'API', {
+	    enumerable: true,
+	    get: function get() {
+	        return _api.Routes;
+	    }
+	});
+	exports.default = {
+	    stories: function stories() {
+	        return '/stories/';
+	    },
+	    story: function story(storyID) {
+	        return '/stories/' + storyID;
+	    }
+	};
+
+/***/ },
+/* 237 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var story = function story(storyID) {
+	    return "/stories/" + storyID + ".json";
+	};
+	var stories = function stories() {
+	    return "/stories.json";
+	};
+	var Routes = exports.Routes = {
+	    story: story, stories: stories
+	};
 
 /***/ }
 /******/ ]);

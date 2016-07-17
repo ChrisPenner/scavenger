@@ -18,6 +18,9 @@ required_story_args = [
 
 @restful_api('/application/json')
 class StoryHandler(RequestHandler):
+    def index(self):
+        return [story.to_dict() for story in Story.query().fetch()]
+
     def get(self, id):
         story = Story.get_by_id(id.upper())
         if story is None:
@@ -26,13 +29,13 @@ class StoryHandler(RequestHandler):
 
     def post(self, id):
         data = json.loads(self.request.body)
-        story = Story(id=id.upper(), **data)
+        story = Story(id=id.upper(), name=id.upper(), **data)
         story.put()
         return story.to_dict()
 
     def put(self, id):
         story_args = parse_args(self.request.params, required_story_args)
-        story = Story(id=id.upper(), **story_args)
+        story = Story(id=id.upper(), name=id.upper(), **story_args)
         story.put()
         return story.to_dict()
 
