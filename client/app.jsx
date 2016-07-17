@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, Link, browserHistory } from 'react-router'
 
-import Story from './story'
+// import Story from './story'
 
 const Contents = () => (
     <div>
@@ -25,7 +25,6 @@ const My404 = () => (
 const App = () => (
     <Router history={browserHistory}>
         <Route path="/" component={Index}>
-            <Route path="story" component={Story}></Route>
             <Route path="*" component={My404}></Route>
         </Route>
     </Router>
