@@ -3,10 +3,15 @@
   "version": "0.0.1",
   "dependencies": {
     "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "es6-promise": "^3.2.1",
+    "lodash": "^4.13.1",
+    "normalizr": "^2.2.0",
     "react": "^15.2.1",
+    "react-bootstrap": "^0.29.5",
     "react-dom": "^15.2.1",
-    "react-router": "^2.5.2"
+    "react-router": "^2.5.2",
+    "uuid4": "^1.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",

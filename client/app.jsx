@@ -2,11 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 
-import { Stories, Story } from './stories'
+import { Stories, Story, Index as StoryIndex } from './stories'
 import Routes from './routes'
 
 const App = ({children}) => (
-    <div> {children} </div>
+    <div className="container"> {children} </div>
 )
 
 const Index = () => (
@@ -24,7 +24,7 @@ ReactDOM.render(
         <Route path="/" component={App}>
             <IndexRoute component={Index}/>
             <Route path={Routes.stories()} component={Stories}>
-                <IndexRoute component={Stories}/>
+                <IndexRoute component={StoryIndex}/>
                 <Route path=':storyID' component={Story}/>
             </Route>
             <Route path="*" component={My404}></Route>

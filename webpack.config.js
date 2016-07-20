@@ -22,7 +22,8 @@ module.exports = {
                 loader: "babel-loader",
                 exclude: path.resolve(__dirname, "node_modules"),
                 query: {
-                    presets: ['es2015', 'react']
+                    presets: ['es2015', 'react'],
+                    plugins: ["transform-object-rest-spread"],
                 }
             },
         ]

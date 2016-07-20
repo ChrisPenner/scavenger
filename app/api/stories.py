@@ -1,5 +1,4 @@
 from collections import namedtuple
-import json
 
 from webapp2 import RequestHandler, abort
 from webapp2_extensions import restful_api, parse_args
@@ -10,7 +9,6 @@ from app.models.story import Story
 Arg = namedtuple('arg', ['key', 'type', 'required'])
 required_story_args = [
     Arg('name', str, True),
-    Arg('description', str, True),
     Arg('clues', dict, True),
     Arg('default_hint', str, True),
 ]
@@ -22,20 +20,22 @@ class StoryHandler(RequestHandler):
         return [story.to_dict() for story in Story.query().fetch()]
 
     def get(self, id):
+        print 'GETTING for ', id
         story = Story.get_by_id(id.upper())
         if story is None:
             abort(400, 'No Resource for that id')
         return story.to_dict()
 
-    def post(self, id):
-        data = json.loads(self.request.body)
-        story = Story(id=id.upper(), name=id.upper(), **data)
+    def post(self, id, data):
+        story_args = parse_args(data, required_story_args)
+        story = Story(id=id.upper(), **story_args)
         story.put()
         return story.to_dict()
 
-    def put(self, id):
-        story_args = parse_args(self.request.params, required_story_args)
-        story = Story(id=id.upper(), name=id.upper(), **story_args)
+    def put(self, id, data):
+        story_args = parse_args(data, required_story_args)
+        story = Story.get_by_id(id.upper()) or Story()
+        story.populate(**story_args)
         story.put()
         return story.to_dict()
 
