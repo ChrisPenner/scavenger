@@ -20,6 +20,6 @@
     "webpack-dev-server": "^1.14.1"
   },
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack --watch"
   }
 }
