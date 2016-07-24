@@ -6,8 +6,11 @@ from webapp2 import abort
 def parse_args(params, args):
     results = {}
     for name, kind, required in args:
-        if name not in params:
-            abort(400, '{name} is required'.format(name=name))
+        if (name not in params):
+            if required:
+                abort(400, '{name} is required'.format(name=name))
+            else:
+                continue
         results[name] = params[name]
     return results
 

@@ -1,31 +1,27 @@
 from google.appengine.ext import ndb
-from uuid import uuid4
-
-
-class Answer(ndb.Model):
-    pattern = ndb.StringProperty(required=True)
-    next = ndb.StringProperty(required=True)
-    uuid = ndb.StringProperty(required=True)
-
-    def __init__(self, *args, **kwargs):
-        super(Answer, self).__init__(*args, **kwargs)
-        self.uuid = str(uuid4())
-
-
-class Clue(ndb.Model):
-    clue_id = ndb.StringProperty(required=True)
-    text = ndb.TextProperty(required=True)
-    answers = ndb.LocalStructuredProperty(Answer, repeated=True)
-    hint = ndb.StringProperty()
-    media_url = ndb.StringProperty()
-    uuid = ndb.StringProperty(required=True)
-
-    def __init__(self, id=None, *args, **kwargs):
-        super(Clue, self).__init__(*args, **kwargs)
-        self.uuid = str(uuid4())
 
 
 class Story(ndb.Model):
-    clues = ndb.LocalStructuredProperty(Clue, repeated=True)
+    clues = ndb.StringProperty(repeated=True)
     default_hint = ndb.StringProperty(required=True)
-    name = ndb.StringProperty(required=True, indexed=True)
+    story_id = ndb.StringProperty(required=True)
+
+    def __init__(self, story_id=None, *args, **kwargs):
+        story_id = story_id.upper()
+        key = self.build_key(story_id)
+        super(Story, self).__init__(key=key, story_id=story_id, *args, **kwargs)
+
+    @staticmethod
+    def build_id(story_id):
+        story_id = story_id.upper()
+        return story_id
+
+    @classmethod
+    def build_key(cls, story_id):
+        story_id = story_id.upper()
+        return ndb.Key(cls, cls.build_id(story_id))
+
+    @classmethod
+    def get_by_story_id(cls, story_id):
+        story_id = story_id.upper()
+        return cls.build_key(story_id).get()
