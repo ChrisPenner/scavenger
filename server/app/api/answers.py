@@ -15,19 +15,20 @@ required_answer_args = [
 
 @restful_api('/application/json')
 class AnswerHandler(RequestHandler):
-    def index(self):
-        answers = [answer.to_dict() for answer in Answer.query().fetch()]
+    def index(self, clue_id):
+        print clue_id
+        answers = [answer.to_dict() for answer in Answer.query(Answer.clue_id == clue_id).fetch()]
         return {answer['uid']: answer for answer in answers}
 
-    def get(self, story_id, clue_id, answer_id):
-        answer = Answer.get_by_ids(story_id, clue_id, answer_id)
+    def get(self, answer_id):
+        answer = Answer.build_key(answer_id).get()
         if answer is None:
             abort(400, 'No Resource for that id')
         return answer.to_dict()
 
-    def post(self, story_id, clue_id, answer_id, data):
+    def post(self, answer_id, data):
         answer_args = parse_args(data, required_answer_args)
-        answer = Answer.from_ids(story_id, clue_id, answer_id)
+        answer = Answer.from_id(answer_id)
         answer.populate(**answer_args)
         answer.put()
         return answer.to_dict()

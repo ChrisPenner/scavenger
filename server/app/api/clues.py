@@ -10,6 +10,7 @@ Arg = namedtuple('arg', ['key', 'type', 'required'])
 required_clue_args = [
     Arg('text', str, True),
     Arg('hint', str, False),
+    Arg('answers', list, False),
     Arg('media_url', str, False),
 ]
 
@@ -28,6 +29,6 @@ class ClueHandler(RequestHandler):
 
     def post(self, uid, data):
         clue_args = parse_args(data, required_clue_args)
-        clue = Clue(uid=uid, **clue_args)
+        clue = Clue.from_id(uid=uid, **clue_args)
         clue.put()
         return clue.to_dict()

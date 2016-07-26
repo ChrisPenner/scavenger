@@ -26906,114 +26906,53 @@
 	    return Stories;
 	}(React.Component);
 
-	var Answer = function (_React$Component2) {
-	    _inherits(Answer, _React$Component2);
-
-	    function Answer() {
-	        _classCallCheck(this, Answer);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Answer).apply(this, arguments));
-	    }
-
-	    _createClass(Answer, [{
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var answer = _props.answer;
-	            var changeState = _props.changeState;
-	            var clues = _props.clues;
-
-	            return React.createElement(
-	                'div',
-	                { className: 'container input-group' },
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Pattern:',
-	                    React.createElement('input', {
-	                        className: 'form-control',
-	                        onChange: function onChange(e) {
-	                            return changeState('answers', answer.uuid, { pattern: e.target.value });
-	                        },
-	                        value: answer.pattern || ''
-	                    })
-	                ),
-	                React.createElement(
-	                    'label',
-	                    null,
-	                    'Next Clue:',
-	                    React.createElement(
-	                        'select',
-	                        {
-	                            className: 'form-control',
-	                            onChange: function onChange(e) {
-	                                return changeState('answers', answer.uuid, { next: e.target.value });
-	                            },
-	                            value: answer.next
-	                        },
-	                        clues.map(function (clueID) {
-	                            return React.createElement(
-	                                'option',
-	                                { key: clueID, value: clueID },
-	                                clueID
-	                            );
-	                        })
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Answer;
-	}(React.Component);
-
-	var Story = function (_React$Component3) {
-	    _inherits(Story, _React$Component3);
+	var Story = function (_React$Component2) {
+	    _inherits(Story, _React$Component2);
 
 	    function Story(props) {
 	        _classCallCheck(this, Story);
 
-	        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(Story).call(this, props));
+	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(Story).call(this, props));
 
-	        _this4.state = {
+	        _this3.state = {
 	            clues: {},
 	            loading: false
 	        };
-	        _this4.storyUID = _this4.props.params.storyUID;
-	        return _this4;
+	        _this3.storyUID = _this3.props.params.storyUID;
+	        return _this3;
 	    }
 
 	    _createClass(Story, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            var _this5 = this;
+	            var _this4 = this;
 
 	            this.setState({ loading: true });
 	            var cluesPromise = Res.Clue.index(this.props.params.storyUID).then(function (clues) {
-	                return _this5.setState({ clues: clues });
+	                return _this4.setState({ clues: clues });
 	            });
 
 	            var storyPromise = Res.Story.get(this.props.params.storyUID).then(function (story) {
-	                return _this5.setState({ story: story });
+	                return _this4.setState({ story: story });
 	            });
 
 	            Promise.all([cluesPromise, storyPromise]).then(function () {
-	                return _this5.setState({ loading: false });
+	                return _this4.setState({ loading: false });
 	            });
 	        }
 	    }, {
 	        key: 'getClues',
 	        value: function getClues() {
-	            var _this6 = this;
+	            var _this5 = this;
 
 	            return Object.keys(this.state.clues).map(function (clueID) {
-	                return _this6.props.clues[clueID];
+	                return _this5.state.clues[clueID];
 	            });
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this7 = this;
+	            var _this6 = this;
 
 	            if (this.state.loading) {
 	                return React.createElement(
@@ -27024,7 +26963,6 @@
 	            }
 
 	            var story = this.state.story;
-	            console.log(this.state);
 	            var clues = this.getClues().map(function (clue) {
 	                return React.createElement(
 	                    'div',
@@ -27044,19 +26982,24 @@
 	                React.createElement(
 	                    'h1',
 	                    null,
-	                    story.name
+	                    story.uid
 	                ),
 	                React.createElement(
 	                    'label',
 	                    null,
 	                    'Default Hint:',
 	                    React.createElement('input', { onChange: function onChange(e) {
-	                            return _this7.props.changeState('stories', story.name, { default_hint: e.target.value });
+	                            return _this6.props.changeState('stories', story.name, { default_hint: e.target.value });
 	                        }, value: story.default_hint || '' })
 	                ),
 	                React.createElement(
 	                    'div',
 	                    null,
+	                    React.createElement(
+	                        'h2',
+	                        null,
+	                        ' Clues '
+	                    ),
 	                    clues
 	                )
 	            );
@@ -34681,7 +34624,7 @@
 /* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(React) {"use strict";
+	/* WEBPACK VAR INJECTION */(function(React) {'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -34693,6 +34636,12 @@
 	var _resources = __webpack_require__(239);
 
 	var Res = _interopRequireWildcard(_resources);
+
+	var _answer = __webpack_require__(381);
+
+	var _answer2 = _interopRequireDefault(_answer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -34712,72 +34661,74 @@
 	    }
 
 	    _createClass(Clue, [{
-	        key: "componentWillMount",
+	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            var _this2 = this;
 
 	            this.setState({ loading: true });
 	            var clueUID = this.props.params.clueUID;
-	            var cluePromise = Res.Clue.get(clueUID).then(function (clue) {
-	                return _this2.setState({ clue: clue });
+
+	            var storyUID = clueUID.split(':')[0];
+	            var cluesPromise = Res.Clue.index(storyUID).then(function (clues) {
+	                return _this2.setState({ clues: clues, clue: clues[clueUID] });
 	            });
 
 	            var answersPromise = Res.Answer.byClue(clueUID).then(function (answers) {
 	                return _this2.setState({ answers: answers });
 	            });
 
-	            Promise.all([cluePromise, answersPromise]).then(function () {
+	            Promise.all([cluesPromise, answersPromise]).then(function () {
 	                return _this2.setState({ loading: false });
-	            }).then(function () {
-	                return console.log(_this2.state);
 	            });
 	        }
 	    }, {
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var _this3 = this;
 
 	            if (this.state.loading) {
 	                return React.createElement(
-	                    "div",
+	                    'div',
 	                    null,
-	                    " Loading... "
+	                    ' Loading... '
 	                );
 	            }
+	            var clue = this.state.clue;
+
 	            var answers = clue.answers.map(function (answerID) {
-	                return _this3.props.answers[answerID];
+	                return _this3.state.answers[answerID];
 	            });
 	            var answerView = answers.map(function (answer) {
-	                return React.createElement(Answer, { key: answer.uuid, answer: answer });
+	                return React.createElement(_answer2.default, { key: answer.uid, answer: answer, clueIDs: Object.keys(_this3.state.clues) });
 	            });
 	            return React.createElement(
-	                "div",
-	                { key: clue.clue_id, className: "panel panel-info" },
+	                'div',
+	                { key: clue.clue_id, className: 'panel panel-info' },
 	                React.createElement(
-	                    "div",
-	                    { className: "panel-heading" },
+	                    'div',
+	                    { className: 'panel-heading' },
 	                    clue.clue_id
 	                ),
 	                React.createElement(
-	                    "div",
-	                    { className: "panel-body" },
+	                    'div',
+	                    { className: 'panel-body' },
 	                    React.createElement(
-	                        "label",
+	                        'label',
 	                        null,
-	                        "Text:",
-	                        React.createElement("input", {
+	                        'Text:',
+	                        React.createElement('input', {
 	                            onChange: function onChange(e) {
 	                                return _this3.props.changeState('clues', clue.clue_id, { text: e.target.value });
 	                            },
 	                            value: clue.text || ''
 	                        })
 	                    ),
-	                    React.createElement("br", null),
+	                    React.createElement('br', null),
 	                    React.createElement(
-	                        "label",
+	                        'label',
 	                        null,
-	                        "Hint:",
-	                        React.createElement("input", {
+	                        'Hint:',
+	                        React.createElement('input', {
 	                            onChange: function onChange(e) {
 	                                return _this3.props.changeState('clues', clue.clue_id, { hint: e.target.value });
 	                            },
@@ -34785,18 +34736,11 @@
 	                        })
 	                    ),
 	                    React.createElement(
-	                        "h4",
+	                        'h4',
 	                        null,
-	                        "Answers "
+	                        'Answers '
 	                    ),
-	                    answerView,
-	                    React.createElement(
-	                        "button",
-	                        { onClick: function onClick() {
-	                                return addAnswer(clue.clue_id);
-	                            } },
-	                        "+"
-	                    )
+	                    answerView
 	                )
 	            );
 	        }
@@ -34804,6 +34748,93 @@
 
 	    return Clue;
 	}(React.Component);
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ },
+/* 381 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(React) {"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Answer = function (_React$Component) {
+	    _inherits(Answer, _React$Component);
+
+	    function Answer(props) {
+	        _classCallCheck(this, Answer);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Answer).call(this, props));
+
+	        _this.state = _extends({}, props.answer);
+	        return _this;
+	    }
+
+	    _createClass(Answer, [{
+	        key: "render",
+	        value: function render() {
+	            var _this2 = this;
+
+	            var answer = this.state.answer;
+
+	            return React.createElement(
+	                "div",
+	                { className: "input-group" },
+	                React.createElement(
+	                    "label",
+	                    null,
+	                    "Pattern",
+	                    React.createElement("input", {
+	                        className: "form-control",
+	                        type: "text",
+	                        value: this.state.pattern,
+	                        onChange: function onChange(e) {
+	                            return _this2.setState({ pattern: e.target.value });
+	                        }
+	                    })
+	                ),
+	                React.createElement(
+	                    "label",
+	                    null,
+	                    "Next Clue",
+	                    React.createElement(
+	                        "select",
+	                        {
+	                            className: "form-control",
+	                            value: this.state.next_clue,
+	                            onChange: function onChange(e) {
+	                                return _this2.setState({ next_clue: e.target.value });
+	                            }
+	                        },
+	                        this.props.clueIDs.map(function (clueID) {
+	                            return React.createElement(
+	                                "option",
+	                                { key: clueID, value: clueID },
+	                                clueID
+	                            );
+	                        })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Answer;
+	}(React.Component);
+
+	exports.default = Answer;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }

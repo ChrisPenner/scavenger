@@ -34,6 +34,7 @@ app = WSGIApplication([
     Route('/stories.json', handler=StoryHandler, handler_method='index'),
     Route('/stories/<uid:[^/]+>.json', StoryHandler),
     Route('/answers/<answer_id:[^/]+>.json', AnswerHandler),
+    Route('/clues/<clue_id:[^/]+>/answers.json', handler=AnswerHandler, handler_method='index'),
     SimpleRoute('/.*', AppHandler),
 ], debug=True)
 

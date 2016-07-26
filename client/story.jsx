@@ -65,34 +65,6 @@ class Stories extends React.Component {
     }
 }
 
-class Answer extends React.Component {
-    render() {
-        const { answer, changeState, clues } = this.props
-        return (
-                <div className="container input-group">
-                <label>
-                    Pattern:
-                    <input
-                        className="form-control"
-                        onChange={(e)=>changeState('answers', answer.uuid, {pattern: e.target.value})}
-                        value={answer.pattern || ''}
-                        />
-                    </label>
-                    <label>
-                    Next Clue:
-                    <select
-                        className="form-control"
-                        onChange={(e)=>changeState('answers', answer.uuid, {next: e.target.value})}
-                        value={answer.next}
-                        >
-                            {clues.map(clueID=><option key={clueID} value={clueID}>{clueID}</option>)}
-                        </select>
-                    </label>
-                </div>
-        )
-    }
-}
-
 class Story extends React.Component {
     constructor(props){
         super(props)
@@ -116,7 +88,7 @@ class Story extends React.Component {
     }
 
     getClues() {
-        return Object.keys(this.state.clues).map(clueID => this.props.clues[clueID])
+        return Object.keys(this.state.clues).map(clueID => this.state.clues[clueID])
     }
 
     render(){
@@ -125,7 +97,6 @@ class Story extends React.Component {
         }
 
         const story = this.state.story
-            console.log(this.state)
         const clues = this.getClues().map(clue=>(
                         <div key={clue.uid}>
                             <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
@@ -133,12 +104,13 @@ class Story extends React.Component {
                     ))
         return (
             <div>
-                <h1>{story.name}</h1>
+                <h1>{story.uid}</h1>
                 <label>
                     Default Hint:
                     <input onChange={(e)=>this.props.changeState('stories', story.name, {default_hint: e.target.value})} value={story.default_hint || ''} />
                 </label>
                 <div>
+                    <h2> Clues </h2>
                     {clues}
                 </div>
             </div>

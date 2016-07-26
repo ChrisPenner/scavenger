@@ -9,6 +9,7 @@ class Story(ndb.Model):
 
     @classmethod
     def from_uid(cls, uid, *args, **kwargs):
+        uid = uid.upper()
         return Story(key=cls.build_key(uid), uid=uid, *args, **kwargs)
 
     @staticmethod

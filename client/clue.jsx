@@ -1,26 +1,28 @@
 import * as Res from './resources'
+import Answer from './answer'
 export class Clue extends React.Component {
     componentWillMount() {
         this.setState({loading: true})
-        const clueUID = this.props.params.clueUID
-        const cluePromise = Res.Clue.get(clueUID)
-            .then(clue => this.setState({clue}))
+        const { clueUID } = this.props.params
+        const storyUID = clueUID.split(':')[0]
+        const cluesPromise = Res.Clue.index(storyUID)
+            .then(clues => this.setState({clues, clue: clues[clueUID]}))
 
         const answersPromise = Res.Answer.byClue(clueUID)
             .then(answers => this.setState({answers}))
 
-        Promise.all([cluePromise, answersPromise])
+        Promise.all([cluesPromise, answersPromise])
             .then(() => this.setState({loading: false}))
-            .then(()=>console.log(this.state))
     }
 
     render() {
         if (this.state.loading){
             return <div> Loading... </div>
         }
-        const answers = clue.answers.map(answerID=>this.props.answers[answerID])
+        const { clue } = this.state
+        const answers = clue.answers.map(answerID=>this.state.answers[answerID])
         const answerView = answers.map(answer => (
-                    <Answer key={answer.uuid} answer={answer} />
+                    <Answer key={answer.uid} answer={answer} clueIDs={Object.keys(this.state.clues)}/>
                     ))
         return (
             <div key={clue.clue_id} className="panel panel-info">
@@ -45,7 +47,6 @@ export class Clue extends React.Component {
                 </label>
                 <h4>Answers </h4>
                 {answerView}
-                <button onClick={()=>addAnswer(clue.clue_id)}>+</button>
             </div>
         </div>
         )
