@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 
-import { Stories, Story, Index as StoryIndex } from './stories'
+import { Stories, Story, Index as StoryIndex } from './story'
 import Routes from './routes'
 
 const App = ({children}) => (

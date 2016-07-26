@@ -1,4 +1,5 @@
 import json
+import logging
 
 from webapp2 import abort
 
@@ -37,14 +38,16 @@ class restful_api(object):
             def wrapped(handler, *args, **kwargs):
                 if method in data_methods:
                     try:
-                        print 'BODY', handler.request.body
                         kwargs['data'] = json.loads(handler.request.body)
                     except ValueError:
+                        logging.error("Failed to serialize in %s.%s: %s", cls.__name__, method, handler.request.body)
                         return handler.abort(400, 'Invalid JSON body')
                 response = f(handler, *args, **kwargs)
-                if not response:
+                if response is None:
+                    logging.info("Nothing returned from %s.%s", cls.__name__, method)
                     return
                 handler.response.headers['Content-Type'] = self.content_type
+                logging.info("Handler response for %s.%s is: %s", cls.__name__, method, response)
                 if isinstance(response, basestring):
                     handler.response.body = response
                 else:

@@ -8,18 +8,21 @@ class Clue(ndb.Model):
     answers = ndb.StringProperty(repeated=True)
     clue_id = ndb.StringProperty(required=True)
     story_id = ndb.StringProperty(required=True)
+    uid = ndb.StringProperty(required=True)
 
-    def __init__(self, story_id=None, clue_id=None, *args, **kwargs):
-        key = self.build_key(story_id, clue_id)
-        super(Clue, self).__init__(key=key, story_id=story_id, clue_id=clue_id, *args, **kwargs)
+    @classmethod
+    def from_id(cls, story_id, clue_id, *args, **kwargs):
+        key = cls.build_key(story_id, clue_id)
+        uid = cls.build_uid(story_id, clue_id)
+        return Clue(key=key, story_id=story_id, clue_id=clue_id, uid=uid, *args, **kwargs)
 
     @staticmethod
-    def build_id(story_id, clue_id):
+    def build_uid(story_id, clue_id):
         return ':'.join([story_id, clue_id])
 
     @classmethod
     def build_key(cls, story_id, clue_id):
-        return ndb.Key(cls, cls.build_id(story_id, clue_id))
+        return ndb.Key(cls, cls.build_uid(story_id, clue_id))
 
     @classmethod
     def get(cls, story_id, clue_id):

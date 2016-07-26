@@ -19,4 +19,23 @@ class Story {
     }
 }
 
-export {Story}
+class Clue {
+    static index(){
+        return fetch(Routes.clues())
+    }
+
+    static put(storyID, clueID, changes){
+        console.log('putting:', clueID, changes)
+        return fetch(Routes.clue(clueID), {
+            method: 'PUT',
+            body: JSON.stringify(changes),
+        })
+    }
+
+    static get(storyID, clueID){
+        console.log(`Getting ${clueID}`)
+        return fetch(Routes.clue(clueID))
+    }
+}
+
+export {Story, Clue}

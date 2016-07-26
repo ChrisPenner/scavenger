@@ -11,7 +11,8 @@
     "react-bootstrap": "^0.29.5",
     "react-dom": "^15.2.1",
     "react-router": "^2.5.2",
-    "uuid4": "^1.0.0"
+    "uuid4": "^1.0.0",
+    "webpack": "^1.13.1"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
@@ -20,6 +21,9 @@
     "webpack-dev-server": "^1.14.1"
   },
   "scripts": {
-    "start": "webpack --watch"
+    "start": "webpack --watch",
+    "postinstall": "npm run build",
+    "build": "webpack",
+    "watch": "webpack --watch"
   }
 }
