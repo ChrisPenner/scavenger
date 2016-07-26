@@ -16,18 +16,18 @@ required_clue_args = [
 
 @restful_api('/application/json')
 class ClueHandler(RequestHandler):
-    def index(self):
-        clues = [clue.to_dict() for clue in Clue.query().fetch()]
-        return {clue['clue_id']: clue for clue in clues}
+    def index(self, story_id):
+        clues = [clue.to_dict() for clue in Clue.query(Clue.story_id == story_id).fetch()]
+        return {clue['uid']: clue for clue in clues}
 
-    def get(self, story_id, clue_id):
-        clue = Clue.get(story_id, clue_id)
+    def get(self, uid):
+        clue = Clue.get_by_id(uid)
         if clue is None:
             abort(400, 'No Resource for that id')
         return clue.to_dict()
 
-    def post(self, story_id, clue_id, data):
+    def post(self, uid, data):
         clue_args = parse_args(data, required_clue_args)
-        clue = Clue.from_id(story_id=story_id, clue_id=clue_id, **clue_args)
+        clue = Clue(uid=uid, **clue_args)
         clue.put()
         return clue.to_dict()

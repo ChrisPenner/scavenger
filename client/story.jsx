@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router'
 import Routes from './routes'
 import * as Res from './resources'
@@ -11,7 +10,6 @@ class Stories extends React.Component {
         super()
         this.state = {
             stories: {},
-            clues: {},
             loading: false,
         }
         this.addAnswer = this.addAnswer.bind(this)
@@ -20,14 +18,7 @@ class Stories extends React.Component {
     componentWillMount() {
         this.setState({loading: true})
         const storiesPromise = Res.Story.index()
-            .then(resp => resp.json())
             .then(stories => this.setState({stories}))
-
-        const cluesPromise = Res.Clue.index()
-            .then(resp => resp.json())
-            .then(clues => this.setState({clues}))
-
-        Promise.all([storiesPromise, cluesPromise])
             .then(() => this.setState({loading: false}))
     }
 
@@ -35,16 +26,8 @@ class Stories extends React.Component {
         return Object.keys(this.state.stories)
     }
 
-    getClues(){
-        return Object.keys(this.state.clues)
-    }
-
-    getStory(storyID){
-        return this.state.stories[storyID]
-    }
-
-    getClue(clueID){
-        return this.state.clues[clueID]
+    getStory(storyUID){
+        return this.state.stories[storyUID]
     }
 
     addAnswer(){
@@ -55,33 +38,25 @@ class Stories extends React.Component {
         if (this.state.loading){
             return <div> Loading... </div>
         }
-        const { storyID } = this.props.params
+
+        const { storyUID } = this.props.params
         let child;
-        if (storyID && this.state.stories[storyID]){
-            child = <Story
-                {...this.state}
-                story={this.getStory(storyID)}
-                addAnswer={this.addAnswer}
-                />
-        } else {
-            child = <Index stories={this.getStories()} />
+        if (storyUID){
+            return (
+                    <Story
+                    {...this.state}
+                    story={this.getStory(storyUID)}
+                    addAnswer={this.addAnswer}
+                    />
+                    )
         }
 
-        return (
-            <div>
-                {child}
-            </div>
-        )
-    }
-}
-
-class Index extends React.Component {
-    render() {
-        const stories = this.props.stories.map(storyID=>(
-            <div key={storyID}>
-                <Link to={`/stories/${storyID}`}> {storyID} </Link>
+        const stories = this.getStories().map(storyUID=>(
+            <div key={storyUID}>
+                <Link to={`/stories/${storyUID}`}> {storyUID} </Link>
             </div>
         ))
+
         return (
             <div> My Stories:
                 {stories}
@@ -119,12 +94,39 @@ class Answer extends React.Component {
 }
 
 class Story extends React.Component {
-    getClues(storyID) {
-        return Object.keys(this.props.clues).map(clueID => this.props.clues[clueID])
+    constructor(props){
+        super(props)
+        this.state = {
+            clues: {},
+            loading: false,
+        }
+        this.storyUID = this.props.params.storyUID
     }
+
+    componentWillMount() {
+        this.setState({loading: true})
+        const cluesPromise = Res.Clue.index(this.props.params.storyUID)
+            .then(clues => this.setState({clues}))
+
+        const storyPromise = Res.Story.get(this.props.params.storyUID)
+            .then(story => this.setState({story}))
+
+        Promise.all([cluesPromise, storyPromise])
+            .then(() => this.setState({loading: false}))
+    }
+
+    getClues() {
+        return Object.keys(this.state.clues).map(clueID => this.props.clues[clueID])
+    }
+
     render(){
-        const {story, addAnswer } = this.props
-        const clues = this.getClues(story.uid).map(clue=>(
+        if (this.state.loading){
+            return <div> Loading... </div>
+        }
+
+        const story = this.state.story
+            console.log(this.state)
+        const clues = this.getClues().map(clue=>(
                         <div key={clue.uid}>
                             <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
                         </div>

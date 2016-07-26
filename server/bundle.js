@@ -52,15 +52,11 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(React) {'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
 
 	var _reactDom = __webpack_require__(34);
 
@@ -68,7 +64,9 @@
 
 	var _reactRouter = __webpack_require__(173);
 
-	var _story = __webpack_require__(394);
+	var _story = __webpack_require__(236);
+
+	var _clue = __webpack_require__(380);
 
 	var _routes = __webpack_require__(237);
 
@@ -78,7 +76,7 @@
 
 	var App = function App(_ref) {
 	    var children = _ref.children;
-	    return _react2.default.createElement(
+	    return React.createElement(
 	        'div',
 	        { className: 'container' },
 	        ' ',
@@ -88,10 +86,10 @@
 	};
 
 	var Index = function Index() {
-	    return _react2.default.createElement(
+	    return React.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement(
+	        React.createElement(
 	            _reactRouter.Link,
 	            { to: _routes2.default.stories() },
 	            ' Stories '
@@ -100,31 +98,33 @@
 	};
 
 	var My404 = function My404() {
-	    return _react2.default.createElement(
+	    return React.createElement(
 	        'div',
 	        null,
 	        ' 404 :\'( '
 	    );
 	};
 
-	_reactDom2.default.render(_react2.default.createElement(
+	_reactDom2.default.render(React.createElement(
 	    _reactRouter.Router,
 	    { history: _reactRouter.browserHistory },
-	    _react2.default.createElement(
+	    React.createElement(
 	        _reactRouter.Route,
 	        { path: '/', component: App },
-	        _react2.default.createElement(_reactRouter.IndexRoute, { component: Index }),
-	        _react2.default.createElement(
+	        React.createElement(_reactRouter.IndexRoute, { component: Index }),
+	        React.createElement(
 	            _reactRouter.Route,
-	            { path: _routes2.default.stories(), component: _story.Stories },
-	            _react2.default.createElement(_reactRouter.IndexRoute, { component: _story.Index }),
-	            _react2.default.createElement(_reactRouter.Route, { path: ':storyID', component: _story.Story })
+	            { path: _routes2.default.stories() },
+	            React.createElement(_reactRouter.IndexRoute, { component: _story.Stories }),
+	            React.createElement(_reactRouter.Route, { path: ':storyUID', component: _story.Story })
 	        ),
-	        _react2.default.createElement(_reactRouter.Route, { path: '*', component: My404 })
+	        React.createElement(_reactRouter.Route, { path: '/clues/:clueUID', component: _clue.Clue }),
+	        React.createElement(_reactRouter.Route, { path: '*', component: My404 })
 	    )
 	), document.getElementById('app'));
 
 	exports.default = App;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
 /* 2 */
@@ -26776,7 +26776,301 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 236 */,
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(React) {'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Stories = exports.Story = undefined;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _reactRouter = __webpack_require__(173);
+
+	var _routes = __webpack_require__(237);
+
+	var _routes2 = _interopRequireDefault(_routes);
+
+	var _resources = __webpack_require__(239);
+
+	var Res = _interopRequireWildcard(_resources);
+
+	var _uuid = __webpack_require__(240);
+
+	var _uuid2 = _interopRequireDefault(_uuid);
+
+	var _merge = __webpack_require__(263);
+
+	var _merge2 = _interopRequireDefault(_merge);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Stories = function (_React$Component) {
+	    _inherits(Stories, _React$Component);
+
+	    function Stories() {
+	        _classCallCheck(this, Stories);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Stories).call(this));
+
+	        _this.state = {
+	            stories: {},
+	            loading: false
+	        };
+	        _this.addAnswer = _this.addAnswer.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(Stories, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var _this2 = this;
+
+	            this.setState({ loading: true });
+	            var storiesPromise = Res.Story.index().then(function (stories) {
+	                return _this2.setState({ stories: stories });
+	            }).then(function () {
+	                return _this2.setState({ loading: false });
+	            });
+	        }
+	    }, {
+	        key: 'getStories',
+	        value: function getStories() {
+	            return Object.keys(this.state.stories);
+	        }
+	    }, {
+	        key: 'getStory',
+	        value: function getStory(storyUID) {
+	            return this.state.stories[storyUID];
+	        }
+	    }, {
+	        key: 'addAnswer',
+	        value: function addAnswer() {}
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            if (this.state.loading) {
+	                return React.createElement(
+	                    'div',
+	                    null,
+	                    ' Loading... '
+	                );
+	            }
+
+	            var storyUID = this.props.params.storyUID;
+
+	            var child = void 0;
+	            if (storyUID) {
+	                return React.createElement(Story, _extends({}, this.state, {
+	                    story: this.getStory(storyUID),
+	                    addAnswer: this.addAnswer
+	                }));
+	            }
+
+	            var stories = this.getStories().map(function (storyUID) {
+	                return React.createElement(
+	                    'div',
+	                    { key: storyUID },
+	                    React.createElement(
+	                        _reactRouter.Link,
+	                        { to: '/stories/' + storyUID },
+	                        ' ',
+	                        storyUID,
+	                        ' '
+	                    )
+	                );
+	            });
+
+	            return React.createElement(
+	                'div',
+	                null,
+	                ' My Stories:',
+	                stories
+	            );
+	        }
+	    }]);
+
+	    return Stories;
+	}(React.Component);
+
+	var Answer = function (_React$Component2) {
+	    _inherits(Answer, _React$Component2);
+
+	    function Answer() {
+	        _classCallCheck(this, Answer);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Answer).apply(this, arguments));
+	    }
+
+	    _createClass(Answer, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var answer = _props.answer;
+	            var changeState = _props.changeState;
+	            var clues = _props.clues;
+
+	            return React.createElement(
+	                'div',
+	                { className: 'container input-group' },
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Pattern:',
+	                    React.createElement('input', {
+	                        className: 'form-control',
+	                        onChange: function onChange(e) {
+	                            return changeState('answers', answer.uuid, { pattern: e.target.value });
+	                        },
+	                        value: answer.pattern || ''
+	                    })
+	                ),
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Next Clue:',
+	                    React.createElement(
+	                        'select',
+	                        {
+	                            className: 'form-control',
+	                            onChange: function onChange(e) {
+	                                return changeState('answers', answer.uuid, { next: e.target.value });
+	                            },
+	                            value: answer.next
+	                        },
+	                        clues.map(function (clueID) {
+	                            return React.createElement(
+	                                'option',
+	                                { key: clueID, value: clueID },
+	                                clueID
+	                            );
+	                        })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Answer;
+	}(React.Component);
+
+	var Story = function (_React$Component3) {
+	    _inherits(Story, _React$Component3);
+
+	    function Story(props) {
+	        _classCallCheck(this, Story);
+
+	        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(Story).call(this, props));
+
+	        _this4.state = {
+	            clues: {},
+	            loading: false
+	        };
+	        _this4.storyUID = _this4.props.params.storyUID;
+	        return _this4;
+	    }
+
+	    _createClass(Story, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var _this5 = this;
+
+	            this.setState({ loading: true });
+	            var cluesPromise = Res.Clue.index(this.props.params.storyUID).then(function (clues) {
+	                return _this5.setState({ clues: clues });
+	            });
+
+	            var storyPromise = Res.Story.get(this.props.params.storyUID).then(function (story) {
+	                return _this5.setState({ story: story });
+	            });
+
+	            Promise.all([cluesPromise, storyPromise]).then(function () {
+	                return _this5.setState({ loading: false });
+	            });
+	        }
+	    }, {
+	        key: 'getClues',
+	        value: function getClues() {
+	            var _this6 = this;
+
+	            return Object.keys(this.state.clues).map(function (clueID) {
+	                return _this6.props.clues[clueID];
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this7 = this;
+
+	            if (this.state.loading) {
+	                return React.createElement(
+	                    'div',
+	                    null,
+	                    ' Loading... '
+	                );
+	            }
+
+	            var story = this.state.story;
+	            console.log(this.state);
+	            var clues = this.getClues().map(function (clue) {
+	                return React.createElement(
+	                    'div',
+	                    { key: clue.uid },
+	                    React.createElement(
+	                        _reactRouter.Link,
+	                        { to: _routes2.default.clue(clue.uid) },
+	                        ' ',
+	                        clue.clue_id,
+	                        ' '
+	                    )
+	                );
+	            });
+	            return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                    'h1',
+	                    null,
+	                    story.name
+	                ),
+	                React.createElement(
+	                    'label',
+	                    null,
+	                    'Default Hint:',
+	                    React.createElement('input', { onChange: function onChange(e) {
+	                            return _this7.props.changeState('stories', story.name, { default_hint: e.target.value });
+	                        }, value: story.default_hint || '' })
+	                ),
+	                React.createElement(
+	                    'div',
+	                    null,
+	                    clues
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Story;
+	}(React.Component);
+
+	exports.Story = Story;
+	exports.Stories = Stories;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ },
 /* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -26801,6 +27095,9 @@
 	    story: function story(storyID) {
 	        return '/stories/' + storyID;
 	    },
+	    clues: function clues() {
+	        return '/clues/';
+	    },
 	    clue: function clue(clueID) {
 	        return '/clues/' + clueID;
 	    }
@@ -26821,15 +27118,20 @@
 	var stories = function stories() {
 	    return "/stories.json";
 	};
-	var clue = function clue(storyID, clueID) {
-	    return "/stories/" + storyID + "/clues/" + clueID + ".json";
+	var clue = function clue(clueUID) {
+	    return "/clues/" + clueUID + ".json";
 	};
-	var clues = function clues() {
-	    return "/clues.json";
+	var clues = function clues(storyUID) {
+	    return "/stories/" + storyUID + "/clues.json";
 	};
+	var answersByClue = function answersByClue(clueUID) {
+	    return "/clues/" + clueUID + "/answers.json";
+	};
+
 	var Routes = exports.Routes = {
 	    story: story, stories: stories,
-	    clue: clue, clues: clues
+	    clue: clue, clues: clues,
+	    answersByClue: answersByClue
 	};
 
 /***/ },
@@ -26841,7 +27143,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.Clue = exports.Story = undefined;
+	exports.Answer = exports.Clue = exports.Story = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -26857,22 +27159,16 @@
 	    _createClass(Story, null, [{
 	        key: 'index',
 	        value: function index() {
-	            return fetch(_api.Routes.stories());
-	        }
-	    }, {
-	        key: 'put',
-	        value: function put(storyID, changes) {
-	            console.log('putting:', storyID, changes);
-	            return fetch(_api.Routes.story(storyID), {
-	                method: 'PUT',
-	                body: JSON.stringify(changes)
+	            return fetch(_api.Routes.stories()).then(function (resp) {
+	                return resp.json();
 	            });
 	        }
 	    }, {
 	        key: 'get',
-	        value: function get(storyID) {
-	            console.log('Getting ' + storyID);
-	            return fetch(_api.Routes.story(storyID));
+	        value: function get(storyUID) {
+	            return fetch(_api.Routes.story(storyUID)).then(function (resp) {
+	                return resp.json();
+	            });
 	        }
 	    }]);
 
@@ -26886,31 +27182,43 @@
 
 	    _createClass(Clue, null, [{
 	        key: 'index',
-	        value: function index() {
-	            return fetch(_api.Routes.clues());
-	        }
-	    }, {
-	        key: 'put',
-	        value: function put(storyID, clueID, changes) {
-	            console.log('putting:', clueID, changes);
-	            return fetch(_api.Routes.clue(clueID), {
-	                method: 'PUT',
-	                body: JSON.stringify(changes)
+	        value: function index(storyUID) {
+	            return fetch(_api.Routes.clues(storyUID)).then(function (resp) {
+	                return resp.json();
 	            });
 	        }
 	    }, {
 	        key: 'get',
-	        value: function get(storyID, clueID) {
-	            console.log('Getting ' + clueID);
-	            return fetch(_api.Routes.clue(clueID));
+	        value: function get(clueUID) {
+	            return fetch(_api.Routes.clue(clueUID)).then(function (resp) {
+	                return resp.json();
+	            });
 	        }
 	    }]);
 
 	    return Clue;
 	}();
 
+	var Answer = function () {
+	    function Answer() {
+	        _classCallCheck(this, Answer);
+	    }
+
+	    _createClass(Answer, null, [{
+	        key: 'byClue',
+	        value: function byClue(clueUID) {
+	            return fetch(_api.Routes.answersByClue(clueUID)).then(function (resp) {
+	                return resp.json();
+	            });
+	        }
+	    }]);
+
+	    return Answer;
+	}();
+
 	exports.Story = Story;
 	exports.Clue = Clue;
+	exports.Answer = Answer;
 
 /***/ },
 /* 240 */
@@ -34370,59 +34678,23 @@
 
 
 /***/ },
-/* 380 */,
-/* 381 */,
-/* 382 */,
-/* 383 */,
-/* 384 */,
-/* 385 */,
-/* 386 */,
-/* 387 */,
-/* 388 */,
-/* 389 */,
-/* 390 */,
-/* 391 */,
-/* 392 */,
-/* 393 */,
-/* 394 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(React) {"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.Stories = exports.Story = undefined;
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	exports.Clue = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(173);
-
-	var _routes = __webpack_require__(237);
-
-	var _routes2 = _interopRequireDefault(_routes);
 
 	var _resources = __webpack_require__(239);
 
 	var Res = _interopRequireWildcard(_resources);
 
-	var _uuid = __webpack_require__(240);
-
-	var _uuid2 = _interopRequireDefault(_uuid);
-
-	var _merge = __webpack_require__(263);
-
-	var _merge2 = _interopRequireDefault(_merge);
-
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -34430,269 +34702,109 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Stories = function (_React$Component) {
-	    _inherits(Stories, _React$Component);
+	var Clue = exports.Clue = function (_React$Component) {
+	    _inherits(Clue, _React$Component);
 
-	    function Stories() {
-	        _classCallCheck(this, Stories);
+	    function Clue() {
+	        _classCallCheck(this, Clue);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Stories).call(this));
-
-	        _this.state = {
-	            stories: {},
-	            clues: {},
-	            loading: false
-	        };
-	        _this.addAnswer = _this.addAnswer.bind(_this);
-	        return _this;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Clue).apply(this, arguments));
 	    }
 
-	    _createClass(Stories, [{
-	        key: 'componentWillMount',
+	    _createClass(Clue, [{
+	        key: "componentWillMount",
 	        value: function componentWillMount() {
 	            var _this2 = this;
 
 	            this.setState({ loading: true });
-	            var storiesPromise = Res.Story.index().then(function (resp) {
-	                return resp.json();
-	            }).then(function (stories) {
-	                return _this2.setState({ stories: stories });
+	            var clueUID = this.props.params.clueUID;
+	            var cluePromise = Res.Clue.get(clueUID).then(function (clue) {
+	                return _this2.setState({ clue: clue });
 	            });
 
-	            var cluesPromise = Res.Clue.index().then(function (resp) {
-	                return resp.json();
-	            }).then(function (clues) {
-	                return _this2.setState({ clues: clues });
+	            var answersPromise = Res.Answer.byClue(clueUID).then(function (answers) {
+	                return _this2.setState({ answers: answers });
 	            });
 
-	            Promise.all([storiesPromise, cluesPromise]).then(function () {
+	            Promise.all([cluePromise, answersPromise]).then(function () {
 	                return _this2.setState({ loading: false });
+	            }).then(function () {
+	                return console.log(_this2.state);
 	            });
 	        }
 	    }, {
-	        key: 'getStories',
-	        value: function getStories() {
-	            return Object.keys(this.state.stories);
-	        }
-	    }, {
-	        key: 'getClues',
-	        value: function getClues() {
-	            return Object.keys(this.state.clues);
-	        }
-	    }, {
-	        key: 'getStory',
-	        value: function getStory(storyID) {
-	            return this.state.stories[storyID];
-	        }
-	    }, {
-	        key: 'getClue',
-	        value: function getClue(clueID) {
-	            return this.state.clues[clueID];
-	        }
-	    }, {
-	        key: 'addAnswer',
-	        value: function addAnswer() {}
-	    }, {
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
+	            var _this3 = this;
+
 	            if (this.state.loading) {
-	                return _react2.default.createElement(
-	                    'div',
+	                return React.createElement(
+	                    "div",
 	                    null,
-	                    ' Loading... '
+	                    " Loading... "
 	                );
 	            }
-	            var storyID = this.props.params.storyID;
-
-	            var child = void 0;
-	            if (storyID && this.state.stories[storyID]) {
-	                child = _react2.default.createElement(Story, _extends({}, this.state, {
-	                    story: this.getStory(storyID),
-	                    addAnswer: this.addAnswer
-	                }));
-	            } else {
-	                child = _react2.default.createElement(Index, { stories: this.getStories() });
-	            }
-
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                child
-	            );
-	        }
-	    }]);
-
-	    return Stories;
-	}(_react2.default.Component);
-
-	var Index = function (_React$Component2) {
-	    _inherits(Index, _React$Component2);
-
-	    function Index() {
-	        _classCallCheck(this, Index);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Index).apply(this, arguments));
-	    }
-
-	    _createClass(Index, [{
-	        key: 'render',
-	        value: function render() {
-	            var stories = this.props.stories.map(function (storyID) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { key: storyID },
-	                    _react2.default.createElement(
-	                        _reactRouter.Link,
-	                        { to: '/stories/' + storyID },
-	                        ' ',
-	                        storyID,
-	                        ' '
-	                    )
-	                );
+	            var answers = clue.answers.map(function (answerID) {
+	                return _this3.props.answers[answerID];
 	            });
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                ' My Stories:',
-	                stories
-	            );
-	        }
-	    }]);
-
-	    return Index;
-	}(_react2.default.Component);
-
-	var Answer = function (_React$Component3) {
-	    _inherits(Answer, _React$Component3);
-
-	    function Answer() {
-	        _classCallCheck(this, Answer);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Answer).apply(this, arguments));
-	    }
-
-	    _createClass(Answer, [{
-	        key: 'render',
-	        value: function render() {
-	            var _props = this.props;
-	            var answer = _props.answer;
-	            var changeState = _props.changeState;
-	            var clues = _props.clues;
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'container input-group' },
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Pattern:',
-	                    _react2.default.createElement('input', {
-	                        className: 'form-control',
-	                        onChange: function onChange(e) {
-	                            return changeState('answers', answer.uuid, { pattern: e.target.value });
-	                        },
-	                        value: answer.pattern || ''
-	                    })
+	            var answerView = answers.map(function (answer) {
+	                return React.createElement(Answer, { key: answer.uuid, answer: answer });
+	            });
+	            return React.createElement(
+	                "div",
+	                { key: clue.clue_id, className: "panel panel-info" },
+	                React.createElement(
+	                    "div",
+	                    { className: "panel-heading" },
+	                    clue.clue_id
 	                ),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Next Clue:',
-	                    _react2.default.createElement(
-	                        'select',
-	                        {
-	                            className: 'form-control',
+	                React.createElement(
+	                    "div",
+	                    { className: "panel-body" },
+	                    React.createElement(
+	                        "label",
+	                        null,
+	                        "Text:",
+	                        React.createElement("input", {
 	                            onChange: function onChange(e) {
-	                                return changeState('answers', answer.uuid, { next: e.target.value });
+	                                return _this3.props.changeState('clues', clue.clue_id, { text: e.target.value });
 	                            },
-	                            value: answer.next
-	                        },
-	                        clues.map(function (clueID) {
-	                            return _react2.default.createElement(
-	                                'option',
-	                                { key: clueID, value: clueID },
-	                                clueID
-	                            );
+	                            value: clue.text || ''
 	                        })
+	                    ),
+	                    React.createElement("br", null),
+	                    React.createElement(
+	                        "label",
+	                        null,
+	                        "Hint:",
+	                        React.createElement("input", {
+	                            onChange: function onChange(e) {
+	                                return _this3.props.changeState('clues', clue.clue_id, { hint: e.target.value });
+	                            },
+	                            value: clue.hint || ''
+	                        })
+	                    ),
+	                    React.createElement(
+	                        "h4",
+	                        null,
+	                        "Answers "
+	                    ),
+	                    answerView,
+	                    React.createElement(
+	                        "button",
+	                        { onClick: function onClick() {
+	                                return addAnswer(clue.clue_id);
+	                            } },
+	                        "+"
 	                    )
 	                )
 	            );
 	        }
 	    }]);
 
-	    return Answer;
-	}(_react2.default.Component);
-
-	var Story = function (_React$Component4) {
-	    _inherits(Story, _React$Component4);
-
-	    function Story() {
-	        _classCallCheck(this, Story);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Story).apply(this, arguments));
-	    }
-
-	    _createClass(Story, [{
-	        key: 'getClues',
-	        value: function getClues(storyID) {
-	            var _this6 = this;
-
-	            return Object.keys(this.props.clues).map(function (clueID) {
-	                return _this6.props.clues[clueID];
-	            });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _this7 = this;
-
-	            var _props2 = this.props;
-	            var story = _props2.story;
-	            var addAnswer = _props2.addAnswer;
-
-	            var clues = this.getClues(story.uid).map(function (clue) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { key: clue.uid },
-	                    _react2.default.createElement(
-	                        _reactRouter.Link,
-	                        { to: _routes2.default.clue(clue.uid) },
-	                        ' ',
-	                        clue.clue_id,
-	                        ' '
-	                    )
-	                );
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'h1',
-	                    null,
-	                    story.name
-	                ),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Default Hint:',
-	                    _react2.default.createElement('input', { onChange: function onChange(e) {
-	                            return _this7.props.changeState('stories', story.name, { default_hint: e.target.value });
-	                        }, value: story.default_hint || '' })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    clues
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Story;
-	}(_react2.default.Component);
-
-	exports.Story = Story;
-	exports.Stories = Stories;
+	    return Clue;
+	}(React.Component);
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }
 /******/ ]);

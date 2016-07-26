@@ -19,15 +19,14 @@ class StoryHandler(RequestHandler):
         stories = [story.to_dict() for story in Story.query().fetch()]
         return {story['story_id']: story for story in stories}
 
-    def get(self, story_id):
-        story = Story.get_by_story_id(story_id)
+    def get(self, uid):
+        story = Story.get_by_id(uid)
         if story is None:
             abort(400, 'No Resource for that id')
         return story.to_dict()
 
-    def post(self, story_id, data):
-        logging.info('story_id', 'data', story_id, data)
+    def post(self, uid, data):
         story_args = parse_args(data, required_story_args)
-        story = Story.from_id(story_id=story_id, **story_args)
+        story = Story.from_uid(uid, **story_args)
         story.put()
         return story.to_dict()

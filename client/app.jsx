@@ -1,8 +1,8 @@
-import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 
-import { Stories, Story, Index as StoryIndex } from './story'
+import { Stories, Story } from './story'
+import { Clue } from './clue'
 import Routes from './routes'
 
 const App = ({children}) => (
@@ -23,10 +23,11 @@ ReactDOM.render(
     <Router history={browserHistory}>
         <Route path="/" component={App}>
             <IndexRoute component={Index}/>
-            <Route path={Routes.stories()} component={Stories}>
-                <IndexRoute component={StoryIndex}/>
-                <Route path=':storyID' component={Story}/>
+            <Route path={Routes.stories()}>
+                <IndexRoute component={Stories}/>
+                <Route path=':storyUID' component={Story}/>
             </Route>
+            <Route path='/clues/:clueUID' component={Clue}/>
             <Route path="*" component={My404}></Route>
         </Route>
     </Router>,

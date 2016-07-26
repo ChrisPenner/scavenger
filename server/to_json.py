@@ -1,4 +1,4 @@
 import json
 from adventure import story, clues, answers
 
-print json.dumps(clues)
+print json.dumps(story)

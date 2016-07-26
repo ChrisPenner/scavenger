@@ -1,15 +1,33 @@
-class Clue extends React.Component {
+import * as Res from './resources'
+export class Clue extends React.Component {
+    componentWillMount() {
+        this.setState({loading: true})
+        const clueUID = this.props.params.clueUID
+        const cluePromise = Res.Clue.get(clueUID)
+            .then(clue => this.setState({clue}))
+
+        const answersPromise = Res.Answer.byClue(clueUID)
+            .then(answers => this.setState({answers}))
+
+        Promise.all([cluePromise, answersPromise])
+            .then(() => this.setState({loading: false}))
+            .then(()=>console.log(this.state))
+    }
+
     render() {
-            const answers = clue.answers.map(answerID=>this.props.answers[answerID])
-            const answerView = answers.map(answer => (
-                        <Answer key={answer.uuid} answer={answer} />
-                        ))
-            return (
+        if (this.state.loading){
+            return <div> Loading... </div>
+        }
+        const answers = clue.answers.map(answerID=>this.props.answers[answerID])
+        const answerView = answers.map(answer => (
+                    <Answer key={answer.uuid} answer={answer} />
+                    ))
+        return (
             <div key={clue.clue_id} className="panel panel-info">
-                    <div className="panel-heading">
-                        {clue.clue_id}
-                    </div>
-                    <div className="panel-body">
+                <div className="panel-heading">
+                    {clue.clue_id}
+                </div>
+                <div className="panel-body">
                 <label>
                     Text:
                     <input
