@@ -17,8 +17,8 @@ required_clue_args = [
 
 @restful_api('/application/json')
 class ClueHandler(RequestHandler):
-    def index(self, story_id):
-        clues = [clue.to_dict() for clue in Clue.query(Clue.story_id == story_id).fetch()]
+    def index(self):
+        clues = [clue.to_dict() for clue in Clue.query().fetch()]
         return {clue['uid']: clue for clue in clues}
 
     def get(self, uid):

@@ -30,11 +30,11 @@ def handle_500(request, response, exception):
 app = WSGIApplication([
     Route('/twilio', TwilioHandler),
     Route('/clues/<uid:[^/]+>.json', ClueHandler),
-    Route('/stories/<story_id:[^/]+>/clues.json', handler=ClueHandler, handler_method='index'),
+    Route('/clues.json', handler=ClueHandler, handler_method='index'),
     Route('/stories.json', handler=StoryHandler, handler_method='index'),
     Route('/stories/<uid:[^/]+>.json', StoryHandler),
     Route('/answers/<answer_id:[^/]+>.json', AnswerHandler),
-    Route('/clues/<clue_id:[^/]+>/answers.json', handler=AnswerHandler, handler_method='index'),
+    Route('/answers.json', handler=AnswerHandler, handler_method='index'),
     SimpleRoute('/.*', AppHandler),
 ], debug=True)
 

@@ -11,10 +11,11 @@ class Story {
             .then(resp => resp.json())
     }
 }
+Story.key = 'stories'
 
 class Clue {
-    static index(storyUID){
-        return fetch(Routes.clues(storyUID))
+    static index(){
+        return fetch(Routes.clues())
             .then(resp => resp.json())
     }
 
@@ -23,12 +24,19 @@ class Clue {
             .then(resp => resp.json())
     }
 }
+Clue.key = 'clues'
 
 class Answer {
+    static index(){
+        return fetch(Routes.answers())
+            .then(resp => resp.json())
+    }
+
     static byClue(clueUID){
         return fetch(Routes.answersByClue(clueUID))
             .then(resp => resp.json())
     }
 }
+Answer.key = 'answers'
 
 export {Story, Clue, Answer}

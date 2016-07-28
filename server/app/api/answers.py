@@ -15,9 +15,8 @@ required_answer_args = [
 
 @restful_api('/application/json')
 class AnswerHandler(RequestHandler):
-    def index(self, clue_id):
-        print clue_id
-        answers = [answer.to_dict() for answer in Answer.query(Answer.clue_id == clue_id).fetch()]
+    def index(self):
+        answers = [answer.to_dict() for answer in Answer.query().fetch()]
         return {answer['uid']: answer for answer in answers}
 
     def get(self, answer_id):
