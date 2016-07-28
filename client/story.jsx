@@ -2,6 +2,8 @@ import uuid from 'uuid4'
 import merge from 'lodash/merge'
 import { Link } from 'react-router'
 import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {changeStory} from './actions'
 
 import Routes from './routes'
 import * as Res from './resources'
@@ -33,7 +35,7 @@ const storiesProps = (state) => {
 }
 const Stories = connect(storiesProps)(StoriesView)
 
-const StoryView = ({story, clues}) =>{
+const StoryView = ({story, clues, onChangeStory}) =>{
     const cluesView = clues.map(clue=>(
                     <div key={clue.uid}>
                         <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
@@ -44,7 +46,10 @@ const StoryView = ({story, clues}) =>{
             <h1>{story.uid}</h1>
             <label>
                 Default Hint:
-                <input value={story.default_hint || ''} />
+                <input
+                    value={story.default_hint || ''}
+                    onChange={(e) => onChangeStory('default_hint', e.target.value)}
+                />
             </label>
             <div>
                 <h2> Clues </h2>
@@ -60,7 +65,14 @@ const storyProps = (state, {params:{storyID}}) => {
         loading: state.loading,
     }
 }
-const Story = connect(storyProps)(StoryView)
+
+const storyActions = (dispatch, {params:{storyID}}) => {
+    return bindActionCreators({
+        onChangeStory: changeStory(storyID),
+    }, dispatch)
+}
+
+const Story = connect(storyProps, storyActions)(StoryView)
 
 export {
     Story,

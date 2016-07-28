@@ -1,36 +1,55 @@
 import {combineReducers} from 'redux'
-import {STORE_RESULTS} from './actions'
+import {STORE_RESULTS, CHANGE_CLUE, CHANGE_ANSWER, CHANGE_STORY} from './actions'
+
+const setter = (state, action) => {
+    const item = state[action.id]
+        return  {
+            ...state,
+            [action.id]: {
+                ...item,
+                [action.field]: action.value,
+            }
+        }
+}
+
+
 const stories = (stories={}, action) => {
-    if (action.key !== 'stories'){
-        return stories
-    }
     switch (action.type) {
         case STORE_RESULTS:
+            if (action.key !== 'stories'){
+                return stories
+            }
             return action.data
+        case CHANGE_STORY:
+            return setter(stories, action)
         default:
             return stories
     }
 }
 
 const clues = (clues={}, action) => {
-    if (action.key !== 'clues'){
-        return clues
-    }
     switch (action.type) {
         case STORE_RESULTS:
+            if (action.key !== 'clues'){
+                return clues
+            }
             return action.data
+        case CHANGE_CLUE:
+            return setter(clues, action)
         default:
             return clues
     }
 }
 
 const answers = (answers={}, action) => {
-    if (action.key !== 'answers'){
-        return answers
-    }
     switch (action.type) {
         case STORE_RESULTS:
+            if (action.key !== 'answers'){
+                return answers
+            }
             return action.data
+        case CHANGE_ANSWER:
+            return setter(answers, action)
         default:
             return answers
     }

@@ -28294,6 +28294,10 @@
 
 	var _reactRedux = __webpack_require__(236);
 
+	var _redux = __webpack_require__(243);
+
+	var _actions = __webpack_require__(263);
+
 	var _routes = __webpack_require__(264);
 
 	var _routes2 = _interopRequireDefault(_routes);
@@ -28348,6 +28352,7 @@
 	var StoryView = function StoryView(_ref2) {
 	    var story = _ref2.story;
 	    var clues = _ref2.clues;
+	    var onChangeStory = _ref2.onChangeStory;
 
 	    var cluesView = clues.map(function (clue) {
 	        return React.createElement(
@@ -28374,7 +28379,12 @@
 	            'label',
 	            null,
 	            'Default Hint:',
-	            React.createElement('input', { value: story.default_hint || '' })
+	            React.createElement('input', {
+	                value: story.default_hint || '',
+	                onChange: function onChange(e) {
+	                    return onChangeStory('default_hint', e.target.value);
+	                }
+	            })
 	        ),
 	        React.createElement(
 	            'div',
@@ -28397,7 +28407,16 @@
 	        loading: state.loading
 	    };
 	};
-	var Story = (0, _reactRedux.connect)(storyProps)(StoryView);
+
+	var storyActions = function storyActions(dispatch, _ref4) {
+	    var storyID = _ref4.params.storyID;
+
+	    return (0, _redux.bindActionCreators)({
+	        onChangeStory: (0, _actions.changeStory)(storyID)
+	    }, dispatch);
+	};
+
+	var Story = (0, _reactRedux.connect)(storyProps, storyActions)(StoryView);
 
 	exports.Story = Story;
 	exports.Stories = Stories;
@@ -28413,6 +28432,8 @@
 	    value: true
 	});
 
+	var _redux = __webpack_require__(243);
+
 	var _reactRedux = __webpack_require__(236);
 
 	var _resources = __webpack_require__(259);
@@ -28425,6 +28446,8 @@
 
 	var _reducers = __webpack_require__(262);
 
+	var _actions = __webpack_require__(263);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -28432,6 +28455,7 @@
 	var Clue = function Clue(_ref) {
 	    var clue = _ref.clue;
 	    var answers = _ref.answers;
+	    var onChangeClue = _ref.onChangeClue;
 
 	    var answerView = answers.map(function (answer) {
 	        return React.createElement(_answer2.default, { key: answer.uid, answerID: answer.uid });
@@ -28452,7 +28476,10 @@
 	                null,
 	                'Text:',
 	                React.createElement('input', {
-	                    value: clue.text || ''
+	                    value: clue.text || '',
+	                    onChange: function onChange(e) {
+	                        return onChangeClue('text', e.target.value);
+	                    }
 	                })
 	            ),
 	            React.createElement('br', null),
@@ -28461,7 +28488,10 @@
 	                null,
 	                'Hint:',
 	                React.createElement('input', {
-	                    value: clue.hint || ''
+	                    value: clue.hint || '',
+	                    onChange: function onChange(e) {
+	                        return onChangeClue('hint', e.target.value);
+	                    }
 	                })
 	            ),
 	            React.createElement(
@@ -28481,7 +28511,14 @@
 	        answers: (0, _reducers.getAnswersListByClue)(state, clueID)
 	    };
 	};
-	exports.default = (0, _reactRedux.connect)(clueProps)(Clue);
+	var clueActions = function clueActions(dispatch, _ref2) {
+	    var clueID = _ref2.params.clueID;
+
+	    return (0, _redux.bindActionCreators)({
+	        onChangeClue: (0, _actions.changeClue)(clueID)
+	    }, dispatch);
+	};
+	exports.default = (0, _reactRedux.connect)(clueProps, clueActions)(Clue);
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
@@ -28624,13 +28661,18 @@
 	    value: true
 	});
 
+	var _redux = __webpack_require__(243);
+
 	var _reactRedux = __webpack_require__(236);
 
 	var _reducers = __webpack_require__(262);
 
+	var _actions = __webpack_require__(263);
+
 	var Answer = function Answer(_ref) {
 	    var answer = _ref.answer;
 	    var clueIDs = _ref.clueIDs;
+	    var onChangeAnswer = _ref.onChangeAnswer;
 	    return React.createElement(
 	        'div',
 	        { className: 'input-group' },
@@ -28641,7 +28683,10 @@
 	            React.createElement('input', {
 	                className: 'form-control',
 	                type: 'text',
-	                value: answer.pattern
+	                value: answer.pattern,
+	                onChange: function onChange(e) {
+	                    return onChangeAnswer('pattern', e.target.value);
+	                }
 	            })
 	        ),
 	        React.createElement(
@@ -28652,7 +28697,10 @@
 	                'select',
 	                {
 	                    className: 'form-control',
-	                    value: answer.next_clue
+	                    value: answer.next_clue,
+	                    onChange: function onChange(e) {
+	                        return onChangeAnswer('next_clue', e.target.value);
+	                    }
 	                },
 	                clueIDs.map(function (clueID) {
 	                    return React.createElement(
@@ -28674,7 +28722,15 @@
 	        clueIDs: Object.keys((0, _reducers.getClues)(state, answer.clue_id))
 	    };
 	};
-	exports.default = (0, _reactRedux.connect)(answerProps)(Answer);
+
+	var answerActions = function answerActions(dispatch, _ref3) {
+	    var answerID = _ref3.answerID;
+
+	    return (0, _redux.bindActionCreators)({
+	        onChangeAnswer: (0, _actions.changeAnswer)(answerID)
+	    }, dispatch);
+	};
+	exports.default = (0, _reactRedux.connect)(answerProps, answerActions)(Answer);
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
@@ -28688,20 +28744,31 @@
 	});
 	exports.getAnswersListByClue = exports.getAnswersByClue = exports.getAnswer = exports.getStoriesList = exports.getStories = exports.getStory = exports.getCluesByStory = exports.getCluesList = exports.getClues = exports.getClue = undefined;
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _redux = __webpack_require__(243);
 
 	var _actions = __webpack_require__(263);
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var setter = function setter(state, action) {
+	    var item = state[action.id];
+	    return _extends({}, state, _defineProperty({}, action.id, _extends({}, item, _defineProperty({}, action.field, action.value))));
+	};
 
 	var stories = function stories() {
 	    var stories = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	    var action = arguments[1];
 
-	    if (action.key !== 'stories') {
-	        return stories;
-	    }
 	    switch (action.type) {
 	        case _actions.STORE_RESULTS:
+	            if (action.key !== 'stories') {
+	                return stories;
+	            }
 	            return action.data;
+	        case _actions.CHANGE_STORY:
+	            return setter(stories, action);
 	        default:
 	            return stories;
 	    }
@@ -28711,12 +28778,14 @@
 	    var clues = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	    var action = arguments[1];
 
-	    if (action.key !== 'clues') {
-	        return clues;
-	    }
 	    switch (action.type) {
 	        case _actions.STORE_RESULTS:
+	            if (action.key !== 'clues') {
+	                return clues;
+	            }
 	            return action.data;
+	        case _actions.CHANGE_CLUE:
+	            return setter(clues, action);
 	        default:
 	            return clues;
 	    }
@@ -28726,12 +28795,14 @@
 	    var answers = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	    var action = arguments[1];
 
-	    if (action.key !== 'answers') {
-	        return answers;
-	    }
 	    switch (action.type) {
 	        case _actions.STORE_RESULTS:
+	            if (action.key !== 'answers') {
+	                return answers;
+	            }
 	            return action.data;
+	        case _actions.CHANGE_ANSWER:
+	            return setter(answers, action);
 	        default:
 	            return answers;
 	    }
@@ -28807,6 +28878,25 @@
 	        });
 	    };
 	};
+	var setter = function setter(type) {
+	    return function (id) {
+	        return function (field, value) {
+	            return {
+	                type: type,
+	                id: id,
+	                field: field,
+	                value: value
+	            };
+	        };
+	    };
+	};
+
+	var CHANGE_CLUE = exports.CHANGE_CLUE = 'CHANGE_CLUE';
+	var CHANGE_ANSWER = exports.CHANGE_ANSWER = 'CHANGE_ANSWER';
+	var CHANGE_STORY = exports.CHANGE_STORY = 'CHANGE_STORY';
+	var changeClue = exports.changeClue = setter(CHANGE_CLUE);
+	var changeAnswer = exports.changeAnswer = setter(CHANGE_ANSWER);
+	var changeStory = exports.changeStory = setter(CHANGE_STORY);
 
 /***/ },
 /* 264 */
