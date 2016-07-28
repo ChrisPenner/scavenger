@@ -11,7 +11,6 @@ class Story {
             .then(resp => resp.json())
     }
 }
-Story.key = 'stories'
 
 class Clue {
     static index(){
@@ -24,7 +23,6 @@ class Clue {
             .then(resp => resp.json())
     }
 }
-Clue.key = 'clues'
 
 class Answer {
     static index(){
@@ -37,6 +35,5 @@ class Answer {
             .then(resp => resp.json())
     }
 }
-Answer.key = 'answers'
 
 export {Story, Clue, Answer}

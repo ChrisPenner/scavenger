@@ -27,9 +27,6 @@ const stories = (stories={}, action) => {
 const clues = (clues={}, action) => {
     switch (action.type) {
         case LOAD_CLUES:
-            if (action.key !== 'clues'){
-                return clues
-            }
             return action.data
         case CHANGE_CLUE:
             return setter(clues, action)
@@ -41,9 +38,6 @@ const clues = (clues={}, action) => {
 const answers = (answers={}, action) => {
     switch (action.type) {
         case LOAD_ANSWERS:
-            if (action.key !== 'answers'){
-                return answers
-            }
             return action.data
         case CHANGE_ANSWER:
             return setter(answers, action)

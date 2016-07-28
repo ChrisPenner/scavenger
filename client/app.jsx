@@ -5,7 +5,7 @@ import {Provider, connect} from 'react-redux'
 import { Stories, Story } from './story'
 import Clue from './clue'
 import Routes from './routes'
-import {fetchResource, LOAD_STORIES, LOAD_CLUES, LOAD_ANSWERS} from './actions'
+import {fetchResource, loadStories, loadClues, loadAnswers} from './actions'
 import * as Res from './resources'
 
 import store from './store'
@@ -34,9 +34,9 @@ const My404 = () => (
 
 const load = (nextState, replace, callback) => {
     Promise.all([
-            store.dispatch(fetchResource(Res.Story, LOAD_STORIES)),
-            store.dispatch(fetchResource(Res.Clue, LOAD_CLUES)),
-            store.dispatch(fetchResource(Res.Answer, LOAD_ANSWERS)),
+            store.dispatch(loadStories),
+            store.dispatch(loadClues),
+            store.dispatch(loadAnswers),
     ]).then(()=>callback())
 }
 

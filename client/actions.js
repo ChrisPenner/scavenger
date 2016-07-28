@@ -1,9 +1,9 @@
-export const STORE_RESULTS = 'STORE_RESULTS'
-export const fetchResource = (Resource, type) => (dispatch) => {
+import * as Res from './resources.js'
+
+export const fetchResource = (Resource, actionType) => (dispatch) => {
     return Resource.index()
                 .then(json => dispatch({
-                    type,
-                    key: Resource.key,
+                    type: actionType,
                     data: json,
                 }))
 }
@@ -23,3 +23,6 @@ export const CHANGE_ANSWER = 'CHANGE_ANSWER'
 export const changeStory = setter(CHANGE_STORY)
 export const changeClue = setter(CHANGE_CLUE)
 export const changeAnswer = setter(CHANGE_ANSWER)
+export const loadStories = fetchResource(Res.Story, LOAD_STORIES)
+export const loadClues = fetchResource(Res.Clue, LOAD_CLUES)
+export const loadAnswers = fetchResource(Res.Answer, LOAD_ANSWERS)
