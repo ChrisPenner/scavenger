@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux'
-import {STORE_RESULTS, CHANGE_CLUE, CHANGE_ANSWER, CHANGE_STORY} from './actions'
+import {LOAD_STORIES, LOAD_CLUES, LOAD_ANSWERS, CHANGE_CLUE, CHANGE_ANSWER, CHANGE_STORY} from './actions'
 
 const setter = (state, action) => {
     const item = state[action.id]
@@ -15,10 +15,7 @@ const setter = (state, action) => {
 
 const stories = (stories={}, action) => {
     switch (action.type) {
-        case STORE_RESULTS:
-            if (action.key !== 'stories'){
-                return stories
-            }
+        case LOAD_STORIES:
             return action.data
         case CHANGE_STORY:
             return setter(stories, action)
@@ -29,7 +26,7 @@ const stories = (stories={}, action) => {
 
 const clues = (clues={}, action) => {
     switch (action.type) {
-        case STORE_RESULTS:
+        case LOAD_CLUES:
             if (action.key !== 'clues'){
                 return clues
             }
@@ -43,7 +40,7 @@ const clues = (clues={}, action) => {
 
 const answers = (answers={}, action) => {
     switch (action.type) {
-        case STORE_RESULTS:
+        case LOAD_ANSWERS:
             if (action.key !== 'answers'){
                 return answers
             }

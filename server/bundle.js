@@ -133,7 +133,7 @@
 	};
 
 	var load = function load(nextState, replace, callback) {
-	    Promise.all([_store2.default.dispatch((0, _actions.fetchResource)(Res.Story)), _store2.default.dispatch((0, _actions.fetchResource)(Res.Clue)), _store2.default.dispatch((0, _actions.fetchResource)(Res.Answer))]).then(function () {
+	    Promise.all([_store2.default.dispatch((0, _actions.fetchResource)(Res.Story, _actions.LOAD_STORIES)), _store2.default.dispatch((0, _actions.fetchResource)(Res.Clue, _actions.LOAD_CLUES)), _store2.default.dispatch((0, _actions.fetchResource)(Res.Answer, _actions.LOAD_ANSWERS))]).then(function () {
 	        return callback();
 	    });
 	};
@@ -28762,10 +28762,7 @@
 	    var action = arguments[1];
 
 	    switch (action.type) {
-	        case _actions.STORE_RESULTS:
-	            if (action.key !== 'stories') {
-	                return stories;
-	            }
+	        case _actions.LOAD_STORIES:
 	            return action.data;
 	        case _actions.CHANGE_STORY:
 	            return setter(stories, action);
@@ -28779,7 +28776,7 @@
 	    var action = arguments[1];
 
 	    switch (action.type) {
-	        case _actions.STORE_RESULTS:
+	        case _actions.LOAD_CLUES:
 	            if (action.key !== 'clues') {
 	                return clues;
 	            }
@@ -28796,7 +28793,7 @@
 	    var action = arguments[1];
 
 	    switch (action.type) {
-	        case _actions.STORE_RESULTS:
+	        case _actions.LOAD_ANSWERS:
 	            if (action.key !== 'answers') {
 	                return answers;
 	            }
@@ -28867,11 +28864,11 @@
 	    value: true
 	});
 	var STORE_RESULTS = exports.STORE_RESULTS = 'STORE_RESULTS';
-	var fetchResource = exports.fetchResource = function fetchResource(Resource) {
+	var fetchResource = exports.fetchResource = function fetchResource(Resource, type) {
 	    return function (dispatch) {
 	        return Resource.index().then(function (json) {
 	            return dispatch({
-	                type: STORE_RESULTS,
+	                type: type,
 	                key: Resource.key,
 	                data: json
 	            });
@@ -28891,12 +28888,15 @@
 	    };
 	};
 
+	var LOAD_CLUES = exports.LOAD_CLUES = 'LOAD_CLUES';
+	var LOAD_STORIES = exports.LOAD_STORIES = 'LOAD_STORIES';
+	var LOAD_ANSWERS = exports.LOAD_ANSWERS = 'LOAD_ANSWERS';
+	var CHANGE_STORY = exports.CHANGE_STORY = 'CHANGE_STORY';
 	var CHANGE_CLUE = exports.CHANGE_CLUE = 'CHANGE_CLUE';
 	var CHANGE_ANSWER = exports.CHANGE_ANSWER = 'CHANGE_ANSWER';
-	var CHANGE_STORY = exports.CHANGE_STORY = 'CHANGE_STORY';
+	var changeStory = exports.changeStory = setter(CHANGE_STORY);
 	var changeClue = exports.changeClue = setter(CHANGE_CLUE);
 	var changeAnswer = exports.changeAnswer = setter(CHANGE_ANSWER);
-	var changeStory = exports.changeStory = setter(CHANGE_STORY);
 
 /***/ },
 /* 264 */
