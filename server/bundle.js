@@ -133,7 +133,7 @@
 	};
 
 	var load = function load(nextState, replace, callback) {
-	    Promise.all([_store2.default.dispatch((0, _actions.fetchResource)(Res.Story, _actions.LOAD_STORIES)), _store2.default.dispatch((0, _actions.fetchResource)(Res.Clue, _actions.LOAD_CLUES)), _store2.default.dispatch((0, _actions.fetchResource)(Res.Answer, _actions.LOAD_ANSWERS))]).then(function () {
+	    Promise.all([_store2.default.dispatch(_actions.loadStories), _store2.default.dispatch(_actions.loadClues), _store2.default.dispatch(_actions.loadAnswers)]).then(function () {
 	        return callback();
 	    });
 	};
@@ -28562,8 +28562,6 @@
 	    return Story;
 	}();
 
-	Story.key = 'stories';
-
 	var Clue = function () {
 	    function Clue() {
 	        _classCallCheck(this, Clue);
@@ -28588,8 +28586,6 @@
 	    return Clue;
 	}();
 
-	Clue.key = 'clues';
-
 	var Answer = function () {
 	    function Answer() {
 	        _classCallCheck(this, Answer);
@@ -28613,8 +28609,6 @@
 
 	    return Answer;
 	}();
-
-	Answer.key = 'answers';
 
 	exports.Story = Story;
 	exports.Clue = Clue;
@@ -28777,9 +28771,6 @@
 
 	    switch (action.type) {
 	        case _actions.LOAD_CLUES:
-	            if (action.key !== 'clues') {
-	                return clues;
-	            }
 	            return action.data;
 	        case _actions.CHANGE_CLUE:
 	            return setter(clues, action);
@@ -28794,9 +28785,6 @@
 
 	    switch (action.type) {
 	        case _actions.LOAD_ANSWERS:
-	            if (action.key !== 'answers') {
-	                return answers;
-	            }
 	            return action.data;
 	        case _actions.CHANGE_ANSWER:
 	            return setter(answers, action);
@@ -28856,20 +28844,27 @@
 
 /***/ },
 /* 263 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.loadAnswers = exports.loadClues = exports.loadStories = exports.changeAnswer = exports.changeClue = exports.changeStory = exports.CHANGE_ANSWER = exports.CHANGE_CLUE = exports.CHANGE_STORY = exports.LOAD_ANSWERS = exports.LOAD_STORIES = exports.LOAD_CLUES = exports.fetchResource = exports.STORE_RESULTS = undefined;
+
+	var _resources = __webpack_require__(259);
+
+	var Res = _interopRequireWildcard(_resources);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	var STORE_RESULTS = exports.STORE_RESULTS = 'STORE_RESULTS';
 	var fetchResource = exports.fetchResource = function fetchResource(Resource, type) {
 	    return function (dispatch) {
 	        return Resource.index().then(function (json) {
 	            return dispatch({
 	                type: type,
-	                key: Resource.key,
 	                data: json
 	            });
 	        });
@@ -28897,6 +28892,9 @@
 	var changeStory = exports.changeStory = setter(CHANGE_STORY);
 	var changeClue = exports.changeClue = setter(CHANGE_CLUE);
 	var changeAnswer = exports.changeAnswer = setter(CHANGE_ANSWER);
+	var loadStories = exports.loadStories = fetchResource(Res.Story, CHANGE_STORY);
+	var loadClues = exports.loadClues = fetchResource(Res.Clue, CHANGE_CLUE);
+	var loadAnswers = exports.loadAnswers = fetchResource(Res.Answer, CHANGE_ANSWER);
 
 /***/ },
 /* 264 */
