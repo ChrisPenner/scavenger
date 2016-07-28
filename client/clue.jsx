@@ -30,7 +30,10 @@ const Clue = ({clue, answers, onChangeClue}) => {
                 />
             </label>
             <h4>Answers </h4>
-            {answerView}
+            {answerView.length > 0 
+                ? answerView
+                : <div> No Answers for this clue.</div>
+            }
         </div>
     </div>
     )
