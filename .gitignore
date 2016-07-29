@@ -3,4 +3,5 @@ app/secrets.py*
 images/
 media/
 /node_modules/
-/server/bundle.js
+/dist/
+
