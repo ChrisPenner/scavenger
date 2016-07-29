@@ -1,8 +1,8 @@
-const story = (storyID) => `/stories/${storyID}.json`
-const stories = () => `/stories.json`
-const clue = (clueUID) => `/clues/${clueUID}.json`
-const clues = () => `/clues.json`
-const answers = () => `/answers.json`
+const story = (storyID) => `/api/stories/${storyID}`
+const stories = () => `/api/stories/`
+const clue = (clueUID) => `/api/clues/${clueUID}`
+const clues = () => `/api/clues/`
+const answers = () => `/api/answers/`
 
 export const Routes = {
     story, stories,

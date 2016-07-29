@@ -1,7 +1,8 @@
 import json
 import logging
 
-from webapp2 import abort
+from webapp2 import abort, Route, RequestHandler
+from webapp2_extras.routes import PathPrefixRoute
 
 
 def parse_args(params, args):
@@ -59,3 +60,27 @@ class restful_api(object):
                 wrapped = format_response(getattr(cls, method), method)
                 setattr(cls, method, wrapped)
         return cls
+
+
+def create_resource_handler(Model, id_key='uid'):
+    @restful_api('/application/json')
+    class ResourceHandler(RequestHandler):
+        def index(self):
+            items = [item.to_dict() for item in Model.query().fetch()]
+            return {item['uid']: item for item in items}
+
+        def get(self, uid):
+            item = Model.get_by_id(uid)
+            if item is None:
+                abort(400, 'No Resource for that id')
+            return item.to_dict()
+
+    return ResourceHandler
+
+
+def ResourceRoutes(route_prefix, Model, id_key='uid'):
+    handler = create_resource_handler(Model, id_key=id_key)
+    return PathPrefixRoute('/{}'.format(route_prefix), [
+            Route('/', handler=handler, handler_method='index'),
+            Route('/<uid:[^/]+>', handler=handler),
+        ])

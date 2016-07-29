@@ -1,11 +1,13 @@
 import logging
 from webapp2 import SimpleRoute, Route
+from webapp2_extras.routes import PathPrefixRoute
+from webapp2_extensions import ResourceRoutes
 
 from app.base import BaseHandler
 from scavenger import TwilioHandler
-from api.stories import StoryHandler
-from api.clues import ClueHandler
-from api.answers import AnswerHandler
+from app.models.story import Story
+from app.models.clue import Clue
+from app.models.answer import Answer
 
 
 class AppHandler(BaseHandler):
@@ -14,12 +16,11 @@ class AppHandler(BaseHandler):
         self.render('app.html')
 
 ROUTES = [
+    PathPrefixRoute('/api', [
+        ResourceRoutes('stories', Story),
+        ResourceRoutes('clues', Clue),
+        ResourceRoutes('answers', Answer),
+        ]),
     Route('/twilio', TwilioHandler),
-    Route('/clues/<uid:[^/]+>.json', ClueHandler),
-    Route('/clues.json', handler=ClueHandler, handler_method='index'),
-    Route('/stories.json', handler=StoryHandler, handler_method='index'),
-    Route('/stories/<uid:[^/]+>.json', StoryHandler),
-    Route('/answers/<answer_id:[^/]+>.json', AnswerHandler),
-    Route('/answers.json', handler=AnswerHandler, handler_method='index'),
     SimpleRoute('/.*', AppHandler),
 ]
