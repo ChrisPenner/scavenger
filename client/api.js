@@ -1,11 +1,11 @@
-const story = (storyID) => `/api/stories/${storyID}`
-const stories = () => `/api/stories/`
-const clue = (clueUID) => `/api/clues/${clueUID}`
-const clues = () => `/api/clues/`
-const answers = () => `/api/answers/`
+const story = (id) => `/api/stories/${id}`
+const clue = (id) => `/api/clues/${id}`
+const answer = (id) => `/api/answers/${id}`
 
-export const Routes = {
-    story, stories,
-    clue, clues,
-    answers,
+const Routes = {
+    story, clue, answer,
 }
+
+export default Routes
+
+export const INDEX = ''

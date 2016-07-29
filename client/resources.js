@@ -1,39 +1,26 @@
-import { Routes } from './api'
+import Routes, { INDEX } from './api'
 
-class Story {
-    static index(){
-        return fetch(Routes.stories())
-            .then(resp => resp.json())
-    }
+const createResource = (route) => {
+    return class Resource {
+        static index(){
+            return fetch(route(INDEX))
+                .then(resp => resp.json())
+        }
 
-    static get(storyUID){
-        return fetch(Routes.story(storyUID))
-            .then(resp => resp.json())
-    }
-}
+        static get(id){
+            return fetch(route(id))
+                .then(resp => resp.json())
+        }
 
-class Clue {
-    static index(){
-        return fetch(Routes.clues())
-            .then(resp => resp.json())
-    }
-
-    static get(clueUID){
-        return fetch(Routes.clue(clueUID))
-            .then(resp => resp.json())
+        static put(id, data){
+            return fetch(route(id), {
+                method: 'put',
+                body: JSON.stringify(data),
+            }).then(resp => resp.json())
+        }
     }
 }
 
-class Answer {
-    static index(){
-        return fetch(Routes.answers())
-            .then(resp => resp.json())
-    }
-
-    static byClue(clueUID){
-        return fetch(Routes.answersByClue(clueUID))
-            .then(resp => resp.json())
-    }
-}
-
-export {Story, Clue, Answer}
+export const Story = createResource(Routes.story)
+export const Clue = createResource(Routes.clue)
+export const Answer = createResource(Routes.answer)

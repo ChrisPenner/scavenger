@@ -1,10 +1,11 @@
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
+import {Button} from 'react-bootstrap'
 import * as Res from './resources'
 import Answer from './answer'
 import {getClue, getAnswersListByClue} from './reducers'
-import {changeClue} from './actions'
-const Clue = ({clue, answers, onChangeClue}) => {
+import {changeClue, saveClue} from './actions'
+const Clue = ({clue, answers, onChangeClue, save}) => {
     const answerView = answers.map(answer => (
                 <Answer key={answer.uid} answerID={answer.uid} />
                 ))
@@ -12,6 +13,7 @@ const Clue = ({clue, answers, onChangeClue}) => {
         <div key={clue.clue_id} className="panel panel-info">
             <div className="panel-heading">
                 {clue.clue_id}
+                <a className="pull-right" onClick={save} >Save</a>
             </div>
             <div className="panel-body">
             <label>
@@ -48,6 +50,7 @@ const clueProps = (state, props) => {
 const clueActions = (dispatch, {params:{clueID}}) => {
     return bindActionCreators({
         onChangeClue: changeClue(clueID),
+        save: saveClue(clueID),
     }, dispatch)
 }
 export default connect(clueProps, clueActions)(Clue)

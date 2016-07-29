@@ -75,6 +75,17 @@ def create_resource_handler(Model, id_key='uid'):
                 abort(400, 'No Resource for that id')
             return item.to_dict()
 
+        def put(self, uid, data):
+            print 'DATA', data
+            item = Model.get_by_id(uid)
+            if item is None:
+                abort(400, 'No Resource for that id')
+            if hasattr(Model, 'DATA_FIELDS'):
+                data = { k:v for k,v in data.iteritems() if k in Model.DATA_FIELDS }
+            item.populate(**data)
+            item.put()
+            return item.to_dict()
+
     return ResourceHandler
 
 

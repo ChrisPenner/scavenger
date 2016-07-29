@@ -2,6 +2,8 @@ from google.appengine.ext import ndb
 
 
 class Clue(ndb.Model):
+    DATA_FIELDS = ['text', 'hint', 'media_url']
+
     text = ndb.TextProperty(required=True)
     hint = ndb.StringProperty()
     media_url = ndb.StringProperty()

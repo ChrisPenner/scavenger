@@ -2,6 +2,8 @@ from google.appengine.ext import ndb
 
 
 class Story(ndb.Model):
+    DATA_FIELDS = ['clues', 'default_hint']
+
     clues = ndb.StringProperty(repeated=True)
     default_hint = ndb.StringProperty(required=True)
     story_id = ndb.ComputedProperty(lambda s: s.uid)

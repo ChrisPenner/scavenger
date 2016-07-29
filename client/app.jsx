@@ -4,7 +4,7 @@ import {Provider, connect} from 'react-redux'
 
 import { Stories, Story } from './story'
 import Clue from './clue'
-import Routes from './routes'
+import Routes, { INDEX } from './routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from './actions'
 import * as Res from './resources'
 
@@ -24,7 +24,7 @@ const App = connect(({loading})=>({loading}))(AppView)
 
 const Index = () => (
     <div>
-        <Link to={Routes.stories()}> Stories </Link>
+        <Link to={Routes.story(INDEX)}> Stories </Link>
     </div>
 )
 
@@ -45,11 +45,11 @@ ReactDOM.render(
         <Router history={browserHistory}>
             <Route path="/" component={App} onEnter={load}>
                 <IndexRoute component={Index}/>
-                <Route path={Routes.stories()}>
+                <Route path={Routes.story(INDEX)}>
                     <IndexRoute component={Stories}/>
                     <Route path=':storyID' component={Story}/>
                 </Route>
-                <Route path='/clues/:clueID' component={Clue}/>
+                <Route path={ Routes.clue(':clueID') } component={Clue}/>
                 <Route path="*" component={My404}></Route>
             </Route>
         </Router>

@@ -2,6 +2,8 @@ from google.appengine.ext import ndb
 
 
 class Answer(ndb.Model):
+    DATA_FIELDS = ['pattern', 'next_clue']
+
     pattern = ndb.StringProperty(required=True)
     next_clue = ndb.StringProperty(required=True)
     story_id = ndb.ComputedProperty(lambda s: ':'.join(s.uid.split(':')[:1]))
