@@ -7,6 +7,7 @@ import Clue from './clue'
 import Routes, { INDEX } from './routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from './actions'
 import * as Res from './resources'
+import {Clues} from './clue'
 
 import store from './store'
 
@@ -47,7 +48,10 @@ ReactDOM.render(
                 <IndexRoute component={Index}/>
                 <Route path={Routes.story(INDEX)}>
                     <IndexRoute component={Stories}/>
-                    <Route path=':storyID' component={Story}/>
+                    <Route path=':storyID' component={Story}>
+                        <IndexRoute component={Clues}/>
+                        <Route path={ Routes.clue(':clueID') } component={Clue}/>
+                    </Route>
                 </Route>
                 <Route path={ Routes.clue(':clueID') } component={Clue}/>
                 <Route path="*" component={My404}></Route>

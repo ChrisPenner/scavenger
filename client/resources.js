@@ -1,6 +1,6 @@
 import Routes, { INDEX } from './api'
 
-const createResource = (route) => {
+const createResource = ({route, factory}) => {
     return class Resource {
         static index(){
             return fetch(route(INDEX))
@@ -18,9 +18,36 @@ const createResource = (route) => {
                 body: JSON.stringify(data),
             }).then(resp => resp.json())
         }
+
+        static new(args){
+            return factory(args)
+        }
     }
 }
 
-export const Story = createResource(Routes.story)
-export const Clue = createResource(Routes.clue)
-export const Answer = createResource(Routes.answer)
+const storyFactory = (args) => ({
+    uid: null,
+    default_hint: '',
+    clues: [],
+    ...args,
+})
+
+const clueFactory = () => ({
+    uid: null,
+    text: '',
+    hint: '',
+    media_url: '',
+    answers: [],
+    ...args,
+})
+
+const answerFactory = () => ({
+    uid: null,
+    pattern: '',
+    next_clue: '',
+    ...args,
+})
+
+export const Story = createResource({ route: Routes.story, factory: storyFactory })
+export const Clue = createResource({ route: Routes.clue, factory: clueFactory })
+export const Answer = createResource({ route: Routes.answer, factory: answerFactory })
