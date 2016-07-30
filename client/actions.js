@@ -51,17 +51,6 @@ export const ADD_STORY = 'ADD_STORY'
 export const ADD_CLUE = 'ADD_CLUE'
 export const ADD_ANSWER = 'ADD_ANSWER'
 
-export const addStory = (data) => (dispatch, getState) => {
-    dispatch({ type: ADD_STORY, data: data })
-    Story.post(data.uid, data)
-}
-
-export const addClue = (data) => (dispatch, getState) => {
-    dispatch({ type: ADD_CLUE, data: data })
-    Clue.post(data.uid, data)
-}
-
-export const addAnswer = (data) => (dispatch, getState) => {
-    dispatch({ type: ADD_ANSWER, data: data })
-    Answer.post(data.uid, data)
-}
+export const addStory = (data) => ({ type: ADD_STORY, data})
+export const addClue = (data) => ({ type: ADD_CLUE, data})
+export const addAnswer = (data) => ({ type: ADD_ANSWER, data})

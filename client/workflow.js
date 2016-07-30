@@ -1,5 +1,5 @@
 import sweetalert from 'sweetalert'
-export const addResourceModal = (resourceName, action, getter) => (itemArgs={}) => (dispatch, getState) => {
+export const addResourceModal = (resourceName, action, getter, successCallback) => (itemArgs={}) => (dispatch, getState) => {
     sweetalert({
         title: `Add A ${resourceName}`,
         text: "Enter a unique identifier",
@@ -21,13 +21,13 @@ export const addResourceModal = (resourceName, action, getter) => (itemArgs={}) 
             sweetalert.showInputError("id must contain only letters, numbers or '-'");
         } else {
             dispatch(action({...itemArgs, uid}))
-            sweetalert('Success!', `Added a ${resourceName}`, 'success')
             swal({
                 title: "Success!", 
                  type: "success",   text: `Added a ${resourceName}`,
                  timer: 700,
-                 showConfirmButton: false 
+                 showConfirmButton: false
             });
+            dispatch(successCallback(uid))
         }
     })
 };

@@ -1,4 +1,6 @@
-import {combineReducers} from 'redux'
+import { combineReducers } from 'redux'
+import { routerReducer } from 'react-router-redux'
+
 import {
     LOAD_STORIES, LOAD_CLUES, LOAD_ANSWERS,
     CHANGE_STORY, CHANGE_CLUE, CHANGE_ANSWER,
@@ -74,6 +76,7 @@ const answers = (answers={}, action) => {
 }
 
 export default combineReducers({
+    routing: routerReducer,
     stories,
     clues,
     answers,

@@ -13,7 +13,7 @@ class Clue(ndb.Model):
     uid = ndb.StringProperty(required=True)
 
     @classmethod
-    def from_id(cls, uid, *args, **kwargs):
+    def from_uid(cls, uid, *args, **kwargs):
         key = cls.build_key(uid=uid)
         return cls(key=key, uid=uid.upper(), *args, **kwargs)
 

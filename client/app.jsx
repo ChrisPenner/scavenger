@@ -1,6 +1,8 @@
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 import {Provider, connect} from 'react-redux'
+import { syncHistoryWithStore} from 'react-router-redux'
+
 import store from './store'
 
 import { Stories, Story } from './story'
@@ -43,7 +45,8 @@ const load = (nextState, replace, callback) => {
 
 ReactDOM.render(
     <Provider store={store}>
-        <Router history={browserHistory}>
+        <Router history={syncHistoryWithStore(browserHistory, store)}>
+
             <Route path="/" component={App} onEnter={load}>
                 <Route path={Routes.clue(':clueID') } component={Clue}/>
                 <IndexRoute component={Index}/>

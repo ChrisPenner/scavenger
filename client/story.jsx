@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import { push } from 'react-router-redux'
 
 import {changeStory, addStory, addClue } from './actions'
 import Routes from './routes'
@@ -8,9 +9,8 @@ import * as Res from './resources'
 import { addResourceModal } from './workflow'
 import { getClue, getStory, getStoriesList, getCluesByStory } from './reducers'
 
-
-const addStoryModal = addResourceModal('Story', addStory, getStory)
-const addClueModal = addResourceModal('Clue', addClue, getClue)
+const addStoryModal = addResourceModal('Story', addStory, getStory, (uid) => push(Routes.story(uid)))
+const addClueModal = addResourceModal('Clue', addClue, getClue, (uid) => push(Routes.clue(uid)))
 
 const StoriesView  = ({story, storiesList, addStory}) => {
     if (story){

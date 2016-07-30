@@ -12,7 +12,7 @@ class Answer(ndb.Model):
     uid = ndb.StringProperty(required=True)
 
     @classmethod
-    def from_id(cls, uid):
+    def from_uid(cls, uid):
         key = cls.build_key(uid)
         return cls(key=key, uid=uid.upper())
 
