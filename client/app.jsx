@@ -46,14 +46,13 @@ ReactDOM.render(
         <Router history={browserHistory}>
             <Route path="/" component={App} onEnter={load}>
                 <IndexRoute component={Index}/>
+                <Route path={ Routes.clue(':clueID') } component={Clue}/>
                 <Route path={Routes.story(INDEX)}>
                     <IndexRoute component={Stories}/>
                     <Route path=':storyID' component={Story}>
                         <IndexRoute component={Clues}/>
-                        <Route path={ Routes.clue(':clueID') } component={Clue}/>
                     </Route>
                 </Route>
-                <Route path={ Routes.clue(':clueID') } component={Clue}/>
                 <Route path="*" component={My404}></Route>
             </Route>
         </Router>

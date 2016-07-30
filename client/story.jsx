@@ -2,12 +2,15 @@ import { Link } from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
-import {changeStory, addStory} from './actions'
-import {Clues} from './clue'
+import {changeStory, addStory, addClue } from './actions'
 import Routes from './routes'
 import * as Res from './resources'
 import { addResourceModal } from './workflow'
-import {getStory, getStoriesList, getCluesByStory} from './reducers'
+import { getClue, getStory, getStoriesList, getCluesByStory } from './reducers'
+
+
+const addStoryModal = addResourceModal('Story', addStory, getStory)
+const addClueModal = addResourceModal('Clue', addClue, getClue)
 
 const StoriesView  = ({story, storiesList, addStory}) => {
     if (story){
@@ -19,13 +22,12 @@ const StoriesView  = ({story, storiesList, addStory}) => {
             <Link to={`/stories/${story.uid}`}> {story.uid} </Link>
         </div>
     ))
-    console.log(stories)
 
     return (
         <div> My Stories:
             {stories}
             <br/>
-            <button onClick={addStory} className="btn btn-primary"> Add Story </button>
+            <button onClick={() => addStory()} className="btn btn-primary"> Add Story </button>
         </div>
     )
 }
@@ -36,10 +38,14 @@ const storiesProps = (state) => {
     }
 }
 
-const addStoryModal = addResourceModal('Story', addStory, getStory)
 const Stories = connect(storiesProps, {addStory: addStoryModal})(StoriesView)
 
-const StoryView = ({story, clues, onChangeStory, children}) =>{
+const StoryView = ({ story, clues, onChangeStory, children, addClue }) =>{
+    console.log(clues)
+    console.log(children)
+    if (!story){
+        return <div> 'wut?' </div>
+    }
     return (
         <div>
             <h1>{story.uid}</h1>
@@ -52,11 +58,13 @@ const StoryView = ({story, clues, onChangeStory, children}) =>{
             </label>
             <div>
                 <h2> Clues </h2>
-                {children ? children : null}
+                {children}
+                <button onClick={() => addClue({story_id: story.uid})} className="btn btn-primary"> Add Clue </button>
             </div>
         </div>
     )
 }
+
 const storyProps = (state, {params:{storyID}}) => {
     return {
         story: getStory(state, storyID),
@@ -68,6 +76,7 @@ const storyProps = (state, {params:{storyID}}) => {
 const storyActions = (dispatch, {params:{storyID}}) => {
     return bindActionCreators({
         onChangeStory: changeStory(storyID),
+        addClue: addClueModal,
     }, dispatch)
 }
 

@@ -31,7 +31,17 @@ const stories = (stories={}, action) => {
         case CHANGE_STORY:
             return setter(stories, action)
         case ADD_STORY:
-            return adder(stories, Story.new({ uid: action.uid }))
+            return adder(stories, Story.new(action.data))
+        case ADD_CLUE:
+            const story = stories[action.data.story_id]
+            const {story_id} = action.data
+            return {
+                ...stories,
+                [action.data.story_id]: {
+                    ...story,
+                    clues: [...story.clues, action.data.uid],
+                }
+            }
         default:
             return stories
     }
@@ -44,7 +54,7 @@ const clues = (clues={}, action) => {
         case CHANGE_CLUE:
             return setter(clues, action)
         case ADD_CLUE:
-            return adder(clues, Clue.new({ uid: action.uid }))
+            return adder(clues, Clue.new(action.data))
         default:
             return clues
     }
@@ -57,7 +67,7 @@ const answers = (answers={}, action) => {
         case CHANGE_ANSWER:
             return setter(answers, action)
         case ADD_ANSWER:
-            return adder(answers, Answer.new({ uid: action.uid }))
+            return adder(answers, Answer.new(action.data))
         default:
             return answers
     }

@@ -11,10 +11,9 @@ import {changeClue, saveClue} from './actions'
 const CluesView = ({clues}) => {
     const cluesView = clues.map(clue=>(
                     <div key={clue.uid}>
-                        <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
+                        <Link to={Routes.clue(clue.uid)}> {clue.uid} </Link>
                     </div>
     ))
-    console.log('cluesview', cluesView)
     return (
         <div>
             {cluesView}
@@ -33,9 +32,9 @@ const Clue = ({clue, answers, onChangeClue, save}) => {
                 <Answer key={answer.uid} answerID={answer.uid} />
                 ))
     return (
-        <div key={clue.clue_id} className="panel panel-info">
+        <div key={clue.uid} className="panel panel-info">
             <div className="panel-heading">
-                {clue.clue_id}
+                {clue.uid}
                 <a className="pull-right" onClick={save} >Save</a>
             </div>
             <div className="panel-body">

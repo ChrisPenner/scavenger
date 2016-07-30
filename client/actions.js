@@ -17,11 +17,9 @@ const setter = (type) => (uid) => (field, value) => ({
 })
 
 const saveResource = (Resource, actionType, getCurrentState) => (uid) => (_) => (dispatch, getState) => {
-    console.log(dispatch, getState)
     const currentState = getCurrentState(getState(), uid)
     return Resource.put(uid, currentState)
-                .then(json=>console.log(json))
-                .catch(err=>console.log(err))
+                .catch(err=>console.error(err))
 }
 
 export const LOAD_CLUES = 'LOAD_CLUES'
@@ -53,6 +51,6 @@ export const ADD_STORY = 'ADD_STORY'
 export const ADD_CLUE = 'ADD_CLUE'
 export const ADD_ANSWER = 'ADD_ANSWER'
 
-export const addStory = (uid) =>({ type: ADD_STORY, uid })
-export const addClue = (uid) =>({ type: ADD_CLUE, uid })
-export const addAnswer = (uid) =>({ type: ADD_ANSWER, uid })
+export const addStory = (storyArgs) =>({ type: ADD_STORY, data: storyArgs })
+export const addClue = (clueArgs) =>({ type: ADD_CLUE, data: clueArgs })
+export const addAnswer = (answerArgs) =>({ type: ADD_ANSWER, data: answerArgs })

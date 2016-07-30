@@ -32,7 +32,7 @@ const storyFactory = (args) => ({
     ...args,
 })
 
-const clueFactory = () => ({
+const clueFactory = (args) => ({
     uid: null,
     text: '',
     hint: '',
@@ -41,7 +41,7 @@ const clueFactory = () => ({
     ...args,
 })
 
-const answerFactory = () => ({
+const answerFactory = (args) => ({
     uid: null,
     pattern: '',
     next_clue: '',

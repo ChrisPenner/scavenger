@@ -7,7 +7,7 @@ module.exports = {
         filename: "bundle.js",
         sourceMapFilename: "bundle.map.js",
     },
-    devtool: 'sourceMap',
+    devtool: 'source-map',
     devServer: {
         port: 3000,
         inline: true,

@@ -1,5 +1,5 @@
 import sweetalert from 'sweetalert'
-export const addResourceModal = (resourceName, action, getter) => () => (dispatch, getState) => {
+export const addResourceModal = (resourceName, action, getter) => (itemArgs={}) => (dispatch, getState) => {
     sweetalert({
         title: `Add A ${resourceName}`,
         text: "Enter a unique identifier",
@@ -7,21 +7,27 @@ export const addResourceModal = (resourceName, action, getter) => () => (dispatc
         showCancelButton: true,
         closeOnConfirm: false,
         inputPlaceholder: `${resourceName} ID`
-    }, (id) => {
-        if (id === false){
+    }, (uid) => {
+        if (uid === false){
             // Cancelled
             return
         }
-        id = id.toUpperCase().trim()
-        if (id === '') {
+        uid = uid.toUpperCase().trim()
+        if (uid === '') {
             sweetalert.showInputError("Please enter an ID");
-        } else if (getter(getState(), id)){
+        } else if (getter(getState(), uid)){
             sweetalert.showInputError(`A ${resourceName} by this id already exists!`);
-        } else if (!/^[A-Z0-9-]+$/.test(id)){
+        } else if (!/^[A-Z0-9-]+$/.test(uid)){
             sweetalert.showInputError("id must contain only letters, numbers or '-'");
         } else {
-            dispatch(action(id))
+            dispatch(action({...itemArgs, uid}))
             sweetalert('Success!', `Added a ${resourceName}`, 'success')
+            swal({
+                title: "Success!", 
+                 type: "success",   text: `Added a ${resourceName}`,
+                 timer: 700,
+                 showConfirmButton: false 
+            });
         }
     })
 };
