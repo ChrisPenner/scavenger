@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 import {Provider, connect} from 'react-redux'
+import store from './store'
 
 import { Stories, Story } from './story'
 import Clue from './clue'
@@ -9,9 +10,8 @@ import {fetchResource, loadStories, loadClues, loadAnswers} from './actions'
 import * as Res from './resources'
 import {Clues} from './clue'
 
-import store from './store'
 
-const AppView = ({children, loading}) => {     
+const AppView = ({children, loading}) => {
     if (loading) {
         return <div> Loading... </div>
     }
@@ -45,8 +45,8 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
             <Route path="/" component={App} onEnter={load}>
+                <Route path={Routes.clue(':clueID') } component={Clue}/>
                 <IndexRoute component={Index}/>
-                <Route path={ Routes.clue(':clueID') } component={Clue}/>
                 <Route path={Routes.story(INDEX)}>
                     <IndexRoute component={Stories}/>
                     <Route path=':storyID' component={Story}>

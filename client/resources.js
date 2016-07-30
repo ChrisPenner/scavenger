@@ -19,6 +19,13 @@ const createResource = ({route, factory}) => {
             }).then(resp => resp.json())
         }
 
+        static post(id, data){
+            return fetch(route(id), {
+                method: 'post',
+                body: JSON.stringify(data),
+            }).then(resp => resp.json())
+        }
+
         static new(args){
             return factory(args)
         }

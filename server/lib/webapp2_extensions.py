@@ -76,13 +76,24 @@ def create_resource_handler(Model, id_key='uid'):
             return item.to_dict()
 
         def put(self, uid, data):
-            print 'DATA', data
+            logging.info('PUT: %s, %s', uid, data)
             item = Model.get_by_id(uid)
             if item is None:
                 abort(400, 'No Resource for that id')
             if hasattr(Model, 'DATA_FIELDS'):
                 data = { k:v for k,v in data.iteritems() if k in Model.DATA_FIELDS }
             item.populate(**data)
+            item.put()
+            return item.to_dict()
+
+        def post(self, uid, data):
+            logging.info('POST: %s, %s', uid, data)
+            item = Model.get_by_id(uid)
+            if item:
+                abort(400, 'Resource already exists!')
+            if hasattr(Model, 'DATA_FIELDS'):
+                data = { k:v for k,v in data.iteritems() if k in Model.DATA_FIELDS }
+            item = Model.from_uid(uid, **data)
             item.put()
             return item.to_dict()
 

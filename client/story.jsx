@@ -41,8 +41,6 @@ const storiesProps = (state) => {
 const Stories = connect(storiesProps, {addStory: addStoryModal})(StoriesView)
 
 const StoryView = ({ story, clues, onChangeStory, children, addClue }) =>{
-    console.log(clues)
-    console.log(children)
     if (!story){
         return <div> 'wut?' </div>
     }

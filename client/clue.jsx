@@ -27,7 +27,7 @@ const cluesProps = (state, {params:{storyID}}) => {
 }
 export const Clues = connect(cluesProps)(CluesView)
 
-const Clue = ({clue, answers, onChangeClue, save}) => {
+const Clue = ({clue, answers, changeClue, saveClue}) => {
     const answerView = answers.map(answer => (
                 <Answer key={answer.uid} answerID={answer.uid} />
                 ))
@@ -35,14 +35,14 @@ const Clue = ({clue, answers, onChangeClue, save}) => {
         <div key={clue.uid} className="panel panel-info">
             <div className="panel-heading">
                 {clue.uid}
-                <a className="pull-right" onClick={save} >Save</a>
+                <a className="pull-right" onClick={() => save(clue.uid)} >Save</a>
             </div>
             <div className="panel-body">
             <label>
                 Text:
                 <input
                     value={clue.text || ''}
-                    onChange={(e)=>onChangeClue('text', e.target.value)}
+                    onChange={(e)=>changeClue(clue.uid, 'text', e.target.value)}
                 />
             </label>
             <br/>
@@ -50,7 +50,7 @@ const Clue = ({clue, answers, onChangeClue, save}) => {
                 Hint:
                 <input
                     value={clue.hint || ''}
-                    onChange={(e)=>onChangeClue('hint', e.target.value)}
+                    onChange={(e)=>changeClue(clue.uid, 'hint', e.target.value)}
                 />
             </label>
             <h4>Answers </h4>
@@ -69,10 +69,4 @@ const clueProps = (state, props) => {
         answers: getAnswersListByClue(state, clueID),
     }
 }
-const clueActions = (dispatch, {params:{clueID}}) => {
-    return bindActionCreators({
-        onChangeClue: changeClue(clueID),
-        save: saveClue(clueID),
-    }, dispatch)
-}
-export default connect(clueProps, clueActions)(Clue)
+export default connect(clueProps, { saveClue, changeClue })(Clue)

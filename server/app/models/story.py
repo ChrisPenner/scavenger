@@ -5,7 +5,7 @@ class Story(ndb.Model):
     DATA_FIELDS = ['clues', 'default_hint']
 
     clues = ndb.StringProperty(repeated=True)
-    default_hint = ndb.StringProperty(required=True)
+    default_hint = ndb.StringProperty()
     story_id = ndb.ComputedProperty(lambda s: s.uid)
     uid = ndb.StringProperty(required=True)
 
