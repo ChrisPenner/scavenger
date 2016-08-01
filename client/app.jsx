@@ -6,7 +6,7 @@ import { syncHistoryWithStore } from 'react-router-redux'
 import store from 'store'
 
 import { Stories, Story, CreateStory } from 'story'
-import Clue from 'clue'
+import { Clue, CreateClue } from 'clue'
 import Routes, { INDEX, CREATE } from 'routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from 'actions'
 import * as Res from 'resources'
@@ -48,9 +48,10 @@ ReactDOM.render(
         <Router history={syncHistoryWithStore(browserHistory, store)}>
 
             <Route path="/" component={App} onEnter={load}>
-                <Route path={Routes.clue(':clueID') } component={Clue}/>
-                <IndexRoute component={Index}/>
                 <Route path={Routes.story(CREATE)} component={CreateStory} />
+                <Route path={Routes.clue(CREATE)} component={CreateClue} />
+                <IndexRoute component={Index}/>
+                <Route path={Routes.clue(':clueID') } component={Clue}/>
                 <Route path={Routes.story(INDEX)}>
                     <IndexRoute component={Stories}/>
                     <Route path=':storyID' component={Story}>

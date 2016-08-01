@@ -15,3 +15,4 @@ export const ADD_CLUE = 'ADD_CLUE'
 export const ADD_ANSWER = 'ADD_ANSWER'
 
 export const SET_STORY = 'SET_STORY'
+export const SET_CLUE = 'SET_CLUE'

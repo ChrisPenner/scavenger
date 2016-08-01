@@ -1,19 +1,20 @@
 import { connect } from 'react-redux'
-import { createStory } from 'actions'
+import { createClue } from 'actions'
 
-const stateToProps = ({stories}) => {
-    return {stories}
+const stateToProps = ({clues}) => {
+    return {clues}
 }
-export default connect(stateToProps, {createStory})(
+export default connect(stateToProps, {createClue})(
 class Create extends React.Component {
-    constructor({createStory}){
+    constructor({createClue}){
         super()
         this.state = {
             uid: '',
-            defaultHint: '',
+            text: '',
+            hint: '',
         }
         this.create = this.create.bind(this)
-        this.createStory = createStory
+        this.createClue = createClue
     }
 
     update(changes){
@@ -25,7 +26,7 @@ class Create extends React.Component {
         if (uid === '') {
             return "Please enter an ID";
         } else if (stories[uid]){
-            return `A Story by this uid already exists!`
+            return `A Clue by this uid already exists!`
         } else if (!/^[A-Z0-9-]+$/.test(uid)){
             return "uid must contain only letters, numbers or '-'"
         }
@@ -37,16 +38,17 @@ class Create extends React.Component {
     }
 
     create(){
-        this.createStory({
+        this.createClue({
             uid: this.state.uid,
-            default_hint: this.state.defaultHint
+            text: this.state.text,
+            hint: this.state.hint,
         })
     }
 
     render(){
         return (
             <div>
-                <h1> New Story </h1>
+                <h1> New Clue </h1>
                 <label> ID:
                     <input
                         type="text"
@@ -55,11 +57,19 @@ class Create extends React.Component {
                     />
                 </label>
                 <br/>
-                <label> Default Hint:
+                <label> Text:
                     <br/>
                     <textarea
-                        onChange={(e) => this.update({defaultHint: e.target.value})}
-                        value={this.state.defaultHint}
+                        onChange={(e) => this.update({text: e.target.value})}
+                        value={this.state.text}
+                        />
+                </label>
+                <br/>
+                <label> Hint:
+                    <br/>
+                    <textarea
+                        onChange={(e) => this.update({hint: e.target.value})}
+                        value={this.state.hint}
                         />
                 </label>
                 <br/>

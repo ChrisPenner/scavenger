@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
-import { getStory, getClue, getCluesByStory } from 'reducers'
-import { changeStory, addClue, saveStory} from 'actions'
+import { Link } from 'react-router'
 
-import { addResourceModal } from 'workflow'
-const addClueModal = addResourceModal('Clue', addClue, getClue, (uid) => push(Routes.clue(uid)))
+import Routes, { CREATE } from 'routes'
+import { getStory, getClue, getCluesByStory } from 'reducers'
+import { changeStory, saveStory} from 'actions'
 
 const stateToProps = (state, {params:{storyID}}) => {
     return {
@@ -12,8 +12,8 @@ const stateToProps = (state, {params:{storyID}}) => {
         loading: state.loading,
     }
 }
-export default connect(stateToProps, { changeStory, addClueModal, saveStory})
-(({ story, clues, changeStory, children, addClueModal, saveStory }) =>{
+export default connect(stateToProps, { changeStory, saveStory})
+(({ story, clues, changeStory, children, saveStory }) =>{
     return (
         <div>
             <h1>
@@ -31,7 +31,10 @@ export default connect(stateToProps, { changeStory, addClueModal, saveStory})
             <div>
                 <h2> Clues </h2>
                 {children}
-                <button onClick={() => addClueModal({story_id: story.uid})} className="btn btn-primary"> Add Clue </button>
+                <br/>
+                <Link to={Routes.clue(CREATE)} className="btn btn-primary">
+                    Add Clue
+                </Link>
             </div>
         </div>
     )

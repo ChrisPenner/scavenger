@@ -10,25 +10,6 @@ import {push} from 'react-router-redux'
 
 const addAnswerModal = addResourceModal('Answer', addAnswer, getAnswer)
 
-const CluesView = ({clues}) => {
-    const cluesView = clues.map(clue=>(
-                    <div key={clue.uid}>
-                        <Link to={Routes.clue(clue.uid)}> {clue.uid} </Link>
-                    </div>
-    ))
-    return (
-        <div>
-            {cluesView}
-        </div>
-    )
-}
-const cluesProps = (state, {params:{storyID}}) => {
-    return {
-        clues: getCluesListByStory(state, storyID),
-    }
-}
-export const Clues = connect(cluesProps)(CluesView)
-
 const Clue = ({clue, answers, changeClue, saveClue, addAnswerModal}) => {
     const answerView = answers.map(answer => (
                 <Answer key={answer.uid} answerID={answer.uid} />

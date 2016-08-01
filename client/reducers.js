@@ -69,6 +69,11 @@ const clues = (clues={}, action) => {
                     answers: [...clue.answers, action.payload.uid],
                 }
             }
+        case at.SET_CLUE:
+            return {
+                ...clues,
+                [action.payload.uid]: action.payload
+            }
         default:
             return clues
     }

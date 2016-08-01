@@ -46,9 +46,21 @@ export const setStory = (payload) => ({
     payload,
 })
 
+export const setClue = (payload) => ({
+    type: at.SET_CLUE,
+    payload,
+})
+
 export const createStory = (payload) => (dispatch) => {
     Story.put(payload.uid, payload)
         .then((story) => dispatch(setStory(story)))
         .then(() => dispatch(push(Routes.story(payload.uid))))
+        .catch(err=>console.error(err))
+}
+
+export const createClue = (payload) => (dispatch) => {
+    Clue.put(payload.uid, payload)
+        .then((clue) => dispatch(setClue(clue)))
+        .then(() => dispatch(push(Routes.clue(payload.uid))))
         .catch(err=>console.error(err))
 }
