@@ -29,7 +29,10 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ["", ".js", ".jsx"]
+        extensions: ["", ".js", ".jsx"],
+        root: [
+            path.resolve('./client')
+        ],
     },
     plugins: [
         new webpack.ProvidePlugin({

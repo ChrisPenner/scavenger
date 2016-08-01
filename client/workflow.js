@@ -8,7 +8,6 @@ export const addResourceModal = (resourceName, action, getter, successCallback) 
         closeOnConfirm: false,
         inputPlaceholder: `${resourceName} ID`
     }, (uid) => {
-        debugger
         if (uid === false){
             // Cancelled
             return

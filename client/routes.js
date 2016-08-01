@@ -1,4 +1,4 @@
-export { Routes as API } from './api'
+export { Routes as API } from 'api'
 
 export default {
     story: (id) => `/stories/${id}`,
@@ -7,3 +7,4 @@ export default {
 }
 
 export const INDEX = ''
+export const CREATE = 'create'

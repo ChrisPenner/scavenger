@@ -1,11 +1,11 @@
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
-import Routes from './routes'
-import * as Res from './resources'
-import Answer from './answer'
-import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from './reducers'
-import {changeClue, saveClue, addAnswer} from './actions'
-import {addResourceModal} from './workflow.js'
+import Routes from 'routes'
+import * as Res from 'resources'
+import Answer from 'answer'
+import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'reducers'
+import {changeClue, saveClue, addAnswer} from 'actions'
+import {addResourceModal} from 'workflow.js'
 import {push} from 'react-router-redux'
 
 const addAnswerModal = addResourceModal('Answer', addAnswer, getAnswer)

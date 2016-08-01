@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-import * as at from './action-types'
-import { Story, Clue, Answer } from './resources'
+import * as at from 'action-types'
+import { Story, Clue, Answer } from 'resources'
 
 const setter = (state, action) => {
     const item = state[action.uid]
@@ -39,6 +39,11 @@ const stories = (stories={}, action) => {
                     ...story,
                     clues: [...story.clues, action.payload.uid],
                 }
+            }
+        case at.SET_STORY:
+            return {
+                ...stories,
+                [action.payload.uid]: action.payload
             }
         default:
             return stories

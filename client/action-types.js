@@ -13,3 +13,5 @@ export const SAVE_ANSWER = 'SAVE_ANSWER'
 export const ADD_STORY = 'ADD_STORY'
 export const ADD_CLUE = 'ADD_CLUE'
 export const ADD_ANSWER = 'ADD_ANSWER'
+
+export const SET_STORY = 'SET_STORY'

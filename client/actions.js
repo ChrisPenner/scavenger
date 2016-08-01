@@ -1,6 +1,8 @@
-import {Story, Clue, Answer} from './resources'
-import { getStory, getClue, getAnswer } from './reducers'
-import * as at from './action-types'
+import {Story, Clue, Answer} from 'resources'
+import { getStory, getClue, getAnswer } from 'reducers'
+import { push } from 'react-router-redux'
+import Routes from 'routes'
+import * as at from 'action-types'
 
 const fetchResource = (Resource, actionType) => (dispatch) => {
     return Resource.index()
@@ -38,3 +40,15 @@ export const saveAnswer = saveResource(Answer, at.SAVE_ANSWER, getAnswer)
 export const addStory = (payload) => ({ type: at.ADD_STORY, payload})
 export const addClue = (payload) => ({ type: at.ADD_CLUE, payload})
 export const addAnswer = (payload) => ({ type: at.ADD_ANSWER, payload})
+
+export const setStory = (payload) => ({
+    type: at.SET_STORY,
+    payload,
+})
+
+export const createStory = (payload) => (dispatch) => {
+    Story.put(payload.uid, payload)
+        .then((story) => dispatch(setStory(story)))
+        .then(() => dispatch(push(Routes.story(payload.uid))))
+        .catch(err=>console.error(err))
+}

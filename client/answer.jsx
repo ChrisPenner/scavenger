@@ -1,7 +1,7 @@
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {getAnswer, getClues} from './reducers'
-import {changeAnswer} from './actions'
+import {getAnswer, getClues} from 'reducers'
+import {changeAnswer} from 'actions'
 const Answer = ({answer, clueIDs, changeAnswer}) => (
     <div className="input-group">
         <label>Pattern

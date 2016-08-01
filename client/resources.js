@@ -1,4 +1,4 @@
-import Routes, { INDEX } from './api'
+import Routes, { INDEX } from 'api'
 
 const createResource = ({route, factory}) => {
     return class Resource {
