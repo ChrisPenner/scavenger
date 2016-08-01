@@ -1,12 +1,14 @@
-import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import Routes from './routes'
-import {Button} from 'react-bootstrap'
 import * as Res from './resources'
 import Answer from './answer'
-import {getClue, getAnswersListByClue, getCluesListByStory} from './reducers'
-import {changeClue, saveClue} from './actions'
+import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from './reducers'
+import {changeClue, saveClue, addAnswer} from './actions'
+import {addResourceModal} from './workflow.js'
+import {push} from 'react-router-redux'
+
+const addAnswerModal = addResourceModal('Answer', addAnswer, getAnswer)
 
 const CluesView = ({clues}) => {
     const cluesView = clues.map(clue=>(
@@ -27,7 +29,7 @@ const cluesProps = (state, {params:{storyID}}) => {
 }
 export const Clues = connect(cluesProps)(CluesView)
 
-const Clue = ({clue, answers, changeClue, saveClue}) => {
+const Clue = ({clue, answers, changeClue, saveClue, addAnswerModal}) => {
     const answerView = answers.map(answer => (
                 <Answer key={answer.uid} answerID={answer.uid} />
                 ))
@@ -35,7 +37,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
         <div key={clue.uid} className="panel panel-info">
             <div className="panel-heading">
                 {clue.uid}
-                <a className="pull-right" onClick={() => save(clue.uid)} >Save</a>
+                <a className="pull-right" onClick={() => saveClue(clue.uid)} >Save</a>
             </div>
             <div className="panel-body">
             <label>
@@ -58,6 +60,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
+        <button className="btn btn-primary" onClick={() => addAnswerModal({clue_id: clue.uid, story_id: clue.story_id})}> + Add Answer </button>
         </div>
     </div>
     )
@@ -69,4 +72,4 @@ const clueProps = (state, props) => {
         answers: getAnswersListByClue(state, clueID),
     }
 }
-export default connect(clueProps, { saveClue, changeClue })(Clue)
+export default connect(clueProps, { saveClue, changeClue, addAnswerModal})(Clue)

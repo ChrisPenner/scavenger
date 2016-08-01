@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 import {Provider, connect} from 'react-redux'
-import { syncHistoryWithStore} from 'react-router-redux'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 import store from './store'
 

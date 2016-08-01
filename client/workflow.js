@@ -8,6 +8,7 @@ export const addResourceModal = (resourceName, action, getter, successCallback) 
         closeOnConfirm: false,
         inputPlaceholder: `${resourceName} ID`
     }, (uid) => {
+        debugger
         if (uid === false){
             // Cancelled
             return
@@ -16,9 +17,9 @@ export const addResourceModal = (resourceName, action, getter, successCallback) 
         if (uid === '') {
             sweetalert.showInputError("Please enter an ID");
         } else if (getter(getState(), uid)){
-            sweetalert.showInputError(`A ${resourceName} by this id already exists!`);
+            sweetalert.showInputError(`A ${resourceName} by this uid already exists!`);
         } else if (!/^[A-Z0-9-]+$/.test(uid)){
-            sweetalert.showInputError("id must contain only letters, numbers or '-'");
+            sweetalert.showInputError("uid must contain only letters, numbers or '-'");
         } else {
             dispatch(action({...itemArgs, uid}))
             swal({
@@ -27,7 +28,9 @@ export const addResourceModal = (resourceName, action, getter, successCallback) 
                  timer: 700,
                  showConfirmButton: false
             });
-            dispatch(successCallback(uid))
+            if(successCallback){
+                dispatch(successCallback(uid))
+            }
         }
     })
 };

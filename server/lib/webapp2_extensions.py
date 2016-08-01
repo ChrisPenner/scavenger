@@ -4,6 +4,8 @@ import logging
 from webapp2 import abort, Route, RequestHandler
 from webapp2_extras.routes import PathPrefixRoute
 
+from google.appengine.ext import ndb
+
 
 def parse_args(params, args):
     results = {}
@@ -75,6 +77,7 @@ def create_resource_handler(Model, id_key='uid'):
                 abort(400, 'No Resource for that id')
             return item.to_dict()
 
+        @ndb.transactional
         def put(self, uid, data):
             logging.info('PUT: %s, %s', uid, data)
             item = Model.get_by_id(uid) or Model.from_uid(uid)

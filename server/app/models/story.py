@@ -23,3 +23,11 @@ class Story(ndb.Model):
     def build_key(cls, story_id):
         story_id = story_id.upper()
         return ndb.Key(cls, cls.build_uid(story_id))
+
+    def add_clue(self, clue):
+        if clue.uid not in self.clues:
+            self.clues.append(clue.uid)
+
+    def remove_clue(self, clue):
+        if clue.uid in self.clues:
+            self.clues.remove(clue.uid)

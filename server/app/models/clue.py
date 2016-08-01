@@ -28,3 +28,26 @@ class Clue(ndb.Model):
         elif story_id and clue_id:
             return ndb.Key(cls, cls.build_uid(story_id, clue_id))
         raise TypeError('build_key requires either story_id and clue_id or a uid')
+
+    def pre_put_hook(self):
+        story = Story.get_by_id(self.story_id)
+        if story is None:
+            raise ValueError("A story doesn't exist for this clue")
+        story.add_clue(self)
+        story.put()
+
+    def pre_delete_hook(self):
+        story = Story.get_by_id(self.story_id)
+        if story is None:
+            return
+
+        story.remove_clue(self)
+        story.put()
+
+    def add_answer(self, answer):
+        if answer.uid not in self.answers:
+            self.answers.append(answer.uid)
+
+    def remove_answer(self, answer):
+        if answer.uid in self.answers:
+            self.answers.remove(answer.uid)

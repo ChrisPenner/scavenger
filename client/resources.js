@@ -12,17 +12,17 @@ const createResource = ({route, factory}) => {
                 .then(resp => resp.json())
         }
 
-        static put(id, data){
+        static put(id, payload){
             return fetch(route(id), {
                 method: 'put',
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             }).then(resp => resp.json())
         }
 
-        static post(id, data){
+        static post(id, payload){
             return fetch(route(id), {
                 method: 'post',
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             }).then(resp => resp.json())
         }
 

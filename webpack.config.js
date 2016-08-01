@@ -3,7 +3,7 @@ var path = require("path");
 module.exports = {
     entry: "./main",
     output: {
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "dist", "js"),
         filename: "bundle.js",
         sourceMapFilename: "bundle.map.js",
     },

@@ -27,3 +27,19 @@ class Answer(ndb.Model):
     @classmethod
     def get_by_ids(cls, story_id, clue_id, answer_id):
         return cls.build_key(cls.build_uid(story_id, clue_id, answer_id)).get()
+
+    def pre_put_hook(self):
+        clue = Clue.get_by_id(self.clue_id)
+        if clue is None:
+            raise ValueError("A clue doesn't exist for this clue")
+        clue.add_answer(self)
+        clue.put()
+
+    def pre_delete_hook(self):
+        clue = Clue.get_by_id(self.clue_id)
+        if clue is None:
+            return
+
+        clue.remove_answer(self)
+        clue.put()
+

@@ -1,11 +1,7 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-import {
-    LOAD_STORIES, LOAD_CLUES, LOAD_ANSWERS,
-    CHANGE_STORY, CHANGE_CLUE, CHANGE_ANSWER,
-    ADD_STORY, ADD_CLUE, ADD_ANSWER,
-} from './actions'
+import * as at from './action-types'
 import { Story, Clue, Answer } from './resources'
 
 const setter = (state, action) => {
@@ -28,20 +24,20 @@ const adder = (state, newItem) => {
 
 const stories = (stories={}, action) => {
     switch (action.type) {
-        case LOAD_STORIES:
-            return action.data
-        case CHANGE_STORY:
+        case at.LOAD_STORIES:
+            return action.payload
+        case at.CHANGE_STORY:
             return setter(stories, action)
-        case ADD_STORY:
-            return adder(stories, Story.new(action.data))
-        case ADD_CLUE:
-            const story = stories[action.data.story_id]
-            const {story_id} = action.data
+        case at.ADD_STORY:
+            return adder(stories, Story.new(action.payload))
+        case at.ADD_CLUE:
+            const story = stories[action.payload.story_id]
+            const {story_id} = action.payload
             return {
                 ...stories,
-                [action.data.story_id]: {
+                [story_id]: {
                     ...story,
-                    clues: [...story.clues, action.data.uid],
+                    clues: [...story.clues, action.payload.uid],
                 }
             }
         default:
@@ -51,12 +47,23 @@ const stories = (stories={}, action) => {
 
 const clues = (clues={}, action) => {
     switch (action.type) {
-        case LOAD_CLUES:
-            return action.data
-        case CHANGE_CLUE:
+        case at.LOAD_CLUES:
+            return action.payload
+        case at.CHANGE_CLUE:
             return setter(clues, action)
-        case ADD_CLUE:
-            return adder(clues, Clue.new(action.data))
+        case at.ADD_CLUE:
+            return adder(clues, Clue.new(action.payload))
+        case at.ADD_ANSWER:
+            const clue = clues[action.payload.clue_id]
+            const {clue_id} = action.payload
+            debugger
+            return {
+                ...clues,
+                [clue_id]: {
+                    ...clue,
+                    answers: [...clue.answers, action.payload.uid],
+                }
+            }
         default:
             return clues
     }
@@ -64,12 +71,12 @@ const clues = (clues={}, action) => {
 
 const answers = (answers={}, action) => {
     switch (action.type) {
-        case LOAD_ANSWERS:
-            return action.data
-        case CHANGE_ANSWER:
+        case at.LOAD_ANSWERS:
+            return action.payload
+        case at.CHANGE_ANSWER:
             return setter(answers, action)
-        case ADD_ANSWER:
-            return adder(answers, Answer.new(action.data))
+        case at.ADD_ANSWER:
+            return adder(answers, Answer.new(action.payload))
         default:
             return answers
     }
