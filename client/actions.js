@@ -64,3 +64,10 @@ export const createClue = (payload) => (dispatch) => {
         .then(() => dispatch(push(Routes.clue(payload.uid))))
         .catch(err=>console.error(err))
 }
+
+export const createAnswer = (payload) => (dispatch) => {
+    Answer.put(payload.uid, payload)
+        .then((answer) => dispatch(setAnswer(answer)))
+        .then(() => dispatch(push(Routes.answer(payload.uid))))
+        .catch(err=>console.error(err))
+}

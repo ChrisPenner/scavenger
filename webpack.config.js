@@ -13,18 +13,19 @@ module.exports = {
         inline: true,
         historyApiFallback: {
             index: 'index.html'
-        }
+        },
+        contentBase: './dist',
+        hot: true,
     },
     module: {
         loaders: [
             {
                 test: /\.jsx?$/, 
-                loader: "babel-loader",
+                loaders: [
+                    'react-hot',
+                    'babel-loader',
+                ],
                 exclude: path.resolve(__dirname, "node_modules"),
-                query: {
-                    presets: ['es2015', 'react'],
-                    plugins: ["transform-object-rest-spread"],
-                }
             },
         ]
     },

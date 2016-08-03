@@ -1,11 +1,11 @@
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
-import Routes from 'routes'
+import Routes, {CREATE} from 'routes'
 import * as Res from 'resources'
 import Answer from 'answer'
 import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'reducers'
 import {changeClue, saveClue, addAnswer} from 'actions'
-import {addResourceModal} from 'workflow.js'
+import {addResourceModal} from 'workflow'
 import {push} from 'react-router-redux'
 
 const addAnswerModal = addResourceModal('Answer', addAnswer, getAnswer)
@@ -41,7 +41,9 @@ const Clue = ({clue, answers, changeClue, saveClue, addAnswerModal}) => {
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
-        <button className="btn btn-primary" onClick={() => addAnswerModal({clue_id: clue.uid, story_id: clue.story_id})}> + Add Answer </button>
+            <Link to={Routes.answer(CREATE)} className="btn btn-primary">
+                Add Answer
+            </Link>
         </div>
     </div>
     )

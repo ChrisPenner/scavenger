@@ -32,7 +32,7 @@ export default connect(stateToProps, { changeStory, saveStory})
                 <h2> Clues </h2>
                 {children}
                 <br/>
-                <Link to={Routes.clue(CREATE)} className="btn btn-primary">
+                <Link to={{ pathname: Routes.clue(CREATE), query: {storyID: story.uid}}} className="btn btn-primary">
                     Add Clue
                 </Link>
             </div>

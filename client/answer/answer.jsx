@@ -2,7 +2,16 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {getAnswer, getClues} from 'reducers'
 import {changeAnswer} from 'actions'
-const Answer = ({answer, clueIDs, changeAnswer}) => (
+
+const stateToProps = (state, {answerID}) => {
+    const answer = getAnswer(state, answerID)
+    return {
+        answer,
+        clueIDs: Object.keys(getClues(state, answer.clue_id)),
+    }
+}
+export default connect(stateToProps, {changeAnswer})(
+({answer, clueIDs, changeAnswer}) => (
     <div className="input-group">
         <label>Pattern
             <input
@@ -22,13 +31,5 @@ const Answer = ({answer, clueIDs, changeAnswer}) => (
                 </select>
         </label>
     </div>
-)
-const answerProps = (state, {answerID}) => {
-    const answer = getAnswer(state, answerID)
-    return {
-        answer,
-        clueIDs: Object.keys(getClues(state, answer.clue_id)),
-    }
-}
+))
 
-export default connect(answerProps, {changeAnswer})(Answer)

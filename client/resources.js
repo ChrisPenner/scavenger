@@ -41,6 +41,7 @@ const storyFactory = (args) => ({
 
 const clueFactory = (args) => ({
     uid: null,
+    story_id: null,
     text: '',
     hint: '',
     media_url: '',

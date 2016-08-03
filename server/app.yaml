@@ -9,11 +9,21 @@ handlers:
   static_files: images/favicon.png
   upload: images/favicon.png
 
-- url: /static
-  static_dir: ../dist
+- url: /js
+  static_dir: ../dist/js
 
-- url: .*
+- url: /css
+  static_dir: ../dist/css
+
+- url: /assets
+  static_dir: ../dist/assets
+
+- url: /api/.*
   script: app.main.app
+
+- url: /.*
+  static_files: ../dist/index.html
+  upload: ../dist/index.html
 
 libraries:
 - name: jinja2

@@ -1,21 +1,24 @@
 import { connect } from 'react-redux'
-import { createClue } from 'actions'
+import { createAnswer } from 'actions'
+import { getClues } from 'reducers'
 
-const stateToProps = ({clues}) => {
-    return {clues}
+const stateToProps = (state) => {
+    return {
+        answers: state.answers,
+        clueIDs: Object.keys(getClues(state, answer.clue_id)),
+    }
 }
-export default connect(stateToProps, {createClue})(
+export default connect(stateToProps, {createAnswer})(
 class Create extends React.Component {
-    constructor({createClue, location: {query: {storyID}}}){
+    constructor({createAnswer}){
         super()
         this.state = {
             uid: '',
-            text: '',
-            hint: '',
+            pattern: '',
+            next_clue: '',
         }
-        this.storyID = storyID
         this.create = this.create.bind(this)
-        this.createClue = createClue
+        this.createAnswer = createAnswer
     }
 
     update(changes){
@@ -27,7 +30,7 @@ class Create extends React.Component {
         if (uid === '') {
             return "Please enter an ID";
         } else if (stories[uid]){
-            return `A Clue by this uid already exists!`
+            return `A Answer by this uid already exists!`
         } else if (!/^[A-Z0-9-]+$/.test(uid)){
             return "uid must contain only letters, numbers or '-'"
         }
@@ -39,18 +42,17 @@ class Create extends React.Component {
     }
 
     create(){
-        this.createClue({
+        this.createAnswer({
             uid: this.state.uid,
-            story_id: this.storyID,
-            text: this.state.text,
-            hint: this.state.hint,
+            pattern: this.state.pattern,
+            next_clue: this.state.next_clue,
         })
     }
 
     render(){
         return (
             <div>
-                <h1> New Clue </h1>
+                <h1> New Answer </h1>
                 <label> ID:
                     <input
                         type="text"
@@ -59,20 +61,27 @@ class Create extends React.Component {
                     />
                 </label>
                 <br/>
-                <label> Text:
+                <label> Pattern:
                     <br/>
-                    <textarea
+                    <input
                         onChange={(e) => this.update({text: e.target.value})}
                         value={this.state.text}
                         />
                 </label>
                 <br/>
-                <label> Hint:
+                <label> Next Clue:
                     <br/>
                     <textarea
-                        onChange={(e) => this.update({hint: e.target.value})}
-                        value={this.state.hint}
+                        onChange={(e) => this.update({next_clue: e.target.value})}
+                        value={this.state.next_clue}
                         />
+                        <select
+                            className="form-control"
+                            value={this.state.next_clue}
+                            onChange={(e) => this.update({next_clue: e.target.value})}
+                            >
+                                {clueIDs.map(clueID=><option key={clueID} value={clueID}>{clueID}</option>)}
+                                </select>
                 </label>
                 <br/>
                 <button onClick={this.create} className="btn btn-primary"> Create </button>
