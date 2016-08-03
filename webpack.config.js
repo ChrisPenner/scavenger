@@ -4,18 +4,21 @@ module.exports = {
     entry: "./main",
     output: {
         path: path.resolve(__dirname, "dist", "js"),
+        publicPath: "/js/",
         filename: "bundle.js",
         sourceMapFilename: "bundle.map.js",
     },
     devtool: 'source-map',
     devServer: {
-        port: 3000,
-        inline: true,
+        contentBase: './dist',
         historyApiFallback: {
             index: 'index.html'
         },
-        contentBase: './dist',
-        hot: true,
+        proxy: {
+            "/api/*": {
+                target: 'http://localhost:8080',
+            }
+        }
     },
     module: {
         loaders: [
