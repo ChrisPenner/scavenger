@@ -5,12 +5,9 @@ import * as Res from 'resources'
 import Answer from 'answer'
 import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'reducers'
 import {changeClue, saveClue, addAnswer} from 'actions'
-import {addResourceModal} from 'workflow'
 import {push} from 'react-router-redux'
 
-const addAnswerModal = addResourceModal('Answer', addAnswer, getAnswer)
-
-const Clue = ({clue, answers, changeClue, saveClue, addAnswerModal}) => {
+const Clue = ({clue, answers, changeClue, saveClue}) => {
     const answerView = answers.map(answer => (
                 <Answer key={answer.uid} answerID={answer.uid} />
                 ))
@@ -55,4 +52,4 @@ const clueProps = (state, props) => {
         answers: getAnswersListByClue(state, clueID),
     }
 }
-export default connect(clueProps, { saveClue, changeClue, addAnswerModal})(Clue)
+export default connect(clueProps, { saveClue, changeClue })(Clue)

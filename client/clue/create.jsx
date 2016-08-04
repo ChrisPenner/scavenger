@@ -40,8 +40,7 @@ class Create extends React.Component {
 
     create(){
         this.createClue({
-            uid: this.state.uid,
-            story_id: this.storyID,
+            uid: `${this.storyID}:${this.state.uid}`,
             text: this.state.text,
             hint: this.state.hint,
         })

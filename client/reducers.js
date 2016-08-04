@@ -30,9 +30,9 @@ const stories = (stories={}, action) => {
             return setter(stories, action)
         case at.ADD_STORY:
             return adder(stories, Story.new(action.payload))
-        case at.ADD_CLUE:
-            const story = stories[action.payload.story_id]
-            const {story_id} = action.payload
+        case at.SET_CLUE:
+            const [story_id, _] = action.payload.uid.split(':')
+            const story = stories[story_id]
             return {
                 ...stories,
                 [story_id]: {
