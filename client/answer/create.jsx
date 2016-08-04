@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
 import { createAnswer } from 'actions'
-import { getCluesByStory } from 'reducers'
+import { getCluesByStory, getAnswers } from 'reducers'
 
 const stateToProps = (state, {location: {query: {storyID, clueID}}}) => {
     return {
-        answers: state.answers,
+        answers: getAnswers(state),
         clues: getCluesByStory(state, storyID),
         storyID,
         clueID,

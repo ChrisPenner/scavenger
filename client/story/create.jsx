@@ -1,8 +1,9 @@
 import { connect } from 'react-redux'
 import { createStory } from 'actions'
+import {getStories} from 'reducers'
 
-const stateToProps = ({stories}) => {
-    return {stories}
+const stateToProps = (state) => {
+    return getStories(state)
 }
 export default connect(stateToProps, {createStory})(
 class Create extends React.Component {

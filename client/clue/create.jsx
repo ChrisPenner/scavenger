@@ -1,8 +1,11 @@
 import { connect } from 'react-redux'
 import { createClue } from 'actions'
+import { getClues } from 'reducers'
 
-const stateToProps = ({clues}) => {
-    return {clues}
+const stateToProps = (state) => {
+    return {
+        clues: getClues(state)
+    }
 }
 export default connect(stateToProps, {createClue})(
 class Create extends React.Component {
