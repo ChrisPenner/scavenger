@@ -15,21 +15,12 @@ const setter = (state, action) => {
     }
 }
 
-const adder = (state, newItem) => {
-    return {
-        ...state,
-        [newItem.uid]: newItem,
-    }
-}
-
 const stories = (stories={}, action) => {
     switch (action.type) {
         case at.LOAD_STORIES:
             return action.payload
         case at.CHANGE_STORY:
             return setter(stories, action)
-        case at.ADD_STORY:
-            return adder(stories, Story.new(action.payload))
         case at.SET_CLUE:
             const [story_id, _] = action.payload.uid.split(':')
             const story = stories[story_id]
@@ -56,23 +47,20 @@ const clues = (clues={}, action) => {
             return action.payload
         case at.CHANGE_CLUE:
             return setter(clues, action)
-        case at.ADD_CLUE:
-            return adder(clues, Clue.new(action.payload))
-        case at.ADD_ANSWER:
-            const clue = clues[action.payload.clue_id]
-            const {clue_id} = action.payload
-            debugger
-            return {
-                ...clues,
-                [clue_id]: {
-                    ...clue,
-                    answers: [...clue.answers, action.payload.uid],
-                }
-            }
         case at.SET_CLUE:
             return {
                 ...clues,
                 [action.payload.uid]: action.payload
+            }
+        case at.SET_ANSWER:
+            const [story_id, clue_id, _] = action.payload.uid.split(':')
+            const clue = clues[`${story_id}:${clue_id}`]
+            return {
+                ...clues,
+                [clue.uid]: {
+                    ...clue,
+                    answers: [...clue.answers, action.payload.uid],
+                }
             }
         default:
             return clues
@@ -85,8 +73,11 @@ const answers = (answers={}, action) => {
             return action.payload
         case at.CHANGE_ANSWER:
             return setter(answers, action)
-        case at.ADD_ANSWER:
-            return adder(answers, Answer.new(action.payload))
+        case at.SET_ANSWER:
+            return {
+                ...answers,
+                [action.payload.uid]: action.payload
+            }
         default:
             return answers
     }

@@ -8,7 +8,7 @@ module.exports = {
         filename: "bundle.js",
         sourceMapFilename: "bundle.map.js",
     },
-    devtool: 'source-map',
+    devtool: 'cheap-module-eval-source-map',
     devServer: {
         contentBase: './dist',
         historyApiFallback: {

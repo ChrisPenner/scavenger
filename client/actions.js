@@ -41,15 +41,9 @@ export const addStory = (payload) => ({ type: at.ADD_STORY, payload})
 export const addClue = (payload) => ({ type: at.ADD_CLUE, payload})
 export const addAnswer = (payload) => ({ type: at.ADD_ANSWER, payload})
 
-export const setStory = (payload) => ({
-    type: at.SET_STORY,
-    payload,
-})
-
-export const setClue = (payload) => ({
-    type: at.SET_CLUE,
-    payload,
-})
+export const setStory = (payload) => ({ type: at.SET_STORY, payload, })
+export const setClue = (payload) => ({ type: at.SET_CLUE, payload, })
+export const setAnswer = (payload) => ({ type: at.SET_ANSWER, payload, })
 
 export const createStory = (payload) => (dispatch) => {
     Story.put(payload.uid, payload)
@@ -66,8 +60,9 @@ export const createClue = (payload) => (dispatch) => {
 }
 
 export const createAnswer = (payload) => (dispatch) => {
+    const [storyID, clueID, _] = payload.uid.split(':')
     Answer.put(payload.uid, payload)
         .then((answer) => dispatch(setAnswer(answer)))
-        .then(() => dispatch(push(Routes.answer(payload.uid))))
+        .then(() => dispatch(push(Routes.clue(`${storyID}:${clueID}`))))
         .catch(err=>console.error(err))
 }

@@ -1,21 +1,23 @@
 import { connect } from 'react-redux'
 import { createAnswer } from 'actions'
-import { getClues } from 'reducers'
+import { getCluesByStory } from 'reducers'
 
-const stateToProps = (state) => {
+const stateToProps = (state, {location: {query: {storyID, clueID}}}) => {
     return {
         answers: state.answers,
-        clueIDs: Object.keys(getClues(state, answer.clue_id)),
+        clues: getCluesByStory(state, storyID),
+        storyID,
+        clueID,
     }
 }
 export default connect(stateToProps, {createAnswer})(
 class Create extends React.Component {
-    constructor({createAnswer}){
+    constructor({createAnswer, clues}){
         super()
         this.state = {
-            uid: '',
+            answer_id: '',
             pattern: '',
-            next_clue: '',
+            next_clue: clues[0].uid,
         }
         this.create = this.create.bind(this)
         this.createAnswer = createAnswer
@@ -25,25 +27,30 @@ class Create extends React.Component {
         this.setState(changes)
     }
 
+    getUID(){
+        const {answer_id} = this.state
+        const {storyID, clueID} = this.props
+        return [storyID, clueID, answer_id].join(':')
+    }
+
     idErrors(){
-        const {uid} = this.state
-        if (uid === '') {
+        if (answer_id === '') {
             return "Please enter an ID";
-        } else if (stories[uid]){
-            return `A Answer by this uid already exists!`
-        } else if (!/^[A-Z0-9-]+$/.test(uid)){
-            return "uid must contain only letters, numbers or '-'"
+        } else if (stories[this.getUID()]){
+            return `A Answer by this answer_id already exists!`
+        } else if (!/^[A-Z0-9-]+$/.test(answer_id)){
+            return "answer_id must contain only letters, numbers or '-'"
         }
     }
 
-    updateUID(newUID){
-        newUID = newUID.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
-        this.setState({uid: newUID})
+    updateAnswerID(newAnswerID){
+        newAnswerID = newAnswerID.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
+        this.setState({answer_id: newAnswerID})
     }
 
     create(){
         this.createAnswer({
-            uid: this.state.uid,
+            uid: this.getUID(),
             pattern: this.state.pattern,
             next_clue: this.state.next_clue,
         })
@@ -56,32 +63,30 @@ class Create extends React.Component {
                 <label> ID:
                     <input
                         type="text"
-                        onChange={(e) => this.updateUID(e.target.value)}
-                        value={this.state.uid}
+                        onChange={(e) => this.updateAnswerID(e.target.value)}
+                        value={this.state.answer_id}
                     />
                 </label>
                 <br/>
                 <label> Pattern:
                     <br/>
                     <input
-                        onChange={(e) => this.update({text: e.target.value})}
-                        value={this.state.text}
+                        onChange={(e) => this.update({pattern: e.target.value})}
+                        value={this.state.pattern}
                         />
                 </label>
                 <br/>
                 <label> Next Clue:
                     <br/>
-                    <textarea
-                        onChange={(e) => this.update({next_clue: e.target.value})}
+                    <select
+                        className="form-control"
                         value={this.state.next_clue}
-                        />
-                        <select
-                            className="form-control"
-                            value={this.state.next_clue}
-                            onChange={(e) => this.update({next_clue: e.target.value})}
-                            >
-                                {clueIDs.map(clueID=><option key={clueID} value={clueID}>{clueID}</option>)}
-                                </select>
+                        onChange={(e) => this.update({next_clue: e.target.value})}
+                        >
+                            {this.props.clues.map(
+                                clue => <option key={clue.uid} value={clue.uid}>{clue.clue_id}</option>
+                            )}
+                        </select>
                 </label>
                 <br/>
                 <button onClick={this.create} className="btn btn-primary"> Create </button>

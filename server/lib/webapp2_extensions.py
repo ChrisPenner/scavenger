@@ -77,7 +77,7 @@ def create_resource_handler(Model, id_key='uid'):
                 abort(400, 'No Resource for that id')
             return item.to_dict()
 
-        @ndb.transactional
+        @ndb.transactional(xg=True)
         def put(self, uid, data):
             logging.info('PUT: %s, %s', uid, data)
             item = Model.get_by_id(uid) or Model.from_uid(uid)

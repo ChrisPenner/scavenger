@@ -13,9 +13,9 @@ const stateToProps = (state, {params:{storyID}}) => {
 export default connect(stateToProps)(
 ({clues}) => {
     const cluesView = clues.map(clue=>(
-                    <div key={clue.uid}>
-                        <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
-                    </div>
+        <div key={clue.uid}>
+            <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
+        </div>
     ))
     return (
         <div>

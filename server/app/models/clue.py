@@ -1,4 +1,5 @@
 from google.appengine.ext import ndb
+from app.models.story import Story
 
 
 class Clue(ndb.Model):
@@ -29,14 +30,18 @@ class Clue(ndb.Model):
             return ndb.Key(cls, cls.build_uid(story_id, clue_id))
         raise TypeError('build_key requires either story_id and clue_id or a uid')
 
-    def pre_put_hook(self):
+    @classmethod
+    def get_by_ids(cls, story_id, clue_id):
+        return cls.build_key(story_id=story_id, clue_id=clue_id).get()
+
+    def _pre_put_hook(self):
         story = Story.get_by_id(self.story_id)
         if story is None:
             raise ValueError("A story doesn't exist for this clue")
         story.add_clue(self)
         story.put()
 
-    def pre_delete_hook(self):
+    def _pre_delete_hook(self):
         story = Story.get_by_id(self.story_id)
         if story is None:
             return

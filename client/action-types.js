@@ -16,3 +16,4 @@ export const ADD_ANSWER = 'ADD_ANSWER'
 
 export const SET_STORY = 'SET_STORY'
 export const SET_CLUE = 'SET_CLUE'
+export const SET_ANSWER = 'SET_ANSWER'

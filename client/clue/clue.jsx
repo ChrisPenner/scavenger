@@ -2,7 +2,7 @@ import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import Routes, {CREATE} from 'routes'
 import * as Res from 'resources'
-import Answer from 'answer'
+import {Answer} from 'answer'
 import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'reducers'
 import {changeClue, saveClue, addAnswer} from 'actions'
 import {push} from 'react-router-redux'
@@ -38,7 +38,8 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
-            <Link to={Routes.answer(CREATE)} className="btn btn-primary">
+        <Link to={{ pathname: Routes.answer(CREATE), query: {storyID: clue.story_id, clueID: clue.clue_id}}} 
+            className="btn btn-primary">
                 Add Answer
             </Link>
         </div>
