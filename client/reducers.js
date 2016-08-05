@@ -66,6 +66,7 @@ const listFromMapping = (mapping) => Object.keys(mapping).map(key => mapping[key
 
 export const getClue = (state, clueUid) => state.clues[clueUid]
 export const getClues = (state) => state.clues
+export const getClueUidsByStory = (state, storyUid) => getStory(state, storyUid).clues
 export const getCluesList = (state) => listFromMapping(state.clues)
 export const getCluesByStory = (state, storyUid) => getCluesList(state).filter(({storyUid}) => storyUid === storyUid)
 export const getCluesListByStory = (state, storyUid) => listFromMapping(getCluesByStory(state, storyUid))

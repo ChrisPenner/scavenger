@@ -1,13 +1,13 @@
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {getAnswer, getClues} from 'reducers'
+import {getAnswer, getClueUidsByStory} from 'reducers'
 import {changeAnswer} from 'actions'
 
 const stateToProps = (state, {answerUid}) => {
     const answer = getAnswer(state, answerUid)
     return {
         answer,
-        clueUids: Object.keys(getClues(state, answer.clueUid)),
+        clueUids: getClueUidsByStory(state, answer.storyUid)
     }
 }
 export default connect(stateToProps, {changeAnswer})(
