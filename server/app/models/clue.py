@@ -9,8 +9,8 @@ class Clue(ndb.Model):
     hint = ndb.StringProperty()
     media_url = ndb.StringProperty()
     answers = ndb.StringProperty(repeated=True)
-    story_id = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
-    clue_id = ndb.ComputedProperty(lambda s: s.uid.split(':')[1])
+    story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
+    clue_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[1])
     uid = ndb.StringProperty(required=True)
 
     @classmethod
@@ -30,19 +30,15 @@ class Clue(ndb.Model):
             return ndb.Key(cls, cls.build_uid(story_id, clue_id))
         raise TypeError('build_key requires either story_id and clue_id or a uid')
 
-    @classmethod
-    def get_by_ids(cls, story_id, clue_id):
-        return cls.build_key(story_id=story_id, clue_id=clue_id).get()
-
     def _pre_put_hook(self):
-        story = Story.get_by_id(self.story_id)
+        story = Story.get_by_id(self.story_uid)
         if story is None:
             raise ValueError("A story doesn't exist for this clue")
         story.add_clue(self)
         story.put()
 
     def _pre_delete_hook(self):
-        story = Story.get_by_id(self.story_id)
+        story = Story.get_by_id(self.story_uid)
         if story is None:
             return
 

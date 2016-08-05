@@ -2,9 +2,14 @@ import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
 import * as at from 'action-types'
-import { Story, Clue, Answer } from 'resources'
 
-const splitUID = R.compose(R.zipObj(['storyID', 'clueID', 'answerID']), R.split(':'))
+const splitUid = (uid) => {
+    const splitList = R.split(':', uid)
+    const concatWithColon = (prev, next) => `${prev}:${next}`
+    const ids = R.zipObj(['storyId', 'clueId', 'answerId'], splitList)
+    const uids = R.zipObj(['storyUid', 'clueUid', 'answerUid'], R.scan(concatWithColon, splitList))
+    return R.merge(ids, uids)
+}
 
 const stories = (stories={}, action) => {
     switch (action.type) {
@@ -13,8 +18,8 @@ const stories = (stories={}, action) => {
         case at.CHANGE_STORY:
             return R.assocPath([action.uid, action.field], action.value, stories)
         case at.SET_CLUE:
-            const { storyID } = splitUID(action.payload.uid)
-            return R.evolve({[storyID]: {clues: R.append(action.payload.uid)}}, stories)
+            const { storyId } = splitUid(action.payload.uid)
+            return R.evolve({[storyId]: {clues: R.append(action.payload.uid)}}, stories)
         case at.SET_STORY:
             return R.assoc(action.payload.uid, action.payload, stories)
         default:
@@ -31,9 +36,9 @@ const clues = (clues={}, action) => {
         case at.SET_CLUE:
             return R.assoc(action.payload.uid, action.payload, clues)
         case at.SET_ANSWER:
-            const { storyID, clueID } = splitUID(action.payload.uid)
-            const clueUID = R.join(':', [storyID, clueID])
-            return R.evolve({[clueUID]: {answers: R.append(action.payload.uid)}}, clues)
+            const { storyId, clueId } = splitUid(action.payload.uid)
+            const clueUid = R.join(':', [storyId, clueId])
+            return R.evolve({[clueUid]: {answers: R.append(action.payload.uid)}}, clues)
         default:
             return clues
     }
@@ -61,17 +66,17 @@ export default combineReducers({
 
 const listFromMapping = (mapping) => Object.keys(mapping).map(key => mapping[key])
 
-export const getClue = (state, clueID) => state.clues[clueID]
+export const getClue = (state, clueId) => state.clues[clueId]
 export const getClues = (state) => state.clues
 export const getCluesList = (state) => listFromMapping(state.clues)
-export const getCluesByStory = (state, storyID) => getCluesList(state).filter(({story_id}) => story_id === storyID)
-export const getCluesListByStory = (state, storyID) => listFromMapping(getCluesByStory(state, storyID))
+export const getCluesByStory = (state, storyId) => getCluesList(state).filter(({storyId}) => storyId === storyId)
+export const getCluesListByStory = (state, storyId) => listFromMapping(getCluesByStory(state, storyId))
 
-export const getStory = (state, storyID) => state.stories[storyID]
+export const getStory = (state, storyId) => state.stories[storyId]
 export const getStories = (state) => state.stories
 export const getStoriesList = (state) => listFromMapping(state.stories)
 
-export const getAnswer = (state, answerID) => state.answers[answerID]
+export const getAnswer = (state, answerId) => state.answers[answerId]
 export const getAnswers = (state) => state.answers
-export const getAnswersByClue = (state, clueID) => getClue(state, clueID).answers.map(answerID=>getAnswer(state, answerID))
-export const getAnswersListByClue = (state, clueID) => listFromMapping(getAnswersByClue(state, clueID))
+export const getAnswersByClue = (state, clueId) => getClue(state, clueId).answers.map(answerId=>getAnswer(state, answerId))
+export const getAnswersListByClue = (state, clueId) => listFromMapping(getAnswersByClue(state, clueId))

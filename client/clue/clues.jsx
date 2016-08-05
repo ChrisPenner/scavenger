@@ -4,9 +4,9 @@ import { Link } from 'react-router'
 import { getCluesListByStory } from 'reducers'
 import Routes from 'routes'
 
-const stateToProps = (state, {params:{storyID}}) => {
+const stateToProps = (state, {params:{storyId}}) => {
     return {
-        clues: getCluesListByStory(state, storyID),
+        clues: getCluesListByStory(state, storyId),
     }
 }
 
@@ -14,7 +14,7 @@ export default connect(stateToProps)(
 ({clues}) => {
     const cluesView = clues.map(clue=>(
         <div key={clue.uid}>
-            <Link to={Routes.clue(clue.uid)}> {clue.clue_id} </Link>
+            <Link to={Routes.clue(clue.uid)}> {clue.clueId} </Link>
         </div>
     ))
     return (

@@ -7,9 +7,8 @@ class Answer(ndb.Model):
 
     pattern = ndb.StringProperty(required=True)
     next_clue = ndb.StringProperty(required=True)
-    story_id = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
-    clue_id = ndb.ComputedProperty(lambda s: s.uid.split(':')[1])
-    answer_id = ndb.ComputedProperty(lambda s: s.uid.split(':')[2])
+    story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
+    clue_uid = ndb.ComputedProperty(lambda s: ':'.join(s.uid.split(':')[:2]))
     uid = ndb.StringProperty(required=True)
 
     @classmethod
@@ -25,20 +24,15 @@ class Answer(ndb.Model):
     def build_key(cls, uid):
         return ndb.Key(cls, uid.upper())
 
-    @classmethod
-    def get_by_ids(cls, story_id, clue_id, answer_id):
-        return cls.build_key(story_id=story_id, clue_id=clue_id, answer_id=answer_id).get()
-
     def _pre_put_hook(self):
-        print 'ASDLJFASLKDJFL'
-        clue = Clue.get_by_ids(self.story_id, self.clue_id)
+        clue = Clue.get_by_id(self.clue_uid)
         if clue is None:
             raise ValueError("A clue doesn't exist for this clue")
         clue.add_answer(self)
         clue.put()
 
     def _pre_delete_hook(self):
-        clue = Clue.get_by_id(self.clue_id)
+        clue = Clue.get_by_id(self.clue_uid)
         if clue is None:
             return
 

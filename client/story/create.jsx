@@ -24,7 +24,7 @@ class Create extends React.Component {
     idErrors(){
         const {uid} = this.state
         if (uid === '') {
-            return "Please enter an ID";
+            return "Please enter an Id";
         } else if (stories[uid]){
             return `A Story by this uid already exists!`
         } else if (!/^[A-Z0-9-]+$/.test(uid)){
@@ -32,15 +32,15 @@ class Create extends React.Component {
         }
     }
 
-    updateUID(newUID){
-        newUID = newUID.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
-        this.setState({uid: newUID})
+    updateUid(newUid){
+        newUid = newUid.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
+        this.setState({uid: newUid})
     }
 
     create(){
         this.createStory({
             uid: this.state.uid,
-            default_hint: this.state.defaultHint
+            defaultHint: this.state.defaultHint
         })
     }
 
@@ -48,10 +48,10 @@ class Create extends React.Component {
         return (
             <div>
                 <h1> New Story </h1>
-                <label> ID:
+                <label> Id:
                     <input
                         type="text"
-                        onChange={(e) => this.updateUID(e.target.value)}
+                        onChange={(e) => this.updateUid(e.target.value)}
                         value={this.state.uid}
                     />
                 </label>

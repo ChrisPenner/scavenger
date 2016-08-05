@@ -6,7 +6,6 @@ class Story(ndb.Model):
 
     clues = ndb.StringProperty(repeated=True)
     default_hint = ndb.StringProperty()
-    story_id = ndb.ComputedProperty(lambda s: s.uid)
     uid = ndb.StringProperty(required=True)
 
     @classmethod

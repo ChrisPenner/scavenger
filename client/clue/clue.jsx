@@ -9,7 +9,7 @@ import {push} from 'react-router-redux'
 
 const Clue = ({clue, answers, changeClue, saveClue}) => {
     const answerView = answers.map(answer => (
-                <Answer key={answer.uid} answerID={answer.uid} />
+                <Answer key={answer.uid} answerId={answer.uid} />
                 ))
     return (
         <div key={clue.uid} className="panel panel-info">
@@ -38,7 +38,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
-        <Link to={{ pathname: Routes.answer(CREATE), query: {storyID: clue.story_id, clueID: clue.clue_id}}} 
+        <Link to={{ pathname: Routes.answer(CREATE), query: {storyId: clue.storyId, clueId: clue.clueId}}} 
             className="btn btn-primary">
                 Add Answer
             </Link>
@@ -47,10 +47,10 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
     )
 }
 const clueProps = (state, props) => {
-    const {clueID} = props.params
+    const {clueId} = props.params
     return {
-        clue: getClue(state, clueID),
-        answers: getAnswersListByClue(state, clueID),
+        clue: getClue(state, clueId),
+        answers: getAnswersListByClue(state, clueId),
     }
 }
 export default connect(clueProps, { saveClue, changeClue })(Clue)

@@ -5,10 +5,10 @@ import Routes, { CREATE } from 'routes'
 import { getStory, getClue, getCluesByStory } from 'reducers'
 import { changeStory, saveStory} from 'actions'
 
-const stateToProps = (state, {params:{storyID}}) => {
+const stateToProps = (state, {params:{storyId}}) => {
     return {
-        story: getStory(state, storyID),
-        clues: getCluesByStory(state, storyID),
+        story: getStory(state, storyId),
+        clues: getCluesByStory(state, storyId),
         loading: state.loading,
     }
 }
@@ -24,15 +24,15 @@ export default connect(stateToProps, { changeStory, saveStory})
             <label>
                 Default Hint:
                 <input
-                    value={story.default_hint || ''}
-                    onChange={(e) => changeStory(story.uid, 'default_hint', e.target.value)}
+                    value={story.defaultHint || ''}
+                    onChange={(e) => changeStory(story.uid, 'defaultHint', e.target.value)}
                 />
             </label>
             <div>
                 <h2> Clues </h2>
                 {children}
                 <br/>
-                <Link to={{ pathname: Routes.clue(CREATE), query: {storyID: story.uid}}} className="btn btn-primary">
+                <Link to={{ pathname: Routes.clue(CREATE), query: {storyId: story.uid}}} className="btn btn-primary">
                     Add Clue
                 </Link>
             </div>

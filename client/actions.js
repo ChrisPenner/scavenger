@@ -60,9 +60,9 @@ export const createClue = (payload) => (dispatch) => {
 }
 
 export const createAnswer = (payload) => (dispatch) => {
-    const [storyID, clueID, _] = payload.uid.split(':')
+    const [storyId, clueId, _] = payload.uid.split(':')
     Answer.put(payload.uid, payload)
         .then((answer) => dispatch(setAnswer(answer)))
-        .then(() => dispatch(push(Routes.clue(`${storyID}:${clueID}`))))
+        .then(() => dispatch(push(Routes.clue(`${storyId}:${clueId}`))))
         .catch(err=>console.error(err))
 }

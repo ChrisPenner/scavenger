@@ -53,10 +53,10 @@ ReactDOM.render(
                 <Route path={Routes.clue(CREATE)} component={CreateClue} />
                 <Route path={Routes.answer(CREATE)} component={CreateAnswer} />
                 <IndexRoute component={Index}/>
-                <Route path={Routes.clue(':clueID') } component={Clue}/>
+                <Route path={Routes.clue(':clueId') } component={Clue}/>
                 <Route path={Routes.story(INDEX)}>
                     <IndexRoute component={Stories}/>
-                    <Route path=':storyID' component={Story}>
+                    <Route path=':storyId' component={Story}>
                         <IndexRoute component={Clues}/>
                     </Route>
                 </Route>

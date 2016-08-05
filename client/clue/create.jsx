@@ -9,14 +9,14 @@ const stateToProps = (state) => {
 }
 export default connect(stateToProps, {createClue})(
 class Create extends React.Component {
-    constructor({createClue, location: {query: {storyID}}}){
+    constructor({createClue, location: {query: {storyId}}}){
         super()
         this.state = {
             uid: '',
             text: '',
             hint: '',
         }
-        this.storyID = storyID
+        this.storyId = storyId
         this.create = this.create.bind(this)
         this.createClue = createClue
     }
@@ -28,7 +28,7 @@ class Create extends React.Component {
     idErrors(){
         const {uid} = this.state
         if (uid === '') {
-            return "Please enter an ID";
+            return "Please enter an Id";
         } else if (stories[uid]){
             return `A Clue by this uid already exists!`
         } else if (!/^[A-Z0-9-]+$/.test(uid)){
@@ -36,14 +36,14 @@ class Create extends React.Component {
         }
     }
 
-    updateUID(newUID){
-        newUID = newUID.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
-        this.setState({uid: newUID})
+    updateUid(newUid){
+        newUid = newUid.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
+        this.setState({uid: newUid})
     }
 
     create(){
         this.createClue({
-            uid: `${this.storyID}:${this.state.uid}`,
+            uid: `${this.storyId}:${this.state.uid}`,
             text: this.state.text,
             hint: this.state.hint,
         })
@@ -53,10 +53,10 @@ class Create extends React.Component {
         return (
             <div>
                 <h1> New Clue </h1>
-                <label> ID:
+                <label> Id:
                     <input
                         type="text"
-                        onChange={(e) => this.updateUID(e.target.value)}
+                        onChange={(e) => this.updateUid(e.target.value)}
                         value={this.state.uid}
                     />
                 </label>

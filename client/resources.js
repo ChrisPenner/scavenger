@@ -1,29 +1,39 @@
+import changeCase from 'change-case'
 import Routes, { INDEX } from 'api'
+
+const mapKeys = R.curry((f, obj) =>
+  R.fromPairs(R.map(R.adjust(f, 0), R.toPairs(obj))));
+const camelize = mapKeys(changeCase.camelCase)
+const snakify = mapKeys(changeCase.snakeCase)
 
 const createResource = ({route, factory}) => {
     return class Resource {
         static index(){
             return fetch(route(INDEX))
                 .then(resp => resp.json())
+                .then(R.map(camelize))
         }
 
         static get(id){
             return fetch(route(id))
                 .then(resp => resp.json())
+                .then(camelize)
         }
 
         static put(id, payload){
             return fetch(route(id), {
                 method: 'put',
-                body: JSON.stringify(payload),
+                body: JSON.stringify(snakify(payload)),
             }).then(resp => resp.json())
+              .then(camelize)
         }
 
         static post(id, payload){
             return fetch(route(id), {
                 method: 'post',
-                body: JSON.stringify(payload),
+                body: JSON.stringify(snakify(payload)),
             }).then(resp => resp.json())
+              .then(camelize)
         }
 
         static new(args){
@@ -34,17 +44,17 @@ const createResource = ({route, factory}) => {
 
 const storyFactory = (args) => ({
     uid: null,
-    default_hint: '',
+    defaultHint: '',
     clues: [],
     ...args,
 })
 
 const clueFactory = (args) => ({
     uid: null,
-    story_id: null,
+    storyId: null,
     text: '',
     hint: '',
-    media_url: '',
+    mediaUrl: '',
     answers: [],
     ...args,
 })
@@ -52,7 +62,7 @@ const clueFactory = (args) => ({
 const answerFactory = (args) => ({
     uid: null,
     pattern: '',
-    next_clue: '',
+    nextClue: '',
     ...args,
 })
 
