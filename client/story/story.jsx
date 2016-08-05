@@ -8,7 +8,6 @@ import { changeStory, saveStory} from 'actions'
 const stateToProps = (state, {params:{storyUid}}) => {
     return {
         story: getStory(state, storyUid),
-        loading: state.loading,
     }
 }
 export default connect(stateToProps, { changeStory, saveStory})

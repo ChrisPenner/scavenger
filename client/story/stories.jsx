@@ -5,7 +5,6 @@ import { getStoriesList } from 'reducers'
 
 const stateToProps = (state) => ({
     storiesList: getStoriesList(state),
-    loading: state.loading,
 })
 export default connect(stateToProps)(
 ({story, storiesList}) => {
