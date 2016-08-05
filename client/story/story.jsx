@@ -5,15 +5,15 @@ import Routes, { CREATE } from 'routes'
 import { getStory, getClue, getCluesByStory } from 'reducers'
 import { changeStory, saveStory} from 'actions'
 
-const stateToProps = (state, {params:{storyId}}) => {
+const stateToProps = (state, {params:{storyUid}}) => {
     return {
-        story: getStory(state, storyId),
-        clues: getCluesByStory(state, storyId),
+        story: getStory(state, storyUid),
         loading: state.loading,
     }
 }
 export default connect(stateToProps, { changeStory, saveStory})
-(({ story, clues, changeStory, children, saveStory }) =>{
+(({ story, changeStory, children, saveStory }) =>{
+    const clueLinks = story.clues.map(clueUid => <Link key={clueUid} to={Routes.clue(clueUid)}> {clueUid} </Link>)
     return (
         <div>
             <h1>
@@ -30,9 +30,9 @@ export default connect(stateToProps, { changeStory, saveStory})
             </label>
             <div>
                 <h2> Clues </h2>
-                {children}
+                {clueLinks}
                 <br/>
-                <Link to={{ pathname: Routes.clue(CREATE), query: {storyId: story.uid}}} className="btn btn-primary">
+                <Link to={{ pathname: Routes.clue(CREATE), query: {storyUid: story.uid}}} className="btn btn-primary">
                     Add Clue
                 </Link>
             </div>

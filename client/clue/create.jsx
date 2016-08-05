@@ -9,14 +9,14 @@ const stateToProps = (state) => {
 }
 export default connect(stateToProps, {createClue})(
 class Create extends React.Component {
-    constructor({createClue, location: {query: {storyId}}}){
+    constructor({createClue, location: {query: {storyUid}}}){
         super()
         this.state = {
-            uid: '',
+            id: '',
             text: '',
             hint: '',
         }
-        this.storyId = storyId
+        this.storyUid = storyUid
         this.create = this.create.bind(this)
         this.createClue = createClue
     }
@@ -26,24 +26,24 @@ class Create extends React.Component {
     }
 
     idErrors(){
-        const {uid} = this.state
-        if (uid === '') {
+        const {id} = this.state
+        if (id === '') {
             return "Please enter an Id";
-        } else if (stories[uid]){
-            return `A Clue by this uid already exists!`
-        } else if (!/^[A-Z0-9-]+$/.test(uid)){
-            return "uid must contain only letters, numbers or '-'"
+        } else if (stories[id]){
+            return `A Clue by this id already exists!`
+        } else if (!/^[A-Z0-9-]+$/.test(id)){
+            return "id must contain only letters, numbers or '-'"
         }
     }
 
-    updateUid(newUid){
-        newUid = newUid.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
-        this.setState({uid: newUid})
+    updateId(newId){
+        newId = newId.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
+        this.setState({id: newId})
     }
 
     create(){
         this.createClue({
-            uid: `${this.storyId}:${this.state.uid}`,
+            uid: `${this.storyUid}:${this.state.id}`,
             text: this.state.text,
             hint: this.state.hint,
         })
@@ -56,8 +56,8 @@ class Create extends React.Component {
                 <label> Id:
                     <input
                         type="text"
-                        onChange={(e) => this.updateUid(e.target.value)}
-                        value={this.state.uid}
+                        onChange={(e) => this.updateId(e.target.value)}
+                        value={this.state.id}
                     />
                 </label>
                 <br/>

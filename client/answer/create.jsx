@@ -2,12 +2,12 @@ import { connect } from 'react-redux'
 import { createAnswer } from 'actions'
 import { getCluesByStory, getAnswers } from 'reducers'
 
-const stateToProps = (state, {location: {query: {storyId, clueId}}}) => {
+const stateToProps = (state, {location: {query: {storyUid, clueUid}}}) => {
     return {
         answers: getAnswers(state),
-        clues: getCluesByStory(state, storyId),
-        storyId,
-        clueId,
+        clues: getCluesByStory(state, storyUid),
+        storyUid,
+        clueUid,
     }
 }
 export default connect(stateToProps, {createAnswer})(
@@ -29,8 +29,8 @@ class Create extends React.Component {
 
     getUId(){
         const {answerId} = this.state
-        const {storyId, clueId} = this.props
-        return [storyId, clueId, answerId].join(':')
+        const {clueUid} = this.props
+        return [clueUid, answerId].join(':')
     }
 
     idErrors(){
@@ -84,7 +84,7 @@ class Create extends React.Component {
                         onChange={(e) => this.update({nextClue: e.target.value})}
                         >
                             {this.props.clues.map(
-                                clue => <option key={clue.uid} value={clue.uid}>{clue.clueId}</option>
+                                clue => <option key={clue.uid} value={clue.uid}>{clue.uid}</option>
                             )}
                         </select>
                 </label>

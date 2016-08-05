@@ -3,15 +3,15 @@ import {connect} from 'react-redux'
 import {getAnswer, getClues} from 'reducers'
 import {changeAnswer} from 'actions'
 
-const stateToProps = (state, {answerId}) => {
-    const answer = getAnswer(state, answerId)
+const stateToProps = (state, {answerUid}) => {
+    const answer = getAnswer(state, answerUid)
     return {
         answer,
-        clueIds: Object.keys(getClues(state, answer.clueId)),
+        clueUids: Object.keys(getClues(state, answer.clueUid)),
     }
 }
 export default connect(stateToProps, {changeAnswer})(
-({answer, clueIds, changeAnswer}) => (
+({answer, clueUids, changeAnswer}) => (
     <div className="input-group">
         <label>Pattern
             <input
@@ -27,7 +27,7 @@ export default connect(stateToProps, {changeAnswer})(
                 value={answer.nextClue}
                 onChange={(e) => changeAnswer(answer.uid, 'nextClue', e.target.value)}
                 >
-                    {clueIds.map(clueId=><option key={clueId} value={clueId}>{clueId}</option>)}
+                    {clueUids.map(clueUid=><option key={clueUid} value={clueUid}>{clueUid}</option>)}
                 </select>
         </label>
     </div>

@@ -7,9 +7,17 @@ import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'red
 import {changeClue, saveClue, addAnswer} from 'actions'
 import {push} from 'react-router-redux'
 
-const Clue = ({clue, answers, changeClue, saveClue}) => {
+const clueProps = (state, props) => {
+    const {clueUid} = props.params
+    return {
+        clue: getClue(state, clueUid),
+        answers: getAnswersListByClue(state, clueUid),
+    }
+}
+export default connect(clueProps, { saveClue, changeClue })(
+({clue, answers, changeClue, saveClue}) => {
     const answerView = answers.map(answer => (
-                <Answer key={answer.uid} answerId={answer.uid} />
+                <Answer key={answer.uid} answerUid={answer.uid} />
                 ))
     return (
         <div key={clue.uid} className="panel panel-info">
@@ -38,19 +46,11 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
-        <Link to={{ pathname: Routes.answer(CREATE), query: {storyId: clue.storyId, clueId: clue.clueId}}} 
+        <Link to={{ pathname: Routes.answer(CREATE), query: {storyUid: clue.storyUid, clueUid: clue.uid}}} 
             className="btn btn-primary">
                 Add Answer
             </Link>
         </div>
     </div>
     )
-}
-const clueProps = (state, props) => {
-    const {clueId} = props.params
-    return {
-        clue: getClue(state, clueId),
-        answers: getAnswersListByClue(state, clueId),
-    }
-}
-export default connect(clueProps, { saveClue, changeClue })(Clue)
+})

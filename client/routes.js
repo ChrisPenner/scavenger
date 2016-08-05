@@ -1,9 +1,9 @@
 export { Routes as API } from 'api'
 
 export default {
-    story: (id) => `/stories/${id}`,
-    clue: (id) => `/clues/${id}`,
-    answer: (id) => `/answers/${id}`,
+    story: (uid) => `/stories/${uid}`,
+    clue: (uid) => `/clues/${uid}`,
+    answer: (uid) => `/answers/${uid}`,
 }
 
 export const INDEX = ''

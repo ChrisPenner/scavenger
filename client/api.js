@@ -1,6 +1,6 @@
-const story = (id) => `/api/stories/${id}`
-const clue = (id) => `/api/clues/${id}`
-const answer = (id) => `/api/answers/${id}`
+const story = (uid) => `/api/stories/${uid}`
+const clue = (uid) => `/api/clues/${uid}`
+const answer = (uid) => `/api/answers/${uid}`
 
 const Routes = {
     story, clue, answer,

@@ -14,22 +14,22 @@ const createResource = ({route, factory}) => {
                 .then(R.map(camelize))
         }
 
-        static get(id){
-            return fetch(route(id))
+        static get(uid){
+            return fetch(route(uid))
                 .then(resp => resp.json())
                 .then(camelize)
         }
 
-        static put(id, payload){
-            return fetch(route(id), {
+        static put(uid, payload){
+            return fetch(route(uid), {
                 method: 'put',
                 body: JSON.stringify(snakify(payload)),
             }).then(resp => resp.json())
               .then(camelize)
         }
 
-        static post(id, payload){
-            return fetch(route(id), {
+        static post(uid, payload){
+            return fetch(route(uid), {
                 method: 'post',
                 body: JSON.stringify(snakify(payload)),
             }).then(resp => resp.json())
@@ -51,7 +51,7 @@ const storyFactory = (args) => ({
 
 const clueFactory = (args) => ({
     uid: null,
-    storyId: null,
+    storyUid: null,
     text: '',
     hint: '',
     mediaUrl: '',
@@ -61,6 +61,8 @@ const clueFactory = (args) => ({
 
 const answerFactory = (args) => ({
     uid: null,
+    storyUid: null,
+    clueUid: null,
     pattern: '',
     nextClue: '',
     ...args,
