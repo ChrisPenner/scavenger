@@ -7,15 +7,14 @@ import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'red
 import {changeClue, saveClue, addAnswer} from 'actions'
 import {push} from 'react-router-redux'
 
-const clueProps = (state, props) => {
+const stateToProps = (state, props) => {
     const {clueUid} = props.params
     return {
         clue: getClue(state, clueUid),
         answers: getAnswersListByClue(state, clueUid),
     }
 }
-export default connect(clueProps, { saveClue, changeClue })(
-({clue, answers, changeClue, saveClue}) => {
+const Clue = ({clue, answers, changeClue, saveClue}) => {
     const answerView = answers.map(answer => (
                 <Answer key={answer.uid} answerUid={answer.uid} />
                 ))
@@ -46,11 +45,18 @@ export default connect(clueProps, { saveClue, changeClue })(
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
-        <Link to={{ pathname: Routes.answer(CREATE), query: {storyUid: clue.storyUid, clueUid: clue.uid}}} 
+        <Link to={{ pathname: Routes.answer(CREATE), query: {storyUid: clue.storyUid, clueUid: clue.uid}}}
             className="btn btn-primary">
                 Add Answer
             </Link>
         </div>
     </div>
     )
-})
+}
+Clue.propTypes = {
+    clue: React.PropTypes.object.isRequired,
+    answers: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    changeClue: React.PropTypes.func.isRequired,
+    saveClue: React.PropTypes.func.isRequired,
+}
+export default connect(stateToProps, { saveClue, changeClue })(Clue)

@@ -10,8 +10,7 @@ const stateToProps = (state, {params:{storyId}}) => {
     }
 }
 
-export default connect(stateToProps)(
-({clues}) => {
+const Clues = ({clues}) => {
     const cluesView = clues.map(clue=>(
         <div key={clue.uid}>
             <Link to={Routes.clue(clue.uid)}> {clue.clueId} </Link>
@@ -22,4 +21,8 @@ export default connect(stateToProps)(
             {cluesView}
         </div>
     )
-})
+}
+Clues.propTypes = {
+    clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+}
+export default connect(stateToProps)(Clues)

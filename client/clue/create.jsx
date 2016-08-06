@@ -7,7 +7,6 @@ const stateToProps = (state) => {
         clues: getClues(state)
     }
 }
-export default connect(stateToProps, {createClue})(
 class Create extends React.Component {
     constructor({createClue, location: {query: {storyUid}}}){
         super()
@@ -81,4 +80,10 @@ class Create extends React.Component {
             </div>
         )
     }
-})
+}
+
+Create.propTypes = {
+    createClue: React.PropTypes.func.isRequired,
+}
+
+export default connect(stateToProps, {createClue})(Create)

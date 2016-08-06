@@ -10,8 +10,7 @@ const stateToProps = (state, {params:{storyUid}}) => {
         story: getStory(state, storyUid),
     }
 }
-export default connect(stateToProps, { changeStory, saveStory})
-(({ story, changeStory, children, saveStory }) =>{
+const Story = ({ story, changeStory, children, saveStory }) =>{
     const clueLinks = story.clues.map(clueUid => <Link key={clueUid} to={Routes.clue(clueUid)}> {clueUid} </Link>)
     return (
         <div>
@@ -37,4 +36,11 @@ export default connect(stateToProps, { changeStory, saveStory})
             </div>
         </div>
     )
-})
+}
+Story.propTypes = {
+    story: React.PropTypes.object.isRequired,
+    changeStory: React.PropTypes.func.isRequired,
+    saveStory: React.PropTypes.func.isRequired,
+    children: React.PropTypes.element.isRequired,
+}
+export default connect(stateToProps, { changeStory, saveStory})(Story)

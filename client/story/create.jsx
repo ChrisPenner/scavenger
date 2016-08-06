@@ -5,7 +5,6 @@ import {getStories} from 'reducers'
 const stateToProps = (state) => {
     return getStories(state)
 }
-export default connect(stateToProps, {createStory})(
 class Create extends React.Component {
     constructor({createStory}){
         super()
@@ -68,4 +67,8 @@ class Create extends React.Component {
             </div>
         )
     }
-})
+}
+Create.propTypes = {
+    createStory: React.PropTypes.func.isRequired,
+}
+export default connect(stateToProps, {createStory})(Create)

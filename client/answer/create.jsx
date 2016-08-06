@@ -10,7 +10,6 @@ const stateToProps = (state, {location: {query: {storyUid, clueUid}}}) => {
         clueUid,
     }
 }
-export default connect(stateToProps, {createAnswer})(
 class Create extends React.Component {
     constructor({createAnswer, clues}){
         super()
@@ -93,4 +92,9 @@ class Create extends React.Component {
             </div>
         )
     }
-})
+}
+Create.propTypes = {
+    createAnswer: React.PropTypes.func.isRequired,
+    clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+}
+export default connect(stateToProps, {createAnswer})(Create)

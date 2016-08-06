@@ -6,8 +6,8 @@ import { getStoriesList } from 'reducers'
 const stateToProps = (state) => ({
     storiesList: getStoriesList(state),
 })
-export default connect(stateToProps)(
-({story, storiesList}) => {
+
+const Stories = ({story, storiesList}) => {
     if (story){
         return <Story story={story} />
     }
@@ -27,5 +27,11 @@ export default connect(stateToProps)(
             </Link>
         </div>
     )
-})
+}
 
+Stories.propTypes = {
+    story: React.PropTypes.object.isRequired,
+    storiesList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+}
+
+export default connect(stateToProps)(Stories)

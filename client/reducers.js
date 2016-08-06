@@ -3,11 +3,12 @@ import { routerReducer } from 'react-router-redux'
 
 import * as at from 'action-types'
 
-const splitUid = (uid) => {
+export const splitUid = (uid) => {
     const splitList = R.split(':', uid)
     const concatWithColon = (prev, next) => `${prev}:${next}`
+    const ids = R.zipObj(['storyId', 'clueId', 'answerId'], splitList)
     const uids = R.zipObj(['storyUid', 'clueUid', 'answerUid'], R.scan(concatWithColon, R.head(splitList), R.tail(splitList)))
-    return uids
+    return R.merge(ids, uids)
 }
 
 const stories = (stories={}, action) => {
