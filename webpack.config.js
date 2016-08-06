@@ -1,12 +1,14 @@
 var webpack = require("webpack");
 var path = require("path");
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
     entry: "./main",
     output: {
-        path: path.resolve(__dirname, "dist", "js"),
+        path: path.resolve(__dirname, "dist"),
         publicPath: "/js/",
-        filename: "bundle.js",
-        sourceMapFilename: "bundle.map.js",
+        filename: "/js/bundle.js",
+        sourceMapFilename: "/js/bundle.map.js",
     },
     devtool: 'cheap-module-eval-source-map',
     devServer: {
@@ -42,6 +44,10 @@ module.exports = {
         new webpack.ProvidePlugin({
             'React': 'react',
             'R': 'ramda',
+            'jquery': 'jquery',
         }),
+        new CopyWebpackPlugin([
+            { from: 'assets' },
+        ]),
     ]
 };
