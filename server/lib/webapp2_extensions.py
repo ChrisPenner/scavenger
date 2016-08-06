@@ -6,6 +6,8 @@ from webapp2_extras.routes import PathPrefixRoute
 
 from google.appengine.ext import ndb
 
+class UserFacingError(Exception):
+    pass
 
 def parse_args(params, args):
     results = {}
@@ -45,17 +47,7 @@ class restful_api(object):
                     except ValueError:
                         logging.error("Failed to serialize in %s.%s: %s", cls.__name__, method, handler.request.body)
                         return handler.abort(400, 'Invalid JSON body')
-                try:
-                    return_value = f(handler, *args, **kwargs)
-                except Exception as e:
-                    if hasattr(e, 'status'):
-                        handler.response.status_int = e.status
-                    else:
-                        handler.response.status_int = 400
-                    handler.response.body = json.dumps({
-                        'error': e.message
-                    })
-                    return
+                return_value = f(handler, *args, **kwargs)
                 if return_value is None:
                     logging.info("Nothing returned from %s.%s", cls.__name__, method)
                     return
@@ -77,6 +69,18 @@ class restful_api(object):
 def create_resource_handler(Model, id_key='uid'):
     @restful_api('/application/json')
     class ResourceHandler(RequestHandler):
+        def handle_exception(self, exception, debug):
+            logging.exception('%s: %s', Model.__name__, exception)
+            if not isinstance(exception, UserFacingError):
+                raise exception
+            if hasattr(exception, 'status'):
+                self.response.status_int = exception.status
+            else:
+                self.response.status_int = 400
+            self.response.body = json.dumps({
+                'error': exception.message
+            })
+
         def index(self):
             items = [item.to_dict() for item in Model.query().fetch()]
             return {item['uid']: item for item in items}
@@ -103,6 +107,6 @@ def create_resource_handler(Model, id_key='uid'):
 def ResourceRoutes(route_prefix, Model, id_key='uid'):
     handler = create_resource_handler(Model, id_key=id_key)
     return PathPrefixRoute('/{}'.format(route_prefix), [
-            Route('/', handler=handler, handler_method='index'),
-            Route('/<uid:[^/]+>', handler=handler),
+            Route('/', handler=handler, handler_method='index', methods=['GET']),
+            Route('/<uid:[^/]+>', handler=handler, methods=['GET', 'PUT']),
         ])

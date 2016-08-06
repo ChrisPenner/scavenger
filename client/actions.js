@@ -20,11 +20,13 @@ const setter = (type) => (uid, field, value) => ({
 })
 
 
-const successMessage = message => toastr.success(message, 'Success')
+const successMessage = message => () => toastr.success(message, 'Success')
+const handleError = err => { toastr.error(err, 'Error'); throw err }
+
 const saveResource = (Resource, actionType, getResourceState) => (uid) => (dispatch, getState) => {
     const currentState = getResourceState(getState(), uid)
     return Resource.put(uid, currentState)
-        .then(R.bind(successMessage, 'Saved'))
+        .then(successMessage, 'Saved')
 }
 
 export const loadStories = fetchResource(Story, at.LOAD_STORIES)
@@ -51,14 +53,14 @@ export const createStory = (payload) => (dispatch) => {
     Story.put(payload.uid, payload)
         .then((story) => dispatch(setStory(story)))
         .then(() => dispatch(push(Routes.story(payload.uid))))
-        .catch(err=>console.error(err))
+        .then(successMessage('Created'))
 }
 
 export const createClue = (payload) => (dispatch) => {
     Clue.put(payload.uid, payload)
         .then((clue) => dispatch(setClue(clue)))
         .then(() => dispatch(push(Routes.clue(payload.uid))))
-        .catch(err=>console.error(err))
+        .then(successMessage('Created'))
 }
 
 export const createAnswer = (payload) => (dispatch) => {
@@ -66,5 +68,5 @@ export const createAnswer = (payload) => (dispatch) => {
     Answer.put(payload.uid, payload)
         .then((answer) => dispatch(setAnswer(answer)))
         .then(() => dispatch(push(Routes.clue(`${storyId}:${clueId}`))))
-        .catch(err=>console.error(err))
+        .then(successMessage('Created'))
 }

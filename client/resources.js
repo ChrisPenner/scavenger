@@ -21,13 +21,16 @@ const snakify = mapKeys(changeCase.snakeCase)
 const handleError = err => { toastr.error(err, 'Error'); throw err }
 
 const processResponse = (respPromise) => {
-    return respPromise.then(resp => resp.json())
-        .then(json => {
-            if (json.error){
-                throw json.error
-            }
-            return json.data
-        }).catch(handleError)
+    return respPromise.then(resp => {
+        return resp.json().catch(() => {
+            throw resp.statusText
+        })
+    }).then(json => {
+        if (json.error){
+            throw json.error
+        }
+        return json.data
+    }).catch(handleError)
 }
 
 const createResource = ({route, factory}) => {
