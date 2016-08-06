@@ -30,7 +30,7 @@ const Stories = ({story, storiesList}) => {
 }
 
 Stories.propTypes = {
-    story: React.PropTypes.object.isRequired,
+    story: React.PropTypes.object,
     storiesList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 

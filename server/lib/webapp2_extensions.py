@@ -19,16 +19,16 @@ def parse_args(params, args):
     return results
 
 
-# def parse_form_data(params, args):
-#     results = {}
-#     for name, kind, required in args:
-#         if name not in params:
-#             abort(400, '{name} is required'.format(name=name))
-#         if kind is dict:
-#             results[name] = json.loads(params[name])
-#         else:
-#             results[name] = kind(params[name])
-#     return results
+def parse_form_data(params, args):
+    results = {}
+    for name, kind, required in args:
+        if name not in params:
+            abort(400, '{name} is required'.format(name=name))
+        if kind is dict:
+            results[name] = json.loads(params[name])
+        else:
+            results[name] = kind(params[name])
+    return results
 
 
 data_methods = ['put', 'patch', 'post']
@@ -45,16 +45,26 @@ class restful_api(object):
                     except ValueError:
                         logging.error("Failed to serialize in %s.%s: %s", cls.__name__, method, handler.request.body)
                         return handler.abort(400, 'Invalid JSON body')
-                response = f(handler, *args, **kwargs)
-                if response is None:
+                try:
+                    return_value = f(handler, *args, **kwargs)
+                except Exception as e:
+                    if hasattr(e, 'status'):
+                        handler.response.status_int = e.status
+                    else:
+                        handler.response.status_int = 400
+                    handler.response.body = json.dumps({
+                        'error': e.message
+                    })
+                    return
+                if return_value is None:
                     logging.info("Nothing returned from %s.%s", cls.__name__, method)
                     return
                 handler.response.headers['Content-Type'] = self.content_type
+                response = {
+                    'data': return_value
+                }
                 logging.info("Handler response for %s.%s is: %s", cls.__name__, method, response)
-                if isinstance(response, basestring):
-                    handler.response.body = response
-                else:
-                    handler.response.body = json.dumps(response)
+                handler.response.body = json.dumps(response)
             return wrapped
 
         for method in ['index', 'get', 'post', 'put', 'patch', 'delete']:

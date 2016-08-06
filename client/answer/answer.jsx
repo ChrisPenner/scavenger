@@ -13,7 +13,7 @@ const stateToProps = (state, {answerUid}) => {
     }
 }
 
-const Answer = ({answer, clueUids, changeAnswer}) => (
+const Answer = ({answer, clueUids, changeAnswer, saveAnswer}) => (
     <div>
         <h4> {getAnswerId(answer.uid)} &nbsp; <a className="" onClick={() => saveAnswer(answer.uid)}>save</a></h4>
         <div className="input-group">

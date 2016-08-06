@@ -1,11 +1,13 @@
 from google.appengine.ext import ndb
 from app.models.clue import Clue
 
+from .validators import not_empty
+
 
 class Answer(ndb.Model):
     DATA_FIELDS = ['pattern', 'next_clue']
 
-    pattern = ndb.StringProperty(required=True)
+    pattern = ndb.StringProperty(required=True, validator=not_empty)
     next_clue = ndb.StringProperty(required=True)
     story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
     clue_uid = ndb.ComputedProperty(lambda s: ':'.join(s.uid.split(':')[:2]))
