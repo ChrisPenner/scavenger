@@ -18,11 +18,7 @@ const deepMapKeys = R.curry((f, data) => {
 
 const camelize = mapKeys(changeCase.camelCase)
 const snakify = mapKeys(changeCase.snakeCase)
-
-
-const handleError = err => {
-    toastr.success('title', 'tohea')
-}
+const handleError = err => { toastr.error(err, 'Error'); throw err }
 
 const processResponse = (respPromise) => {
     return respPromise.then(resp => resp.json())
@@ -39,7 +35,6 @@ const createResource = ({route, factory}) => {
         static index(){
             return R.compose(processResponse, fetch, route)(INDEX)
                 .then(R.map(camelize))
-                .then(stuff => {console.log('break', stuff); return stuff})
         }
 
         static get(uid){

@@ -19,10 +19,12 @@ const setter = (type) => (uid, field, value) => ({
     value,
 })
 
+
+const successMessage = message => toastr.success(message, 'Success')
 const saveResource = (Resource, actionType, getResourceState) => (uid) => (dispatch, getState) => {
     const currentState = getResourceState(getState(), uid)
     return Resource.put(uid, currentState)
-        .catch(err=>console.error(err))
+        .then(R.bind(successMessage, 'Saved'))
 }
 
 export const loadStories = fetchResource(Story, at.LOAD_STORIES)
