@@ -6,7 +6,7 @@ module.exports = {
     entry: "./main",
     output: {
         path: path.resolve(__dirname, "dist"),
-        publicPath: "/js/",
+        publicPath: "/",
         filename: "/js/bundle.js",
         sourceMapFilename: "/js/bundle.map.js",
     },
@@ -45,6 +45,7 @@ module.exports = {
             'React': 'react',
             'R': 'ramda',
             'jquery': 'jquery',
+            'toastr': 'toastr'
         }),
         new CopyWebpackPlugin([
             { from: 'assets' },
