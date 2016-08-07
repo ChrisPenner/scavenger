@@ -43,34 +43,58 @@ const stateToProps = (state) => {
 const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, texts}) =>{
     return (
         <div>
-            <h1> Explorer </h1>
-            <div>
-                <label> To #:
-                    <input
-                        value={toNumber}
-                        onChange={(e) => changeExplorer(['toNumber'], e.target.value)}
-                    />
-                </label>
-                <br/>
-                <label> From #:
-                    <input
-                        value={fromNumber}
-                        onChange={(e) => changeExplorer(['fromNumber'], e.target.value)}
-                    />
-                </label>
-                <br/>
-                <input
-                    value={text}
-                    onChange={(e) => changeExplorer(['text'], e.target.value)}
-                    />
-                <button
-                    onClick={()=> sendMessage()}
-                    className="btn btn-primary">
-                    Submit
-                </button>
+            <div className="row">
+                <div className="col-xs-12">
+                    <h1> Explorer </h1>
+                </div>
             </div>
-            <div>
-                <Texts texts={texts}/>
+            <div className="row">
+                <div className="col-sm-6 col-md-3">
+                    <form action="javascript:void(0);">
+                        <div className="form-group">
+                            <label htmlFor="to"> To # </label>
+                            <input
+                                id="to"
+                                className="form-control"
+                                value={toNumber}
+                                placeholder="+555-123-4567"
+                                onChange={(e) => changeExplorer(['toNumber'], e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="from"> From # </label>
+                            <input
+                                id="from"
+                                className="form-control"
+                                value={fromNumber}
+                                placeholder="+555-123-4567"
+                                onChange={(e) => changeExplorer(['fromNumber'], e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="text"> Text </label>
+                            <div className="input-group">
+                                <input
+                                    id="text"
+                                    className="form-control"
+                                    value={text}
+                                    placeholder="Hi mom!"
+                                    onChange={(e) => changeExplorer(['text'], e.target.value)}
+                                />
+                                <span className="input-group-btn">
+                                    <button
+                                        onClick={()=> sendMessage()}
+                                        className="btn btn-primary">
+                                        Send
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div className="col-xs-12 col-md-9">
+                    <Texts texts={texts}/>
+                </div>
             </div>
         </div>
     )

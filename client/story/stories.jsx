@@ -13,14 +13,16 @@ const Stories = ({story, storiesList}) => {
     }
 
     const stories = storiesList.map(story =>(
-        <div key={story.uid}>
+        <li key={story.uid}>
             <Link to={Routes.story(story.uid)}> {story.uid} </Link>
-        </div>
+        </li>
     ))
 
     return (
         <div> My Stories:
-            {stories}
+            <ul>
+                {stories}
+            </ul>
             <br/>
             <Link to={Routes.story(CREATE)} className="btn btn-primary">
                 Add Story
