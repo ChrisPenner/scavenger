@@ -16,7 +16,7 @@ import {Explorer} from 'explorer'
 
 
 const App = connect(({loading})=>({loading}))(
-({children, loading}) => {
+({children, loading, story, clue, answer}) => {
     if (loading) {
         return <div> Loading... </div>
     }
@@ -38,7 +38,17 @@ const App = connect(({loading})=>({loading}))(
                 </div>
             </nav>
             <div className="container-fluid">
-                {children}
+                <div className="row">
+                    <div className="col-sm-4">
+                        {story}
+                    </div>
+                    <div className="col-sm-4">
+                        {clue}
+                    </div>
+                    <div className="col-sm-4">
+                        {answer}
+                    </div>
+                </div>
             </div>
         </div>
     )
@@ -60,22 +70,28 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={syncHistoryWithStore(browserHistory, store)}>
             <Route path="/" component={App} onEnter={load}>
-                <Route path={Routes.story(CREATE)} component={CreateStory} />
-                <Route path={Routes.clue(CREATE)} component={CreateClue} />
-                <Route path={Routes.answer(CREATE)} component={CreateAnswer} />
-                <IndexRoute component={Explorer}/>
-                <Route path={Routes.clue(':clueUid') } component={Clue}/>
-                <Route path={Routes.story(INDEX)}>
-                    <IndexRoute component={Stories}/>
-                    <Route path=':storyUid' component={Story}>
-                        <IndexRoute component={Clues}/>
-                    </Route>
-                </Route>
-                <Route path="*" component={My404}></Route>
+                <Route path={Routes.story(INDEX)} component={{story:Stories, clue:null}}/>
+                <Route path={Routes.story()} component={{story:Story, clue:Clues}}/>
+                <Route path={Routes.clue()} component={{story:Story, clue:Clue}}/>
             </Route>
+            
         </Router>
     </Provider>,
     document.getElementById('app')
 )
 
 export default App
+
+// <Route path="/" component={App} onEnter={load}>
+//                 <Route path={Routes.story(INDEX)}>
+//                     <IndexRoute component={Stories}/>
+//                     <Route path=':storyUid' component={{story:Story, clue:Clues}}/>
+//                     <Route path=':storyUid' component={{story:Story, clue:Clues}}/>
+//                 </Route>
+//                 <Route path={Routes.story(CREATE)} component={CreateStory} />
+//                 <Route path={Routes.clue(CREATE)} component={CreateClue} />
+//                 <Route path={Routes.answer(CREATE)} component={CreateAnswer} />
+//                 <IndexRoute component={{story: Stories}} />
+//                 <Route path={Routes.clue(':clueUid') } component={Clue}/>
+//                 <Route path="*" component={My404}></Route>
+//             </Route>

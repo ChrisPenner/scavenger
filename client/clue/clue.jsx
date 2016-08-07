@@ -6,9 +6,10 @@ import {Answer} from 'answer'
 import {getClue, getAnswersListByClue, getCluesListByStory, getAnswer} from 'reducers'
 import {changeClue, saveClue, addAnswer} from 'actions'
 import {push} from 'react-router-redux'
+import {uidsFromParams} from 'reducers'
 
-const stateToProps = (state, props) => {
-    const {clueUid} = props.params
+const stateToProps = (state, {params}) => {
+    const {clueUid} = uidsFromParams(params)
     return {
         clue: getClue(state, clueUid),
         answers: getAnswersListByClue(state, clueUid),
@@ -19,7 +20,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 <Answer key={answer.uid} answerUid={answer.uid} />
                 ))
     return (
-        <div key={clue.uid} className="panel panel-info">
+        <div key={clue.uid} className="panel panel-warning">
             <div className="panel-heading">
                 {clue.uid}
                 <a className="pull-right" onClick={() => saveClue(clue.uid)} >Save</a>
@@ -45,7 +46,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 ? answerView
                 : <div> No Answers for this clue.</div>
             }
-        <Link to={{ pathname: Routes.answer(CREATE), query: {storyUid: clue.storyUid, clueUid: clue.uid}}}
+        <Link to={{ pathname: Routes.answer(CREATE) }}
             className="btn btn-primary">
                 Add Answer
             </Link>
