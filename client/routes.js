@@ -16,8 +16,11 @@ export default {
         return `/stories/${STORY_ID_PARAM}/clues/${CLUE_ID_PARAM}`
     },
     answer: (uid) => {
-        const {storyId, clueId, answerId} = splitUid(uid)
-        return `/stories/${storyId}/clues/${clueId}/answers/${answerId}`
+        if (uid){
+            const {answerId, clueId, storyId} = splitUid(uid)
+            return `/stories/${storyId}/clues/${clueId}/answers/${answerId}`
+        }
+        return `/stories/${STORY_ID_PARAM}/clues/${CLUE_ID_PARAM}/answers/${ANSWER_ID_PARAM}`
     },
     explorer: () => `/`,
     message: () => `/api/message`,

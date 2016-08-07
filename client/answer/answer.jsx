@@ -1,11 +1,12 @@
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {getAnswer, getClueUidsByStory, splitUid} from 'reducers'
+import {getAnswer, getClueUidsByStory, splitUid, uidsFromParams} from 'reducers'
 import {changeAnswer, saveAnswer} from 'actions'
 
 const getAnswerId = R.compose(R.prop('answerId'), splitUid)
 
-const stateToProps = (state, {answerUid}) => {
+const stateToProps = (state, {params}) => {
+    const {answerUid} = uidsFromParams(params)
     const answer = getAnswer(state, answerUid)
     return {
         answer,
@@ -14,26 +15,36 @@ const stateToProps = (state, {answerUid}) => {
 }
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer}) => (
-    <div>
-        <h4> {getAnswerId(answer.uid)} &nbsp; <a className="" onClick={() => saveAnswer(answer.uid)}>save</a></h4>
-        <div className="input-group">
-            <label>Pattern
+    <div className="panel panel-success">
+        <div className="panel-heading">
+            {answer.uid}
+            <a
+                className="pull-right"
+                onClick={() => saveAnswer(answer.uid)}>
+                Save
+            </a>
+        </div>
+        <div className="panel-body">
+            <div className="form-group">
+                <label htmlFor="pattern"> Pattern </label>
                 <input
+                    id="pattern"
                     className="form-control"
-                    type="text"
-                    value={answer.pattern}
+                    value={answer.pattern || ''}
                     onChange={(e) => changeAnswer([answer.uid, 'pattern'], e.target.value)}
                 />
-            </label>
-            <label>Next Clue
+            </div>
+            <div className="form-group">
+                <label htmlFor="next-clue"> Next Clue </label>
                 <select
+                    id="next-clue"
                     className="form-control"
                     value={answer.nextClue}
                     onChange={(e) => changeAnswer([answer.uid, 'nextClue'], e.target.value)}
-                    >
-                        {clueUids.map(clueUid=><option key={clueUid} value={clueUid}>{clueUid}</option>)}
-                    </select>
-            </label>
+                >
+                    {clueUids.map(clueUid=><option key={clueUid} value={clueUid}>{clueUid}</option>)}
+                </select>
+            </div>
         </div>
     </div>
 )
@@ -43,4 +54,3 @@ Answer.propTypes = {
     changeAnswer: React.PropTypes.func.isRequired,
 }
 export default connect(stateToProps, {changeAnswer, saveAnswer})(Answer)
-

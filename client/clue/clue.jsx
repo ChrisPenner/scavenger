@@ -22,21 +22,24 @@ const Clue = ({clue, changeClue, saveClue}) => {
                 <a className="pull-right" onClick={() => saveClue(clue.uid)} >Save</a>
             </div>
             <div className="panel-body">
-                <label>
-                    Text:
+                <div className="form-group">
+                    <label htmlFor="text"> Text </label>
                     <input
+                        id="text"
+                        className="form-control"
                         value={clue.text || ''}
                         onChange={(e)=>changeClue([clue.uid, 'text'], e.target.value)}
                     />
-                </label>
-                <br/>
-                <label>
-                    Hint:
+                </div>
+                <div className="form-group">
+                    <label htmlFor="hint"> Hint: </label>
                     <input
+                        id="hint"
+                        className="form-control"
                         value={clue.hint || ''}
                         onChange={(e)=>changeClue([clue.uid, 'hint'], e.target.value)}
                     />
-                </label>
+                </div>
                 <h3> Answers </h3>
             </div>
             <Answers clueUid={clue.uid} />

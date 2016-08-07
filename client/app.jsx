@@ -7,11 +7,11 @@ import store from 'store'
 
 import { Stories, Story, CreateStory } from 'story'
 import { Clue, CreateClue } from 'clue'
+import { Answer } from 'answer'
 import { CreateAnswer } from 'answer'
 import Routes, { INDEX, CREATE } from 'routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from 'actions'
 import * as Res from 'resources'
-import {Clues} from 'clue'
 import {Explorer} from 'explorer'
 
 
@@ -73,6 +73,7 @@ ReactDOM.render(
                 <Route path={Routes.story(INDEX)} component={{story:Stories}}/>
                 <Route path={Routes.story()} component={{story:Story}}/>
                 <Route path={Routes.clue()} component={{story:Story, clue:Clue}}/>
+                <Route path={Routes.answer()} component={{story:Story, clue:Clue, answer: Answer}}/>
             </Route>
         </Router>
     </Provider>,

@@ -14,34 +14,28 @@ const stateToProps = (state, {params}) => {
 }
 const Story = ({ story, changeStory, saveStory }) =>{
     return (
-        <div>
-            <div className="row">
-                <div className="col">
-                    <div className="panel panel-info">
-                        <div className="panel-heading">
-                            {story.uid}
-                        <a
-                            className="pull-right"
-                            onClick={() => saveStory(story.uid)}>
-                            Save
-                        </a>
-                        </div>
-                        <div className="panel-body">
-                            <div className="form-group">
-                                <label htmlFor="default-hint"> Default Hint: </label>
-                                <input
-                                    id="default-hint"
-                                    className="form-control"
-                                    value={story.defaultHint || ''}
-                                    onChange={(e) => changeStory([story.uid, 'defaultHint'], e.target.value)}
-                                />
-                            </div>
-                            <h3> Clues </h3>
-                        </div>
-                        <Clues storyUid={story.uid}/>
-                    </div>
-                </div>
+        <div className="panel panel-info">
+            <div className="panel-heading">
+                {story.uid}
+                <a
+                    className="pull-right"
+                    onClick={() => saveStory(story.uid)}>
+                    Save
+                </a>
             </div>
+            <div className="panel-body">
+                <div className="form-group">
+                    <label htmlFor="default-hint"> Default Hint </label>
+                    <input
+                        id="default-hint"
+                        className="form-control"
+                        value={story.defaultHint || ''}
+                        onChange={(e) => changeStory([story.uid, 'defaultHint'], e.target.value)}
+                    />
+                </div>
+                <h3> Clues </h3>
+            </div>
+            <Clues storyUid={story.uid}/>
         </div>
     )
 }
