@@ -7,16 +7,17 @@ from app.models.user import User
 class Group(ndb.Model):
     name = ndb.StringProperty()
     code = ndb.StringProperty()
+    uid = ndb.StringProperty()
     data = ndb.JsonProperty(default={})
-    story_key = ndb.KeyProperty("Story")
+    story_uid = ndb.StringProperty()
     created_at = ndb.DateTimeProperty(auto_now_add=True)
     hints_used = ndb.IntegerProperty(default=0)
     completed_at = ndb.DateTimeProperty()
-    current_clue_key = ndb.StringProperty()
+    clue_uid = ndb.StringProperty()
     user_keys = ndb.KeyProperty(User, repeated=True)
 
-    @classmethod
-    def gen_code(cls):
+    @staticmethod
+    def gen_code():
         code = uuid4().hex[:6].upper()
         while Group.get_by_id(code):
             code = uuid4().hex[:6].upper()
@@ -28,16 +29,22 @@ class Group(ndb.Model):
 
     @property
     def current_clue(self):
-        return self.story.clues[self.current_clue_key]
+        return Clue.get_by_id(self.clue_uid)
 
     @current_clue.setter
-    def current_clue(self, value):
-        self.current_clue_key = value
+    def current_clue(self, clue):
+        if isinstance(story, basestring):
+            self.clue_uid = clue
+        else:
+            self.clue_uid = clue.uid
 
     @property
     def story(self):
-        return self.story_key.get()
+        return Story.get_by_id(story_uid)
 
     @story.setter
-    def story(self, value):
-        self.story_key = ndb.Key("Story", value.id)
+    def story(self, story):
+        if isinstance(story, basestring):
+            self.story_uid = story
+        else:
+            self.story_uid = story.uid

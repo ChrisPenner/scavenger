@@ -9,6 +9,10 @@ class Story(ndb.Model):
     uid = ndb.StringProperty(required=True)
 
     @classmethod
+    def get_by_id(cls, id):
+        return super(Story, cls).get_by_id(id.upper())
+
+    @classmethod
     def from_uid(cls, uid, *args, **kwargs):
         uid = uid.upper()
         return Story(key=cls.build_key(uid), uid=uid, *args, **kwargs)

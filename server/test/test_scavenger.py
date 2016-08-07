@@ -16,7 +16,7 @@ from app.scavenger import twiml_response, format_response, determine_message_typ
 
 class TestScavenger(TestCase):
     def setUp(self):
-        self.request = Request.blank('/twilio')
+        self.request = Request.blank('/api/message')
         self.request.method = 'POST'
         self.request.POST.update({
             'From': '+5555551234',

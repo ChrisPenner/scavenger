@@ -18,6 +18,10 @@ class Answer(ndb.Model):
         key = cls.build_key(uid)
         return cls(key=key, uid=uid.upper())
 
+    @classmethod
+    def get_by_id(cls, id):
+        return super(Answer, cls).get_by_id(id.upper())
+
     @staticmethod
     def build_uid(story_id, clue_id, answer_id):
         return ':'.join([story_id, clue_id, answer_id]).upper()
