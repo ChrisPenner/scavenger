@@ -70,11 +70,10 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={syncHistoryWithStore(browserHistory, store)}>
             <Route path="/" component={App} onEnter={load}>
-                <Route path={Routes.story(INDEX)} component={{story:Stories, clue:null}}/>
-                <Route path={Routes.story()} component={{story:Story, clue:Clues}}/>
+                <Route path={Routes.story(INDEX)} component={{story:Stories}}/>
+                <Route path={Routes.story()} component={{story:Story}}/>
                 <Route path={Routes.clue()} component={{story:Story, clue:Clue}}/>
             </Route>
-            
         </Router>
     </Provider>,
     document.getElementById('app')

@@ -1,15 +1,12 @@
 import {connect} from 'react-redux'
 import { Link } from 'react-router'
 
-import { getCluesListByStory } from 'reducers'
+import { getCluesListByStory, uidsFromParams } from 'reducers'
 import Routes, {CREATE} from 'routes'
-import {uidsFromParams} from 'reducers'
 
-const stateToProps = (state, {params}) => {
-    const {storyUid} = uidsFromParams(params)
+const stateToProps = (state, {storyUid}) => {
     return {
         clues: getCluesListByStory(state, storyUid),
-        storyUid,
     }
 }
 
@@ -22,18 +19,11 @@ const Clues = ({clues}) => {
             <span className="text-info">{clue.uid}</span>
         </Link>))
     return (
-        <div className="col">
-            <div className="panel panel-warning">
-                <div className="panel-heading">
-                    Clues
-                </div>
-                <div className="list-group">
-                    {clueLinks}
-                    <Link to={{ pathname: Routes.clue(CREATE)}} className="list-group-item list-group-item-warning">
-                        + Add Clue
-                    </Link>
-                </div>
-            </div>
+        <div className="list-group">
+            {clueLinks}
+            <Link to={{ pathname: Routes.clue(CREATE)}} className="list-group-item list-group-item-success">
+                + Add Clue
+            </Link>
         </div>
     )
 }
