@@ -1,0 +1,86 @@
+import {connect} from 'react-redux'
+import {getExplorer} from 'reducers'
+import {changeExplorer, sendMessage} from 'actions'
+
+const Texts = ({texts}) => {
+    const textsView = texts.map(({from, to, body}, i)=> {
+        return (
+            <tr key={i}>
+                <td>
+                    {from}
+                </td>
+                <td>
+                    {to}
+                </td>
+                <td>
+                    {body}
+                </td>
+            </tr>
+        )
+    })
+    return (
+        <table className="table table-hover table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th> From </th>
+                    <th> To </th>
+                    <th> Text </th>
+                </tr>
+            </thead>
+            <tbody>
+                {textsView}
+            </tbody>
+        </table>
+    )
+}
+Text.propTypes = {
+    texts: React.PropTypes.arrayOf(React.PropTypes.object),
+}
+
+const stateToProps = (state) => {
+    return getExplorer(state)
+}
+const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, texts}) =>{
+    return (
+        <div>
+            <h1> Explorer </h1>
+            <div>
+                <label> To #:
+                    <input
+                        value={toNumber}
+                        onChange={(e) => changeExplorer(['toNumber'], e.target.value)}
+                    />
+                </label>
+                <br/>
+                <label> From #:
+                    <input
+                        value={fromNumber}
+                        onChange={(e) => changeExplorer(['fromNumber'], e.target.value)}
+                    />
+                </label>
+                <br/>
+                <input
+                    value={text}
+                    onChange={(e) => changeExplorer(['text'], e.target.value)}
+                    />
+                <button
+                    onClick={()=> sendMessage()}
+                    className="btn btn-primary">
+                    Submit
+                </button>
+            </div>
+            <div>
+                <Texts texts={texts}/>
+            </div>
+        </div>
+    )
+}
+Explorer.propTypes = {
+    toNumber: React.PropTypes.string.isRequired,
+    fromNumber: React.PropTypes.string.isRequired,
+    text: React.PropTypes.string.isRequired,
+    texts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    changeExplorer: React.PropTypes.func.isRequired,
+    sendMessage: React.PropTypes.func.isRequired,
+}
+export default connect(stateToProps, {changeExplorer, sendMessage})(Explorer)

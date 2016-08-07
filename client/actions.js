@@ -1,5 +1,6 @@
+import xml2js from 'xml2js-es6-promise'
 import {Story, Clue, Answer} from 'resources'
-import { getStory, getClue, getAnswer } from 'reducers'
+import { getStory, getClue, getAnswer, getExplorer } from 'reducers'
 import { push } from 'react-router-redux'
 import Routes from 'routes'
 import * as at from 'action-types'
@@ -12,10 +13,9 @@ const fetchResource = (Resource, actionType) => (dispatch) => {
         }))
 }
 
-const setter = (type) => (uid, field, value) => ({
+const setter = (type) => (path, value) => ({
     type: type,
-    uid,
-    field,
+    path,
     value,
 })
 
@@ -27,6 +27,54 @@ const saveResource = (Resource, actionType, getResourceState) => (uid) => (dispa
     const currentState = getResourceState(getState(), uid)
     return Resource.put(uid, currentState)
         .then(successMessage, 'Saved')
+}
+
+export const receiveMessage = (message) => {
+    return {
+        type: at.RECEIVE_MESSAGE,
+        message,
+    }
+}
+
+const parseTwiML = xml2js
+
+const messageLens = R.lensPath(['Response', 'Message', 0])
+const bodyLens = R.compose(
+    messageLens,
+    R.lensPath(['Body', 0])
+)
+
+const toLens = R.compose(
+    messageLens,
+    R.lensPath(['$', 'to'])
+)
+
+const makeTextObj = (twimlObj) => ({
+    body: R.view(bodyLens, twimlObj),
+    to: R.view(toLens, twimlObj),
+})
+
+export const sendMessage = () => (dispatch, getState) => {
+    const {fromNumber, toNumber, text} = getExplorer(getState())
+    dispatch({
+        type: at.SEND_MESSAGE,
+        message: {
+            to: toNumber,
+            from: fromNumber,
+            body: text,
+        }
+    })
+    // https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters
+    const formData = new FormData()
+    formData.append('From', fromNumber)
+    formData.append('Body', text)
+    return fetch(Routes.message(), {
+        method: 'post',
+        body: formData,
+    }).then(resp => resp.text())
+    .then(parseTwiML)
+    .then(makeTextObj)
+    .then(R.compose(dispatch, receiveMessage))
 }
 
 export const loadStories = fetchResource(Story, at.LOAD_STORIES)
@@ -48,6 +96,8 @@ export const addAnswer = (payload) => ({ type: at.ADD_ANSWER, payload})
 export const setStory = (payload) => ({ type: at.SET_STORY, payload, })
 export const setClue = (payload) => ({ type: at.SET_CLUE, payload, })
 export const setAnswer = (payload) => ({ type: at.SET_ANSWER, payload, })
+
+export const changeExplorer = setter(at.CHANGE_EXPLORER)
 
 export const createStory = (payload) => (dispatch) => {
     Story.put(payload.uid, payload)

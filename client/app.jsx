@@ -12,6 +12,7 @@ import Routes, { INDEX, CREATE } from 'routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from 'actions'
 import * as Res from 'resources'
 import {Clues} from 'clue'
+import {Explorer} from 'explorer'
 
 
 const AppView = ({children, loading}) => {
@@ -47,7 +48,7 @@ const load = (nextState, replace, callback) => {
 ReactDOM.render(
     <Provider store={store}>
         <Router history={syncHistoryWithStore(browserHistory, store)}>
-
+            <Route path="/explorer" component={Explorer} />
             <Route path="/" component={App} onEnter={load}>
                 <Route path={Routes.story(CREATE)} component={CreateStory} />
                 <Route path={Routes.clue(CREATE)} component={CreateClue} />

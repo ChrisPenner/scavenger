@@ -16,7 +16,7 @@ const stories = (stories={}, action) => {
         case at.LOAD_STORIES:
             return action.payload
         case at.CHANGE_STORY:
-            return R.assocPath([action.uid, action.field], action.value, stories)
+            return R.assocPath(action.path, action.value, stories)
         case at.SET_CLUE:
             const { storyUid } = splitUid(action.payload.uid)
             return R.evolve({[storyUid]: {clues: R.append(action.payload.uid)}}, stories)
@@ -32,7 +32,7 @@ const clues = (clues={}, action) => {
         case at.LOAD_CLUES:
             return action.payload
         case at.CHANGE_CLUE:
-            return R.assocPath([action.uid, action.field], action.value, clues)
+            return R.assocPath(action.path, action.value, clues)
         case at.SET_CLUE:
             return R.assoc(action.payload.uid, action.payload, clues)
         case at.SET_ANSWER:
@@ -48,11 +48,24 @@ const answers = (answers={}, action) => {
         case at.LOAD_ANSWERS:
             return action.payload
         case at.CHANGE_ANSWER:
-            return R.assocPath([action.uid, action.field], action.value, answers)
+            return R.assocPath(action.path, action.value, answers)
         case at.SET_ANSWER:
             return R.assoc(action.payload.uid, action.payload, answers)
         default:
             return answers
+    }
+}
+
+const explorer = (explorer={text:'', toNumber:'', fromNumber:'', texts:[]}, action) => {
+    switch (action.type) {
+        case at.CHANGE_EXPLORER:
+            return R.assocPath(action.path, action.value, explorer)
+        case at.RECEIVE_MESSAGE:
+        case at.SEND_MESSAGE:
+            console.log(action)
+            return R.evolve({texts: R.append(action.message)})(explorer)
+        default:
+            return explorer
     }
 }
 
@@ -61,6 +74,7 @@ export default combineReducers({
     stories,
     clues,
     answers,
+    explorer,
 })
 
 const listFromMapping = (mapping) => Object.keys(mapping).map(key => mapping[key])
@@ -80,3 +94,5 @@ export const getAnswer = (state, answerUid) => state.answers[answerUid]
 export const getAnswers = (state) => state.answers
 export const getAnswersByClue = (state, clueUid) => getClue(state, clueUid).answers.map(answerUid=>getAnswer(state, answerUid))
 export const getAnswersListByClue = (state, clueUid) => listFromMapping(getAnswersByClue(state, clueUid))
+
+export const getExplorer = (state) => state.explorer

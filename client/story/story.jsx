@@ -23,7 +23,7 @@ const Story = ({ story, changeStory, children, saveStory }) =>{
                 Default Hint:
                 <input
                     value={story.defaultHint || ''}
-                    onChange={(e) => changeStory(story.uid, 'defaultHint', e.target.value)}
+                    onChange={(e) => changeStory([story.uid, 'defaultHint'], e.target.value)}
                 />
             </label>
             <div>

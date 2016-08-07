@@ -22,14 +22,14 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer}) => (
                     className="form-control"
                     type="text"
                     value={answer.pattern}
-                    onChange={(e) => changeAnswer(answer.uid, 'pattern', e.target.value)}
+                    onChange={(e) => changeAnswer([answer.uid, 'pattern'], e.target.value)}
                 />
             </label>
             <label>Next Clue
                 <select
                     className="form-control"
                     value={answer.nextClue}
-                    onChange={(e) => changeAnswer(answer.uid, 'nextClue', e.target.value)}
+                    onChange={(e) => changeAnswer([answer.uid, 'nextClue'], e.target.value)}
                     >
                         {clueUids.map(clueUid=><option key={clueUid} value={clueUid}>{clueUid}</option>)}
                     </select>

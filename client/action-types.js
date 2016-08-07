@@ -17,3 +17,7 @@ export const ADD_ANSWER = 'ADD_ANSWER'
 export const SET_STORY = 'SET_STORY'
 export const SET_CLUE = 'SET_CLUE'
 export const SET_ANSWER = 'SET_ANSWER'
+
+export const CHANGE_EXPLORER = 'CHANGE_EXPLORER'
+export const SEND_MESSAGE = 'SEND_MESSAGE'
+export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'

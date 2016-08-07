@@ -29,7 +29,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 Text:
                 <input
                     value={clue.text || ''}
-                    onChange={(e)=>changeClue(clue.uid, 'text', e.target.value)}
+                    onChange={(e)=>changeClue([clue.uid, 'text'], e.target.value)}
                 />
             </label>
             <br/>
@@ -37,7 +37,7 @@ const Clue = ({clue, answers, changeClue, saveClue}) => {
                 Hint:
                 <input
                     value={clue.hint || ''}
-                    onChange={(e)=>changeClue(clue.uid, 'hint', e.target.value)}
+                    onChange={(e)=>changeClue([clue.uid, 'hint'], e.target.value)}
                 />
             </label>
             <h4>Answers </h4>
