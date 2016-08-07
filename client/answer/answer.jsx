@@ -15,7 +15,7 @@ const stateToProps = (state, {params}) => {
 }
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer}) => (
-    <div className="panel panel-success">
+    <div className="panel panel-danger">
         <div className="panel-heading">
             {answer.uid}
             <a

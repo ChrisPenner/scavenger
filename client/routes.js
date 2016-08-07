@@ -22,7 +22,8 @@ export default {
         }
         return `/stories/${STORY_ID_PARAM}/clues/${CLUE_ID_PARAM}/answers/${ANSWER_ID_PARAM}`
     },
-    explorer: () => `/`,
+    createStory: () => `/create-story`,
+    explorer: () => `/explorer`,
     message: () => `/api/message`,
 }
 

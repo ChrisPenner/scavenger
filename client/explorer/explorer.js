@@ -49,7 +49,7 @@ const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, text
                 </div>
             </div>
             <div className="row">
-                <div className="col-sm-6 col-md-3">
+                <div className="col-xs-12 col-sm-6 col-md-3">
                     <form action="javascript:void(0);">
                         <div className="form-group">
                             <label htmlFor="to"> To # </label>
@@ -92,7 +92,7 @@ const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, text
                         </div>
                     </form>
                 </div>
-                <div className="col-xs-12 col-md-9">
+                <div className="col-xs-12 col-sm-6 col-md-9">
                     <Texts texts={texts}/>
                 </div>
             </div>
