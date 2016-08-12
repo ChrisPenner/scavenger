@@ -5,9 +5,11 @@ const STORY_ID_PARAM = ':storyId'
 const CLUE_ID_PARAM = ':clueId'
 const ANSWER_ID_PARAM = ':answerId'
 
+export const INDEX = ''
 
 export default {
     story: (uid) => `/stories/${uid || STORY_ID_PARAM}`,
+    storyIndex: () => `/stories/`,
     clue: (uid) => {
         if (uid){
             const {clueId, storyId} = splitUid(uid)
@@ -29,4 +31,3 @@ export default {
     message: () => `/api/message`,
 }
 
-export const INDEX = ''

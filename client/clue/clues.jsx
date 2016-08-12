@@ -5,6 +5,7 @@ import { getCluesListByStory, uidsFromParams } from 'reducers'
 import Routes from 'routes'
 
 const stateToProps = (state, {storyUid}) => {
+    debugger
     return {
         clues: getCluesListByStory(state, storyUid),
         storyUid,

@@ -8,7 +8,7 @@ import store from 'store'
 import { Stories, Story, CreateStory } from 'story'
 import { Clue, CreateClue } from 'clue'
 import { Answer, CreateAnswer } from 'answer'
-import Routes, { INDEX} from 'routes'
+import Routes from 'routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from 'actions'
 import * as Res from 'resources'
 import {Explorer} from 'explorer'
@@ -32,7 +32,7 @@ const App = connect(({loading})=>({loading}))(
                             <Link activeClassName="active" to={Routes.explorer()}>Explorer</Link>
                         </li>
                         <li>
-                            <Link activeClassName="active" to={Routes.story(INDEX)}>Stories</Link>
+                            <Link activeClassName="active" to={Routes.storyIndex()}>Stories</Link>
                         </li>
                     </ul>
                 </div>
@@ -73,7 +73,7 @@ ReactDOM.render(
         <Router history={syncHistoryWithStore(browserHistory, store)}>
             <Route path="/" component={App} onEnter={load}>
                 <Route path={Routes.explorer()} components={{ main:Explorer }}/>
-                <Route path={Routes.story(INDEX)} components={{story:Stories}}/>
+                <Route path={Routes.storyIndex()} components={{story:Stories}}/>
                 <Route path={Routes.story()} components={{story:Story}}/>
                 <Route path={Routes.clue()} components={{story:Story, clue:Clue}}/>
                 <Route path={Routes.answer()} components={{story:Story, clue:Clue, answer: Answer}}/>
