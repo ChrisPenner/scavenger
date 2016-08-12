@@ -1,16 +1,18 @@
 import {Link} from 'react-router'
 import {connect} from 'react-redux'
-import {uidsFromParams} from 'reducers'
-import { getAnswersListByClue } from 'reducers'
+import { getAnswersListByClue, splitUid } from 'reducers'
 import Routes, {CREATE} from 'routes'
 
 const stateToProps = (state, {clueUid}) => {
+    const {clueId, storyId} = splitUid(clueUid)
     return {
         answers: getAnswersListByClue(state, clueUid),
+        storyId,
+        clueId,
     }
 }
 
-const Answers = ({answers}) => {
+const Answers = ({answers, storyId, clueId}) => {
     const answerLinks = answers.map(answer => (
         <Link
             key={answer.uid}
@@ -21,7 +23,7 @@ const Answers = ({answers}) => {
     return (
         <div className="list-group">
             {answerLinks}
-            <Link to={{ pathname: Routes.answer(CREATE)}} className="list-group-item list-group-item-success">
+            <Link to={{ pathname: Routes.createAnswer(storyId, clueId)}} className="list-group-item list-group-item-success">
                 + Add Answer
             </Link>
         </div>

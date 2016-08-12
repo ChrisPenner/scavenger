@@ -33,7 +33,7 @@ class Answer(ndb.Model):
     def _pre_put_hook(self):
         clue = Clue.get_by_id(self.clue_uid)
         if clue is None:
-            raise ValueError("A clue doesn't exist for this clue")
+            raise ValueError("A clue doesn't exist for this answer")
         clue.add_answer(self)
         clue.put()
 

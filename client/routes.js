@@ -24,7 +24,7 @@ export default {
     },
     createStory: () => `/create-story`,
     createClue: (storyId) => `/stories/${storyId || STORY_ID_PARAM}/create-story`,
-    createAction: (storyId, clueId) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-story`,
+    createAnswer: (storyId, clueId) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-story`,
     explorer: () => `/explorer`,
     message: () => `/api/message`,
 }

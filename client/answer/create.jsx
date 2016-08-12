@@ -2,16 +2,16 @@ import { connect } from 'react-redux'
 import { createAnswer } from 'actions'
 import { getCluesByStory, getAnswers } from 'reducers'
 
-const stateToProps = (state, {location: {query: {storyUid, clueUid}}}) => {
+const stateToProps = (state, {params:{storyId, clueId}}) => {
     return {
         answers: getAnswers(state),
-        clues: getCluesByStory(state, storyUid),
-        storyUid,
-        clueUid,
+        clues: getCluesByStory(state, storyId),
+        storyId,
+        clueId,
     }
 }
 class Create extends React.Component {
-    constructor({createAnswer, clues}){
+    constructor({createAnswer, clues, storyId, clueId}){
         super()
         this.state = {
             answerId: '',
@@ -20,6 +20,8 @@ class Create extends React.Component {
         }
         this.create = this.create.bind(this)
         this.createAnswer = createAnswer
+        this.storyId = storyId
+        this.clueId = clueId
     }
 
     update(changes){
@@ -28,8 +30,7 @@ class Create extends React.Component {
 
     getUId(){
         const {answerId} = this.state
-        const {clueUid} = this.props
-        return [clueUid, answerId].join(':')
+        return [this.storyId, this.clueId, answerId].join(':')
     }
 
     idErrors(){
@@ -48,6 +49,7 @@ class Create extends React.Component {
     }
 
     create(){
+        debugger
         this.createAnswer({
             uid: this.getUId(),
             pattern: this.state.pattern,
