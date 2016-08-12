@@ -23,9 +23,13 @@ class Group(ndb.Model):
             code = uuid4().hex[:6].upper()
         return code
 
+    @classmethod
+    def get_by_id(cls, id):
+        return super(Group, cls).get_by_id(id.upper())
+
     @property
     def users(self):
-        return [user.get() for user in self.user_keys]
+        return ndb.get_multi(self.user_keys)
 
     @property
     def current_clue(self):

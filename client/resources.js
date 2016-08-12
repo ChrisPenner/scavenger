@@ -49,7 +49,7 @@ const createResource = ({route, factory}) => {
             return processResponse(fetch(route(uid), {
                 method: 'put',
                 body: JSON.stringify(snakify(payload)),
-            }))
+            })).then(camelize)
         }
 
         static post(uid, payload){

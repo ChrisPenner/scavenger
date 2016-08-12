@@ -8,7 +8,7 @@ class User(ndb.Model):
 
     @property
     def group(self):
-        Group.get_by_id(self.group_uid)
+        return Group.get_by_id(self.group_uid)
 
     @group.setter
     def group(self, group):

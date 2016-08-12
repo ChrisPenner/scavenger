@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import Routes, {CREATE} from 'routes'
+import Routes from 'routes'
 import { getStoriesList } from 'reducers'
 
 const stateToProps = (state) => ({
@@ -34,7 +34,7 @@ const Stories = ({story, storiesList}) => {
                     <div className="list-group">
                         {stories}
                     </div>
-                    <Link to={Routes.story(CREATE)} className="btn btn-primary">
+                    <Link to={Routes.createStory()} className="btn btn-primary">
                         Add Story
                     </Link>
                 </div>

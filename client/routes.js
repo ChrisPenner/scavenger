@@ -7,7 +7,7 @@ const ANSWER_ID_PARAM = ':answerId'
 
 
 export default {
-    story: (uid) => `/stories/${uid === undefined ? STORY_ID_PARAM : uid}`,
+    story: (uid) => `/stories/${uid || STORY_ID_PARAM}`,
     clue: (uid) => {
         if (uid){
             const {clueId, storyId} = splitUid(uid)
@@ -23,9 +23,10 @@ export default {
         return `/stories/${STORY_ID_PARAM}/clues/${CLUE_ID_PARAM}/answers/${ANSWER_ID_PARAM}`
     },
     createStory: () => `/create-story`,
+    createClue: (storyId) => `/stories/${storyId || STORY_ID_PARAM}/create-story`,
+    createAction: (storyId, clueId) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-story`,
     explorer: () => `/explorer`,
     message: () => `/api/message`,
 }
 
 export const INDEX = ''
-export const CREATE = 'create'

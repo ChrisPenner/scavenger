@@ -9,7 +9,7 @@ import { Stories, Story, CreateStory } from 'story'
 import { Clue, CreateClue } from 'clue'
 import { Answer } from 'answer'
 import { CreateAnswer } from 'answer'
-import Routes, { INDEX, CREATE } from 'routes'
+import Routes, { INDEX} from 'routes'
 import {fetchResource, loadStories, loadClues, loadAnswers} from 'actions'
 import * as Res from 'resources'
 import {Explorer} from 'explorer'
@@ -73,12 +73,13 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={syncHistoryWithStore(browserHistory, store)}>
             <Route path="/" component={App} onEnter={load}>
-                <Route path={Routes.explorer()} component={{ main:Explorer }}/>
-                <Route path={Routes.story(INDEX)} component={{story:Stories}}/>
-                <Route path={Routes.story()} component={{story:Story}}/>
-                <Route path={Routes.clue()} component={{story:Story, clue:Clue}}/>
-                <Route path={Routes.answer()} component={{story:Story, clue:Clue, answer: Answer}}/>
-                <Route path={Routes.createStory()} component={{story:CreateStory}}/>
+                <Route path={Routes.explorer()} components={{ main:Explorer }}/>
+                <Route path={Routes.story(INDEX)} components={{story:Stories}}/>
+                <Route path={Routes.story()} components={{story:Story}}/>
+                <Route path={Routes.clue()} components={{story:Story, clue:Clue}}/>
+                <Route path={Routes.answer()} components={{story:Story, clue:Clue, answer: Answer}}/>
+                <Route path={Routes.createStory()} components={{main: CreateStory}}/>
+                <Route path={Routes.createClue()} components={{main: CreateClue}}/>
             </Route>
             <Route path="*" component={My404} />
         </Router>

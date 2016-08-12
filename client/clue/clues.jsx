@@ -2,15 +2,16 @@ import {connect} from 'react-redux'
 import { Link } from 'react-router'
 
 import { getCluesListByStory, uidsFromParams } from 'reducers'
-import Routes, {CREATE} from 'routes'
+import Routes from 'routes'
 
 const stateToProps = (state, {storyUid}) => {
     return {
         clues: getCluesListByStory(state, storyUid),
+        storyUid,
     }
 }
 
-const Clues = ({clues}) => {
+const Clues = ({clues, storyUid}) => {
     const clueLinks = clues.map(clue => (
         <Link
             key={clue.uid}
@@ -21,7 +22,7 @@ const Clues = ({clues}) => {
     return (
         <div className="list-group">
             {clueLinks}
-            <Link to={{ pathname: Routes.clue(CREATE)}} className="list-group-item list-group-item-success">
+            <Link to={{ pathname: Routes.createClue(storyUid)}} className="list-group-item list-group-item-success">
                 + Add Clue
             </Link>
         </div>
@@ -29,6 +30,7 @@ const Clues = ({clues}) => {
 }
 Clues.propTypes = {
     clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    storyUid: React.PropTypes.string.isRequired,
 }
 export default connect(stateToProps)(Clues)
 

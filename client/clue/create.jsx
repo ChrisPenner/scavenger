@@ -8,14 +8,14 @@ const stateToProps = (state) => {
     }
 }
 class Create extends React.Component {
-    constructor({createClue, location: {query: {storyUid}}}){
+    constructor({createClue, params:{storyId}}){
         super()
         this.state = {
             id: '',
             text: '',
             hint: '',
         }
-        this.storyUid = storyUid
+        this.storyId = storyId
         this.create = this.create.bind(this)
         this.createClue = createClue
     }
@@ -41,8 +41,9 @@ class Create extends React.Component {
     }
 
     create(){
+        debugger
         this.createClue({
-            uid: `${this.storyUid}:${this.state.id}`,
+            uid: `${this.storyId}:${this.state.id}`,
             text: this.state.text,
             hint: this.state.hint,
         })
