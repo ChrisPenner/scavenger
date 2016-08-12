@@ -26,7 +26,7 @@ const handleError = err => { toastr.error(err, 'Error'); throw err }
 const saveResource = (Resource, actionType, getResourceState) => (uid) => (dispatch, getState) => {
     const currentState = getResourceState(getState(), uid)
     return Resource.put(uid, currentState)
-        .then(successMessage, 'Saved')
+        .then(successMessage('Saved'))
 }
 
 export const receiveMessage = (message) => {

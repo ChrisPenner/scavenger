@@ -69,8 +69,7 @@ const explorer = (explorer={text:'', toNumber:'', fromNumber:'', texts:[]}, acti
             return R.assocPath(action.path, action.value, explorer)
         case at.RECEIVE_MESSAGE:
         case at.SEND_MESSAGE:
-            console.log(action)
-            return R.evolve({texts: R.append(action.message)})(explorer)
+            return R.evolve({texts: R.prepend(action.message)})(explorer)
         default:
             return explorer
     }
