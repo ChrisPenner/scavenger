@@ -8,6 +8,7 @@ from twilio import twiml
 from models.user import User
 from models.group import Group
 from models.story import Story
+from models.message import Message
 from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
     ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, SEPARATOR_STRING, start_new_story
 
@@ -90,9 +91,9 @@ def start_story(message, user):
     if not story:
         logging.info("Couldn't find story for code: %s", code)
         return [STORY_NOT_FOUND]
-    group_code = Group.gen_code()
-    user.group = Group(id=group_code, clue_uid='{}:START'.format(story.uid), story_uid=story.uid, user_keys=[user.key])
-    print 'USERGROUP', user.group
+    group_code = Group.gen_uid()
+    user.group = Group.from_uid(group_code, clue_uid='{}:START'.format(story.uid), story_uid=story.uid, user_keys=[user.key])
+    print 'Set user:', user
     return [start_new_story(group_code),
             user.group.current_clue]
 
@@ -115,21 +116,21 @@ def join_group(message, user):
 
 def restart(user):
     logging.info("Restarting story")
-    user.group.current_clue_key = 'start'
-    user.group.data = {}
-    user.data = {}
+    user.group.restart()
+    user.restart = {}
     return [RESTARTED, user.group.current_clue]
 
 
 def get_next_clue(message, user):
-    next_clue, answer_data = next(((next_clue, regex_match(pattern, message).groupdict())
-                                   for pattern, next_clue in user.group.current_clue['answers']
-                                   if regex_match(pattern, message)), (None, None))
+    next_clue, answer_data = next(((answer.next_clue, regex_match(answer.pattern, message).groupdict())
+                                   for answer in user.group.current_clue.get_answers()
+                                   if regex_match(answer.pattern, message)), (None, None))
     return next_clue, answer_data
 
 
 def answer(message, user):
-    if (not user.group.current_clue) or (not user.group.current_clue['answers']):
+    print 'HERE', user.group.current_clue, user.group.current_clue.get_answers()
+    if (not user.group.current_clue) or (not user.group.current_clue.get_answers()):
         return [END_OF_STORY]
     next_clue, answer_data = get_next_clue(message, user)
     if next_clue:
@@ -140,9 +141,9 @@ def answer(message, user):
         return [user.group.current_clue]
     # They got the answer wrong - send them a hint
     logging.info('Sending hint')
-    if user.group.current_clue.get('hint'):
-        return [user.group.current_clue.get('hint')]
-    return [user.group.story.default_hint]
+    if user.group.current_clue.hint:
+        return [Message(user.group.current_clue.hint)]
+    return [Message(user.group.story.default_hint)]
 
 
 class TwilioHandler(RequestHandler):
@@ -158,9 +159,9 @@ class TwilioHandler(RequestHandler):
 
         user = User.get_by_id(from_phone)
         if user:
-            logging.info('Found existing user')
+            logging.info('Found existing user for %s', from_phone)
         else:
-            logging.info('Creating new user')
+            logging.info('Creating new user for %s', from_phone)
             user = User(id=from_phone)
 
         message_type = determine_message_type(message)
@@ -173,4 +174,5 @@ class TwilioHandler(RequestHandler):
         logging.info('Responding: %s', self.response.body)
         if user.group:
             user.group.put()
+        print 'PUTTING USER', user
         user.put()

@@ -7,6 +7,9 @@ class User(ndb.Model):
     data = ndb.JsonProperty(default={})
     registration_date = ndb.DateTimeProperty(auto_now_add=True)
 
+    def restart(self):
+        self.data = {}
+
     @property
     def group(self):
         if not self.__dict__.get('group_entity'):
