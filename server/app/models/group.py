@@ -1,7 +1,8 @@
 from uuid import uuid4
 
 from google.appengine.ext import ndb
-from app.models.user import User
+
+from app.models.clue import Clue
 
 
 class Group(ndb.Model):
@@ -14,17 +15,19 @@ class Group(ndb.Model):
     hints_used = ndb.IntegerProperty(default=0)
     completed_at = ndb.DateTimeProperty()
     clue_uid = ndb.StringProperty()
-    user_keys = ndb.KeyProperty(User, repeated=True)
+    user_keys = ndb.KeyProperty('User', repeated=True)
 
-    @staticmethod
-    def gen_code():
+    @classmethod
+    def gen_code(cls):
         code = uuid4().hex[:6].upper()
-        while Group.get_by_id(code):
+        while cls.get_by_id(code):
             code = uuid4().hex[:6].upper()
         return code
 
     @classmethod
     def get_by_id(cls, id):
+        if not id:
+            return None
         return super(Group, cls).get_by_id(id.upper())
 
     @property
@@ -38,7 +41,7 @@ class Group(ndb.Model):
     @current_clue.setter
     def current_clue(self, clue):
         if isinstance(story, basestring):
-            self.clue_uid = clue
+            self.clue_uid = clue.upper()
         else:
             self.clue_uid = clue.uid
 
@@ -49,6 +52,6 @@ class Group(ndb.Model):
     @story.setter
     def story(self, story):
         if isinstance(story, basestring):
-            self.story_uid = story
+            self.story_uid = story.upper()
         else:
             self.story_uid = story.uid

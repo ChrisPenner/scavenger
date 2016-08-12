@@ -23,9 +23,9 @@ regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
 
 
 def twiml_response(user, message_type, messages):
-    media_urls = [m['media_url'] for m in messages
-                  if not isinstance(m, basestring) and m.get('media_url')]
-    messages = [get_text_message_from_clue(m) for m in messages]
+    media_urls = [m.media_url for m in messages
+                  if not isinstance(m, basestring) and m.media_url]
+    messages = [m.text for m in messages]
     recipients = [user.phone]
     joined_messages = SEPARATOR_STRING.join(messages)
     if user.group and user.group.users and message_type == CLUE or message_type == HINT:
@@ -37,13 +37,6 @@ def twiml_response(user, message_type, messages):
             message.append(twiml.Media(url=media_url))
         resp.append(message)
     return str(resp)
-
-
-def get_text_message_from_clue(message):
-    if isinstance(message, basestring):
-        return message
-    else:  # Must be clue
-        return message['text']
 
 
 def split_data(data):
@@ -62,7 +55,7 @@ def format_response(message, user):
     data.update(user.data)
     if user.group:
         data.update(user.group.data)
-    message['text'] = message['text'].format(**data)
+    message.text = message.text.format(**data)
     return message
 
 
@@ -98,8 +91,8 @@ def start_story(message, user):
         logging.info("Couldn't find story for code: %s", code)
         return [STORY_NOT_FOUND]
     group_code = Group.gen_code()
-    group = Group(id=group_code, current_clue_key='start', story_key=story.key, user_keys=[user.key])
-    user.group = group
+    user.group = Group(id=group_code, clue_uid='{}:START'.format(story.uid), story_uid=story.uid, user_keys=[user.key])
+    print 'USERGROUP', user.group
     return [start_new_story(group_code),
             user.group.current_clue]
 
@@ -111,7 +104,7 @@ def join_group(message, user):
     if not code or not Group.get_by_id(code):
         logging.info("Couldn't find group for code: %s", code)
         return [NO_GROUP_FOUND]
-    if user.group_code == code:
+    if user.group_uid == code:
         logging.info("Already in group for code: %s", code)
         return [ALREADY_IN_GROUP]
     group = Group.get_by_id(code.upper())

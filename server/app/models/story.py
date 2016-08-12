@@ -10,6 +10,8 @@ class Story(ndb.Model):
 
     @classmethod
     def get_by_id(cls, id):
+        if not id:
+            return None
         return super(Story, cls).get_by_id(id.upper())
 
     @classmethod

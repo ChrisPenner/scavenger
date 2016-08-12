@@ -41,7 +41,6 @@ class Create extends React.Component {
     }
 
     create(){
-        debugger
         this.createClue({
             uid: `${this.storyId}:${this.state.id}`,
             text: this.state.text,

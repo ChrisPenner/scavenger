@@ -1,4 +1,5 @@
 from google.appengine.ext import ndb
+from app.models.group import Group
 
 
 class User(ndb.Model):
@@ -8,14 +9,14 @@ class User(ndb.Model):
 
     @property
     def group(self):
-        return Group.get_by_id(self.group_uid)
+        if not self.__dict__.get('group_entity'):
+            self.__dict__['group_entity'] = Group.get_by_id(self.group_uid)
+        return self.__dict__['group_entity']
 
     @group.setter
     def group(self, group):
-        if isinstance(group, basestring):
-            self.group_uid = group
-        else:
-            self.group_uid = group.uid
+        self.group_uid = group.uid
+        self.__dict__['group_entity'] = group
 
     @property
     def phone(self):
