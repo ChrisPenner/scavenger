@@ -14,9 +14,9 @@ class Answer(ndb.Model):
     uid = ndb.StringProperty(required=True)
 
     @classmethod
-    def from_uid(cls, uid):
+    def from_uid(cls, uid, **kwargs):
         key = cls.build_key(uid)
-        return cls(key=key, uid=uid.upper())
+        return cls(key=key, uid=uid.upper(), **kwargs)
 
     @classmethod
     def get_by_id(cls, id):

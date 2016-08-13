@@ -6,16 +6,15 @@ class Clue(ndb.Model):
     DATA_FIELDS = ['text', 'hint', 'media_url']
 
     text = ndb.TextProperty(required=True)
-    hint = ndb.StringProperty(default='')
+    hint = ndb.StringProperty(None)
     media_url = ndb.StringProperty()
     answer_uids = ndb.StringProperty(repeated=True)
     story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
-    clue_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[1])
     uid = ndb.StringProperty(required=True)
 
     @property
     def answers(self):
-        return ndb.get_multi(ndb.Key('Answer', uid) for uid in self.answers)
+        return ndb.get_multi(ndb.Key('Answer', uid) for uid in self.answer_uids)
 
     @property
     def story(self):
@@ -62,9 +61,9 @@ class Clue(ndb.Model):
         story.put()
 
     def add_answer(self, answer):
-        if answer.uid not in self.answers:
-            self.answers.append(answer.uid)
+        if answer.uid not in self.answer_uids:
+            self.answer_uids.append(answer.uid)
 
     def remove_answer(self, answer):
-        if answer.uid in self.answers:
-            self.answers.remove(answer.uid)
+        if answer.uid in self.answer_uids:
+            self.answer_uids.remove(answer.uid)

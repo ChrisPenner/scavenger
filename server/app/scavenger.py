@@ -15,27 +15,31 @@ from models.message import Message
 from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
     ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, SEPARATOR_STRING, start_new_story
 
-CLUE = 'CLUE'
-HINT = 'HINT'
-
+# Message Types
 START_STORY = 'START_STORY'
 JOIN_GROUP = 'JOIN_GROUP'
 RESTART = 'RESTART'
 ANSWER = 'ANSWER'
 
-Result = namedtuple('Result', ['messages', 'user', 'group'])
+# Response Types
+INFO = 'INFO'
+JOINED = 'JOINED'
+CLUE = 'CLUE'
+HINT = 'HINT'
+
+Result = namedtuple('Result', ['response_type', 'messages', 'user', 'group'])
 
 regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
 
 
-def twiml_response(user, message_type, messages):
+def twiml_response(user, group, response_type, messages):
     media_urls = [m.media_url for m in messages
                   if not isinstance(m, basestring) and m.media_url]
     messages = [m.text for m in messages]
     recipients = [user.phone]
     joined_messages = SEPARATOR_STRING.join(messages)
-    if user.group and user.group.users and message_type == CLUE or message_type == HINT:
-        recipients = user.group.users
+    if group and group.users and (response_type == CLUE or response_type == HINT):
+        recipients = group.users
     resp = twiml.Response()
     for recipient in recipients:
         message = twiml.Message(msg=joined_messages, to=recipient)
@@ -82,7 +86,7 @@ def perform_action(message_type, message, user, group):
     elif message_type == JOIN_GROUP:
         return join_group(message, user)
     if not user.group_uid:
-        return Result(messages=[HOW_TO_START], user=user, group=None)
+        return Result(response_type=INFO, messages=[HOW_TO_START], user=user, group=None)
     elif message_type == RESTART:
         return restart(user, group)
     else:  # ANSWER
@@ -99,6 +103,7 @@ def start_story(message, user):
     group_code = Group.gen_uid()
     group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_uid, user_keys=[user.key])
     return Result(
+        response_type=INFO,
         messages=[start_new_story(group_code),
                   start_clue],
         user=user,
@@ -123,7 +128,7 @@ def join_group(message, user):
     group.user_keys.append(user.key)
     user.group_uid = group.uid
     clue = group.clue
-    return Result(messages=[JOINED_GROUP, clue], user=user, group=group)
+    return Result(response_type=JOINED, messages=[JOINED_GROUP, clue], user=user, group=group)
 
 
 def restart(user, group):
@@ -131,7 +136,7 @@ def restart(user, group):
     group.restart()
     user.restart()
     clue = group.clue
-    return Result(messages=[RESTARTED, clue], user=user, group=group)
+    return Result(response_type=INFO, messages=[RESTARTED, clue], user=user, group=group)
 
 
 def get_next_clue(message, answers):
@@ -144,21 +149,21 @@ def get_next_clue(message, answers):
 def answer(message, user, group):
     clue = group.clue
     if clue.is_endpoint:
-        return Result(messages=[END_OF_STORY], user=user, group=group)
-    answers = ndb.get_multi([ndb.Key(uid) for uid in user.group.answer_uids])
+        return Result(response_type=CLUE, messages=[END_OF_STORY], user=user, group=group)
+    answers = group.clue.answers
     next_clue, answer_data = get_next_clue(message, answers)
     if next_clue:
         group.clue_uid = next_clue
         user_data, group_data = split_data(answer_data)
         user.data.update(user_data)
         group.data.update(group_data)
-        return Result(messages=[user.group.current_clue], user=user, group=group)
+        return Result(response_type=CLUE, messages=[user.group.clue], user=user, group=group)
     # They got the answer wrong - send them a hint
     logging.info('Sending hint')
     if clue.hint:
-        return Result(messages=[Message(clue.hint)], user=user, group=group)
-    story = Story.get_from_id(group.story_uid)
-    return Result(messages=[Message(story.default_hint)], user=user, group=group)
+        return Result(response_type=HINT, messages=[Message(clue.hint)], user=user, group=group)
+    story = Story.get_by_id(group.story_uid)
+    return Result(response_type=HINT, messages=[Message(story.default_hint)], user=user, group=group)
 
 
 class TwilioHandler(RequestHandler):
@@ -182,10 +187,10 @@ class TwilioHandler(RequestHandler):
         message_type = determine_message_type(message)
         logging.info('Message of type: %s', message_type)
         group = user.group
-        messages, user, group = perform_action(message_type, message, user, group)
+        response_type, messages, user, group = perform_action(message_type, message, user, group)
         responses = [format_message(m, user, group) for m in messages]
         logging.info('Responding with: %s', responses)
-        self.response.body = twiml_response(user, message_type, responses)
+        self.response.body = twiml_response(user, group, response_type, responses)
         self.response.headers['Content-Type'] = 'text/xml'
         logging.info('Responding: %s', self.response.body)
 

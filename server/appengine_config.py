@@ -8,4 +8,7 @@ from google.appengine.ext import vendor
 
 # Third-party libraries are stored in "lib", vendoring will make
 # sure that they are importable by the application.
-vendor.add('lib')
+try:
+    vendor.add('lib')
+except ValueError:
+    pass  # Tests have trouble here for some reason

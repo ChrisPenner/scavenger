@@ -17,6 +17,10 @@ class Group(ndb.Model):
     user_keys = ndb.KeyProperty('User', repeated=True)
 
     @property
+    def users(self):
+        pass
+
+    @property
     def clue(self):
         if not self.clue_uid:
             return None
