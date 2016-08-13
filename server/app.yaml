@@ -1,13 +1,12 @@
 application: look-go
-version: 1
+version: 6
 runtime: python27
 api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /favicon.ico
-  static_files: images/favicon.png
-  upload: images/favicon.png
+- url: /api/.*
+  script: app.main.app
 
 - url: /js
   static_dir: ../dist/js
@@ -17,9 +16,6 @@ handlers:
 
 - url: /assets
   static_dir: ../dist/assets
-
-- url: /api/.*
-  script: app.main.app
 
 - url: /.*
   static_files: ../dist/index.html
