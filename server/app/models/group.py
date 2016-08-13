@@ -16,6 +16,12 @@ class Group(ndb.Model):
     clue_uid = ndb.StringProperty(required=True)
     user_keys = ndb.KeyProperty('User', repeated=True)
 
+    @property
+    def clue(self):
+        if not self.clue_uid:
+            return None
+        return Clue.get_by_id(self.clue_uid)
+
     def restart(self):
         self.data = {}
         self.clue_uid = "{}:{}".format(self.story_uid, 'START')

@@ -13,8 +13,13 @@ class Clue(ndb.Model):
     clue_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[1])
     uid = ndb.StringProperty(required=True)
 
-    def get_answers(self):
+    @property
+    def answers(self):
         return ndb.get_multi(ndb.Key('Answer', uid) for uid in self.answers)
+
+    @property
+    def story(self):
+        return Story.get_by_id(self.story_uid)
 
     @property
     def is_endpoint(self):

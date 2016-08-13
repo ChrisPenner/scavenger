@@ -12,14 +12,7 @@ class User(ndb.Model):
 
     @property
     def group(self):
-        if not self.__dict__.get('group_entity'):
-            self.__dict__['group_entity'] = Group.get_by_id(self.group_uid)
-        return self.__dict__['group_entity']
-
-    @group.setter
-    def group(self, group):
-        self.group_uid = group.uid
-        self.__dict__['group_entity'] = group
+        return Group.get_by_id(self.group_uid)
 
     @property
     def phone(self):

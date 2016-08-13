@@ -122,7 +122,7 @@ def join_group(message, user):
         return [NO_GROUP_FOUND]
     group.user_keys.append(user.key)
     user.group_uid = group.uid
-    clue = Clue.get_by_id(group.clue_uid)
+    clue = group.clue
     return Result(messages=[JOINED_GROUP, clue], user=user, group=group)
 
 
@@ -130,7 +130,7 @@ def restart(user, group):
     logging.info("Restarting story")
     group.restart()
     user.restart()
-    clue = Clue.get_by_id(group.clue_uid)
+    clue = group.clue
     return Result(messages=[RESTARTED, clue], user=user, group=group)
 
 
@@ -142,7 +142,7 @@ def get_next_clue(message, answers):
 
 
 def answer(message, user, group):
-    clue = Clue.get_by_id(group.clue_uid)
+    clue = group.clue
     if clue.is_endpoint:
         return Result(messages=[END_OF_STORY], user=user, group=group)
     answers = ndb.get_multi([ndb.Key(uid) for uid in user.group.answer_uids])
@@ -181,9 +181,9 @@ class TwilioHandler(RequestHandler):
 
         message_type = determine_message_type(message)
         logging.info('Message of type: %s', message_type)
-        group = Group.get_by_id(user.group_uid)
+        group = user.group
         messages, user, group = perform_action(message_type, message, user, group)
-        responses = [format_message(m, user) for m in messages]
+        responses = [format_message(m, user, group) for m in messages]
         logging.info('Responding with: %s', responses)
         self.response.body = twiml_response(user, message_type, responses)
         self.response.headers['Content-Type'] = 'text/xml'
