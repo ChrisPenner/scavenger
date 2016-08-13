@@ -3,7 +3,6 @@ class Message(object):
         self.text = text
         self.media_url = media_url
 
-    def __str__(self):
-        return str(self.__dict__)
+    def __repr__(self):
+        return 'Message({})'.format(repr(self.__dict__))
 
-    __repr__ = __str__

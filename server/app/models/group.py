@@ -36,29 +36,3 @@ class Group(ndb.Model):
     @classmethod
     def from_uid(cls, uid, **kwargs):
         return Group(id=uid, uid=uid, **kwargs)
-
-    @property
-    def users(self):
-        return ndb.get_multi(self.user_keys)
-
-    @property
-    def current_clue(self):
-        return Clue.get_by_id(self.clue_uid)
-
-    @current_clue.setter
-    def current_clue(self, clue):
-        if isinstance(clue, basestring):
-            self.clue_uid = clue.upper()
-        else:
-            self.clue_uid = clue.uid
-
-    @property
-    def story(self):
-        return Story.get_by_id(self.story_uid)
-
-    @story.setter
-    def story(self, story):
-        if isinstance(story, basestring):
-            self.story_uid = story.upper()
-        else:
-            self.story_uid = story.uid

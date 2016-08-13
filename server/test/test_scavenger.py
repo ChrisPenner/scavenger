@@ -1,18 +1,34 @@
 from unittest import TestCase
 from webapp2 import Request
-from mock import Mock, patch
+from mock import Mock, patch, MagicMock
 
 from google.appengine.ext import testbed, ndb
 
 from app.main import app
+from app.models.clue import Clue
+from app.models.answer import Answer
+from app.models.group import Group
 
 from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
     ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story
-from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER
+from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER, Result
 
-from app.scavenger import twiml_response, format_response, determine_message_type, perform_action, \
+from app.scavenger import twiml_response, format_message, determine_message_type, perform_action, \
     split_data, get_next_clue, answer
+from models.message import Message
+from models.user import User
 
+
+class AppengineTest(TestCase):
+    def setUp(self):
+        self.testbed = testbed.Testbed()
+        self.testbed.activate()
+        self.testbed.init_datastore_v3_stub()
+        self.testbed.init_memcache_stub()
+        ndb.get_context().set_cache_policy(False)
+
+    def tearDown(self):
+        self.testbed.deactivate()
 
 class TestScavenger(TestCase):
     def setUp(self):
@@ -22,14 +38,6 @@ class TestScavenger(TestCase):
             'From': '+5555551234',
             'Body': 'texty text'
         })
-        self.testbed = testbed.Testbed()
-        self.testbed.activate()
-        self.testbed.init_datastore_v3_stub()
-        self.testbed.init_memcache_stub()
-        ndb.get_context().set_cache_policy(False)
-
-    def tearDown(self):
-        self.testbed.deactivate()
 
     def test_post_requires_body(self):
         del self.request.POST['Body']
@@ -65,15 +73,15 @@ class TestTwimlResponse(TestCase):
         self.user = Mock(phone='+1111')
 
     def test_includes_messages_in_response(self):
-        messages = ['HELLO!!', 'Hey there!']
+        messages = [Clue(text='Hey there!')]
         response = twiml_response(self.user, START_STORY, messages)
         for m in messages:
-            self.assertIn(m, response)
+            self.assertIn(m.text, response)
 
     def test_sends_copies_to_each_recipient_for_CLUE_or_HINT(self):
         phones = ['+1234', '+555', '+678']
         self.user.group.users = phones
-        messages = ['HELLO!!', 'Hey there!']
+        messages = [Clue(text='Hey there!')]
         response = twiml_response(self.user, CLUE, messages)
         for p in phones:
             self.assertIn(p, response)
@@ -82,14 +90,14 @@ class TestTwimlResponse(TestCase):
             self.assertIn(p, response)
 
     def test_sends_media_urls_from_clues(self):
-        messages = ['HELLO!!', {'text': 'my_clue', 'media_url': 'picture.com/my.png'},
-                    {'text': 'my_other_clue', 'media_url': 'second.com/my.jpg'}]
+        messages = [Clue(text='my_clue', media_url='picture.com/my.png'),
+                    Clue(text='my_other_clue', media_url='second.com/my.jpg')]
         response = twiml_response(self.user, START_STORY, messages)
         self.assertIn('<Media>picture.com/my.png</Media>', response)
         self.assertIn('<Media>second.com/my.jpg</Media>', response)
 
     def test_extracts_text_from_clues(self):
-        messages = ['HELLO!!', {'text': 'my_clue'}, {'text': 'my_other_clue'}]
+        messages = [Clue(text='my_clue'), Clue(text='my_other_clue')]
         response = twiml_response(self.user, START_STORY, messages)
         self.assertIn('my_clue', response)
         self.assertIn('my_other_clue', response)
@@ -100,19 +108,17 @@ class TestFormatResponse(TestCase):
         data = {'user_name': 'bob', 'user_color': 'red'}
         user = Mock()
         user.data = data
-        user.group.data = {}
-        message = {'text': 'Hello {user_name}, you like {user_color}?'}
-        response = format_response(message, user)
-        self.assertEqual({'text': 'Hello bob, you like red?'}, response)
+        message = Clue(text='Hello {user_name}, you like {user_color}?')
+        response = format_message(message, user, Group(data={}))
+        self.assertEqual('Hello bob, you like red?', response.text)
 
     def test_formats_group_data(self):
         data = {'group_name': 'bob', 'group_color': 'red'}
         user = Mock()
         user.data = {}
-        user.group.data = data
-        message = {'text': 'Hello {group_name}, you like {group_color}?'}
-        response = format_response(message, user)
-        self.assertEqual({'text': 'Hello bob, you like red?'}, response)
+        message = Clue(text='Hello {group_name}, you like {group_color}?')
+        response = format_message(message, user, Group(data=data))
+        self.assertEqual('Hello bob, you like red?', response.text)
 
 
 class TestDetermineMessageType(TestCase):
@@ -125,108 +131,110 @@ class TestDetermineMessageType(TestCase):
 
 class TestPerformAction(TestCase):
     def test_returns_expected_how_to_start(self):
-        user = Mock(group=None)
-        result = perform_action(ANSWER, 'blah', user)
-        self.assertEqual([HOW_TO_START], result)
+        user = User()
+        result = perform_action(ANSWER, 'blah', user, None)
+        self.assertEqual([HOW_TO_START.text], [m.text for m in result.messages])
 
-    @patch('app.scavenger.Story')
-    def test_returns_expected_story_not_found(self, story_mock):
-        story_mock.get_by_id.return_value = None
-        user = Mock(group=None)
-        result = perform_action(START_STORY, 'start blah', user)
+    @patch('app.scavenger.Clue.get_by_id', new=Mock(return_value=None))
+    def test_returns_expected_story_not_found(self):
+        user = Mock()
+        result = perform_action(START_STORY, 'start blah', user, None)
         self.assertEqual([STORY_NOT_FOUND], result)
 
     @patch('app.scavenger.Group')
-    @patch('app.scavenger.Story')
-    def test_returns_expected_starting_new_story(self, story_mock, group_mock):
-        clue = {'text': 'test'}
+    @patch('app.scavenger.Clue')
+    def test_returns_expected_starting_new_story(self, clue_mock, group_mock):
+        clue_mock.get_by_id.return_value = Clue(text='test')
+        clue = Clue(text='test')
         group_mock.return_value.current_clue = clue
-        group_mock.gen_code.return_value = 'abcd'
-        user = Mock(group=None)
-        result = perform_action(START_STORY, 'start blah', user)
-        self.assertEqual([start_new_story('abcd'), clue], result)
+        group_mock.gen_uid.return_value = 'abcd'
+        user = User()
+        result = perform_action(START_STORY, 'start blah', user, None)
+        expected_message_text = [start_new_story('abcd').text, clue.text]
+        self.assertEqual(expected_message_text, [m.text for m in result.messages])
 
     @patch('app.scavenger.Group')
     def test_returns_expected_group_not_found(self, group_mock):
         group_mock.get_by_id.return_value = None
-        user = Mock(group=None)
-        result = perform_action(JOIN_GROUP, 'join blah', user)
+        user = Mock()
+        result = perform_action(JOIN_GROUP, 'join blah', user, None)
         self.assertEqual([NO_GROUP_FOUND], result)
 
-    @patch('app.scavenger.Group')
-    def test_returns_expected_already_in_group(self, group_mock):
-        user = Mock(group_code='code')
-        result = perform_action(JOIN_GROUP, 'join code', user)
+    @patch('app.scavenger.Group', new=Mock())
+    def test_returns_expected_already_in_group(self):
+        user = User(group_uid='code')
+        result = perform_action(JOIN_GROUP, 'join code', user, Group())
         self.assertEqual([ALREADY_IN_GROUP], result)
 
     @patch('app.scavenger.Group')
-    def test_returns_expected_joined_group(self, group_mock):
-        clue = {'text': 'clue'}
-        group_mock.current_clue = clue
-        group_mock.get_by_id.return_value = group_mock
-        user = Mock()
-        result = perform_action(JOIN_GROUP, 'join code', user)
-        self.assertEqual([JOINED_GROUP, clue], result)
+    @patch('app.scavenger.Clue')
+    def test_returns_expected_joined_group(self, clue_mock, group_mock):
+        clue_mock.get_by_id.return_value = Clue(text='clue text')
+        group = Group(uid='code', clue_uid='MYSTORY:MYCLUE')
+        group_mock.get_by_id.return_value = group
+        user = User()
+        result = perform_action(JOIN_GROUP, 'join code', user, None)
+        self.assertEqual([JOINED_GROUP.text, 'clue text'], [m.text for m in result.messages])
 
-    def test_returns_expected_restarted(self):
+    @patch('app.scavenger.Clue')
+    def test_returns_expected_restarted(self, clue_mock):
+        start_message = 'Start the story'
+        clue_mock.get_by_id.return_value = Clue(text=start_message)
         user = Mock()
-        clue = {'text': 'clue'}
-        user.group.current_clue = clue
-        result = perform_action(RESTART, 'restart', user)
-        self.assertEqual([RESTARTED, clue], result)
+        result = perform_action(RESTART, 'restart', user, Group(clue_uid='something'))
+        self.assertEqual([RESTARTED.text, start_message], [m.text for m in result.messages])
 
-    def test_returns_expected_end_of_story(self):
+    @patch('app.scavenger.Clue')
+    def test_returns_expected_end_of_story(self, clue_mock):
+        clue_mock.get_by_id.return_value = Clue(text='blah', answer_uids=[])
         user = Mock()
-        user.group.current_clue = None
-        result = perform_action(ANSWER, 'asdf', user)
-        self.assertEqual([END_OF_STORY], result)
+        result = perform_action(ANSWER, 'asdf', user, Group())
+        self.assertEqual([END_OF_STORY.text], [m.text for m in result.messages])
 
 
 class TestGetNextClue(TestCase):
-    def test_answers_clue_properly(self):
-        user = Mock()
-        user.group.current_clue = {
-            'text': 'hi',
-            'answers': [
-                [r'\w+\s+(?P<second_word>\w+)', "two-words"],
-                [r'steve', "steve"],
-                [r'.*', "catch-all"],
-            ],
-        }
+    @patch('app.scavenger.ndb.get_multi')
+    def test_answers_clue_properly(self, get_multi_mock):
+        answers = [
+            Answer(pattern=r'\w+\s+(?P<second_word>\w+)', next_clue='TWOWORDS'),
+            Answer(pattern=r'steve', next_clue="STEVE"),
+            Answer(pattern=r'.*', next_clue='CATCHALL'),
+        ]
+        get_multi_mock.return_value = answers
         message = 'test answer'
-        next_clue, answer_data = get_next_clue(message, user)
-        self.assertEqual('two-words', next_clue)
+        next_clue, answer_data = get_next_clue(message, answers)
+        self.assertEqual('TWOWORDS', next_clue)
         self.assertEqual({'second_word': 'answer'}, answer_data)
 
 
 class TestAnswerClue(TestCase):
-    def test_sets_next_clue_on_group(self):
-        user = Mock()
-        user.group.current_clue = {
-            'text': 'hi',
-            'answers': [
-                [r'\w+\s+(?P<group_word>\w+)', "two-words"],
-                [r'steve', "steve"],
-                [r'.*', "catch-all"],
-            ],
-        }
-        user.group.data = {}
-        message = 'test answer'
-        responses = answer(message, user)
-        self.assertEqual(['two-words'], responses)
-        self.assertEqual("two-words", user.group.current_clue)
-        self.assertEqual({'group_word': 'answer'}, user.group.data)
 
-    def test_gives_hints_if_incorrect(self):
-        hint = {'text': 'My hint'},
-        user = Mock()
-        user.group.current_clue = {
-            'text': 'hi',
-            'hint': hint,
-            'answers': [
-                [r'blah', "blah"],
-            ],
-        }
+    @patch('app.scavenger.Clue')
+    @patch('app.scavenger.ndb.get_multi')
+    def test_sets_next_clue_on_group(self, get_answers_mock, clue_mock):
+        clue_mock.get_by_id.return_value = Mock(is_endpoint=False)
+        user = MagicMock()
+        get_answers_mock.return_value = [
+            Answer(
+                pattern=r'\w+\s+(?P<group_word>\w+)',
+                next_clue=r'STORY:TWO-WORDS',
+            ),
+            Answer(
+                pattern=r'.*',
+                next_clue=r'STORY:GENERIC'
+            )
+        ]
         message = 'test answer'
-        responses = answer(message, user)
-        self.assertEqual([hint], responses)
+        result = answer(message, user, Group(data={}))
+        self.assertEqual("STORY:TWO-WORDS", result.group.clue_uid)
+        self.assertEqual({'group_word': 'answer'}, result.group.data)
+
+    @patch('app.scavenger.Clue')
+    @patch('app.scavenger.ndb.get_multi')
+    def test_gives_hints_if_incorrect(self, get_answers_mock, clue_mock):
+        clue_mock.get_by_id.return_value = Mock(hint='My Hint', is_endpoint=False)
+        get_answers_mock.return_value = [Answer(pattern=r'tough answer', next_clue='SOME:NEXTCLUE')]
+        user = MagicMock()
+        message = 'this is not the correct answer'
+        result = answer(message, user, Group())
+        self.assertEqual(['My Hint'], [r.text for r in result.messages])

@@ -1,9 +1,12 @@
 from functools import partial
 import re
 import logging
+from collections import namedtuple
 
+from google.appengine.ext import ndb
 from webapp2 import RequestHandler, abort
 
+from models.clue import Clue
 from twilio import twiml
 from models.user import User
 from models.group import Group
@@ -19,6 +22,8 @@ START_STORY = 'START_STORY'
 JOIN_GROUP = 'JOIN_GROUP'
 RESTART = 'RESTART'
 ANSWER = 'ANSWER'
+
+Result = namedtuple('Result', ['messages', 'user', 'group'])
 
 regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
 
@@ -51,11 +56,11 @@ def split_data(data):
     return user_data, group_data
 
 
-def format_response(message, user):
+def format_message(message, user, group):
     data = {}
     data.update(user.data)
-    if user.group:
-        data.update(user.group.data)
+    if group:
+        data.update(group.data)
     message.text = message.text.format(**data)
     return message
 
@@ -71,84 +76,94 @@ def determine_message_type(message):
         return ANSWER
 
 
-def perform_action(message_type, message, user):
+def perform_action(message_type, message, user, group):
     if message_type == START_STORY:
         return start_story(message, user)
     elif message_type == JOIN_GROUP:
         return join_group(message, user)
-    if (not user.group) or (not user.group.story):
-        return [HOW_TO_START]
+    if not user.group_uid:
+        return Result(messages=[HOW_TO_START], user=user, group=None)
     elif message_type == RESTART:
-        return restart(user)
+        return restart(user, group)
     else:  # ANSWER
-        return answer(message, user)
+        return answer(message, user, group)
 
 
 def start_story(message, user):
     match = regex_match(r'^start (?P<code>.+)', message.lower())
-    code = match.groupdict().get('code')
-    story = Story.get_by_id(code) if code else None
-    if not story:
-        logging.info("Couldn't find story for code: %s", code)
+    story_uid = match.groupdict().get('code')
+    start_clue = Clue.get_by_id('{}:START'.format(story_uid)) if story_uid else None
+    if not start_clue:
+        logging.info("Couldn't find story for story_uid: %s", story_uid)
         return [STORY_NOT_FOUND]
     group_code = Group.gen_uid()
-    user.group = Group.from_uid(group_code, clue_uid='{}:START'.format(story.uid), story_uid=story.uid, user_keys=[user.key])
-    print 'Set user:', user
-    return [start_new_story(group_code),
-            user.group.current_clue]
+    group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_uid, user_keys=[user.key])
+    return Result(
+        messages=[start_new_story(group_code),
+                  start_clue],
+        user=user,
+        group=group,
+    )
 
 
 def join_group(message, user):
     """ Join group by code """
-    match = regex_match(r'^join (?P<code>.+)', message.lower())
-    code = match.groupdict().get('code')
-    if not code or not Group.get_by_id(code):
-        logging.info("Couldn't find group for code: %s", code)
-        return [NO_GROUP_FOUND]
-    if user.group_uid == code:
-        logging.info("Already in group for code: %s", code)
+    match = regex_match(r'^join (?P<group_uid>.+)', message.lower())
+    group_uid = match.groupdict().get('group_uid')
+    if user.group_uid == group_uid:
+        logging.info("Already in group for group_uid: %s", group_uid)
         return [ALREADY_IN_GROUP]
-    group = Group.get_by_id(code.upper())
+    if not group_uid:
+        logging.info("Need to specify a group_uid")
+        return [NO_GROUP_FOUND]
+    group = Group.get_by_id(group_uid)
+    if not group:
+        logging.info("Couldn't find group for group_uid: %s", group_uid)
+        return [NO_GROUP_FOUND]
     group.user_keys.append(user.key)
-    user.group = group
-    return [JOINED_GROUP, user.group.current_clue]
+    user.group_uid = group.uid
+    clue = Clue.get_by_id(group.clue_uid)
+    return Result(messages=[JOINED_GROUP, clue], user=user, group=group)
 
 
-def restart(user):
+def restart(user, group):
     logging.info("Restarting story")
-    user.group.restart()
-    user.restart = {}
-    return [RESTARTED, user.group.current_clue]
+    group.restart()
+    user.restart()
+    clue = Clue.get_by_id(group.clue_uid)
+    return Result(messages=[RESTARTED, clue], user=user, group=group)
 
 
-def get_next_clue(message, user):
+def get_next_clue(message, answers):
     next_clue, answer_data = next(((answer.next_clue, regex_match(answer.pattern, message).groupdict())
-                                   for answer in user.group.current_clue.get_answers()
+                                   for answer in answers
                                    if regex_match(answer.pattern, message)), (None, None))
     return next_clue, answer_data
 
 
-def answer(message, user):
-    print 'HERE', user.group.current_clue, user.group.current_clue.get_answers()
-    if (not user.group.current_clue) or (not user.group.current_clue.get_answers()):
-        return [END_OF_STORY]
-    next_clue, answer_data = get_next_clue(message, user)
+def answer(message, user, group):
+    clue = Clue.get_by_id(group.clue_uid)
+    if clue.is_endpoint:
+        return Result(messages=[END_OF_STORY], user=user, group=group)
+    answers = ndb.get_multi([ndb.Key(uid) for uid in user.group.answer_uids])
+    next_clue, answer_data = get_next_clue(message, answers)
     if next_clue:
-        user.group.current_clue = next_clue
+        group.clue_uid = next_clue
         user_data, group_data = split_data(answer_data)
         user.data.update(user_data)
-        user.group.data.update(group_data)
-        return [user.group.current_clue]
+        group.data.update(group_data)
+        return Result(messages=[user.group.current_clue], user=user, group=group)
     # They got the answer wrong - send them a hint
     logging.info('Sending hint')
-    if user.group.current_clue.hint:
-        return [Message(user.group.current_clue.hint)]
-    return [Message(user.group.story.default_hint)]
+    if clue.hint:
+        return Result(messages=[Message(clue.hint)], user=user, group=group)
+    story = Story.get_from_id(group.story_uid)
+    return Result(messages=[Message(story.default_hint)], user=user, group=group)
 
 
 class TwilioHandler(RequestHandler):
     def post(self):
-        if not self.request.get('Body') or not self.request.get('From'):
+        if self.request.POST.get('Body') is None or self.request.POST.get('From') is None:
             logging.error('Body and From params required')
             abort(400, 'Body and From params required')
 
@@ -166,13 +181,17 @@ class TwilioHandler(RequestHandler):
 
         message_type = determine_message_type(message)
         logging.info('Message of type: %s', message_type)
-        responses = perform_action(message_type, message, user)
-        responses = [format_response(r, user) for r in responses]
+        group = Group.get_by_id(user.group_uid)
+        messages, user, group = perform_action(message_type, message, user, group)
+        responses = [format_message(m, user) for m in messages]
         logging.info('Responding with: %s', responses)
         self.response.body = twiml_response(user, message_type, responses)
         self.response.headers['Content-Type'] = 'text/xml'
         logging.info('Responding: %s', self.response.body)
-        if user.group:
-            user.group.put()
-        print 'PUTTING USER', user
+
+        if group:
+            group.put()
+            user.group_uid = group.uid
+        else:
+            user.group_uid = None
         user.put()

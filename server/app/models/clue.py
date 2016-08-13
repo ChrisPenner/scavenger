@@ -8,13 +8,17 @@ class Clue(ndb.Model):
     text = ndb.TextProperty(required=True)
     hint = ndb.StringProperty(default='')
     media_url = ndb.StringProperty()
-    answers = ndb.StringProperty(repeated=True)
+    answer_uids = ndb.StringProperty(repeated=True)
     story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
     clue_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[1])
     uid = ndb.StringProperty(required=True)
 
     def get_answers(self):
         return ndb.get_multi(ndb.Key('Answer', uid) for uid in self.answers)
+
+    @property
+    def is_endpoint(self):
+        return not self.answer_uids
 
     @classmethod
     def from_uid(cls, uid, *args, **kwargs):
