@@ -14,28 +14,28 @@ const stateToProps = (state, {params}) => {
 }
 const Story = ({ story, changeStory, saveStory }) =>{
     return (
-        <div className="panel panel-info">
-            <div className="panel-heading">
+        <div className="message is-primary">
+            <div className="message-header level is-marginless">
                 {story.uid}
-                <a
-                    className="pull-right"
+                <button
+                    className="button is-success is-pulled-right"
                     onClick={() => saveStory(story.uid)}>
                     Save
-                </a>
+                </button>
             </div>
-            <div className="panel-body">
-                <div className="form-group">
-                    <label htmlFor="default-hint"> Default Hint </label>
+            <div className="message-body">
+                <label className="label"> Default Hint </label>
+                <div className="control">
                     <input
                         id="default-hint"
-                        className="form-control"
+                        className="input"
                         value={story.defaultHint || ''}
                         onChange={(e) => changeStory([story.uid, 'defaultHint'], e.target.value)}
                     />
                 </div>
-                <h3> Clues </h3>
+                <label className="label"> Clues </label>
+                <Clues storyUid={story.uid}/>
             </div>
-            <Clues storyUid={story.uid}/>
         </div>
     )
 }

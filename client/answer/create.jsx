@@ -58,38 +58,46 @@ class Create extends React.Component {
 
     render(){
         return (
-            <div>
-                <h1> New Answer </h1>
-                <label> Id:
-                    <input
-                        type="text"
-                        onChange={(e) => this.updateAnswerId(e.target.value)}
-                        value={this.state.answerId}
-                    />
-                </label>
-                <br/>
-                <label> Pattern:
-                    <br/>
-                    <input
-                        onChange={(e) => this.update({pattern: e.target.value})}
-                        value={this.state.pattern}
+            <div className="columns">
+                <div className="column is-half margin-auto">
+                    <h1 className="title"> New Answer </h1>
+                    <label htmlFor="id" className="label"> Id </label>
+                    <div className="control">
+                        <input
+                            id="id"
+                            className="input"
+                            type="text"
+                            onChange={(e) => this.updateAnswerId(e.target.value)}
+                            value={this.state.answerId}
                         />
-                </label>
-                <br/>
-                <label> Next Clue:
-                    <br/>
-                    <select
-                        className="form-control"
-                        value={this.state.nextClue}
-                        onChange={(e) => this.update({nextClue: e.target.value})}
-                        >
-                            {this.props.clues.map(
+                    </div>
+                    <label className="label" htmlFor="pattern"> Pattern </label>
+                    <div className="control">
+                        <input
+                            id="pattern"
+                            className="input"
+                            onChange={(e) => this.update({pattern: e.target.value})}
+                            value={this.state.pattern}
+                        />
+                    </div>
+                    <label className="label" htmlFor="next-clue"> Next Clue </label>
+                    <div className="control">
+                        <span className="select">
+                            <select
+                                id="next-clue"
+                                value={this.state.nextClue}
+                                onChange={(e) => this.update({nextClue: e.target.value})}
+                            >
+                                {this.props.clues.map(
                                 clue => <option key={clue.uid} value={clue.uid}>{clue.uid}</option>
                             )}
-                        </select>
-                </label>
-                <br/>
-                <button onClick={this.create} className="btn btn-primary"> Create </button>
+            </select>
+            </span>
+                    </div>
+                    <button onClick={this.create} className="button is-success">
+                        Create
+                    </button>
+                </div>
             </div>
         )
     }

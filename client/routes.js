@@ -9,7 +9,7 @@ export const INDEX = ''
 
 export default {
     story: (uid) => `/stories/${uid || STORY_ID_PARAM}`,
-    storyIndex: () => `/stories/`,
+    stories: () => `/stories/`,
     clue: (uid) => {
         if (uid){
             const {clueId, storyId} = splitUid(uid)
@@ -25,8 +25,8 @@ export default {
         return `/stories/${STORY_ID_PARAM}/clues/${CLUE_ID_PARAM}/answers/${ANSWER_ID_PARAM}`
     },
     createStory: () => `/create-story`,
-    createClue: (storyId) => `/stories/${storyId || STORY_ID_PARAM}/create-story`,
-    createAnswer: (storyId, clueId) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-story`,
+    createClue: (storyId) => `/stories/${storyId || STORY_ID_PARAM}/create-clue`,
+    createAnswer: (storyId, clueId) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-answer`,
     explorer: () => `/explorer`,
     message: () => `/api/message`,
 }

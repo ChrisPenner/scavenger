@@ -13,19 +13,26 @@ const stateToProps = (state, {storyUid}) => {
 
 const Clues = ({clues, storyUid}) => {
     const clueLinks = clues.map(clue => (
-        <Link
-            key={clue.uid}
-            to={Routes.clue(clue.uid)}
-            className="list-group-item">
-            <span className="text-info">{clue.uid}</span>
-        </Link>))
+        <tr key={clue.uid}>
+            <td>
+                <Link to={Routes.clue(clue.uid)}>
+                    {clue.uid}
+                </Link>
+            </td>
+        </tr>))
     return (
-        <div className="list-group">
-            {clueLinks}
-            <Link to={{ pathname: Routes.createClue(storyUid)}} className="list-group-item list-group-item-success">
-                + Add Clue
-            </Link>
-        </div>
+        <table className="table is-bordered">
+            <tbody>
+                {clueLinks}
+                <tr key="addClue">
+                    <td>
+                        <Link to={{ pathname: Routes.createClue(storyUid)}}>
+                            + Add Clue
+                        </Link>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     )
 }
 Clues.propTypes = {

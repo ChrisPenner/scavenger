@@ -15,30 +15,28 @@ const stateToProps = (state, {params}) => {
 }
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer}) => (
-    <div className="panel panel-danger">
-        <div className="panel-heading">
+    <div className="message is-danger">
+        <div className="message-header level is-marginless">
             {answer.uid}
-            <a
-                className="pull-right"
+            <button className="button is-success is-pulled-right"
                 onClick={() => saveAnswer(answer.uid)}>
                 Save
-            </a>
+            </button>
         </div>
-        <div className="panel-body">
-            <div className="form-group">
-                <label htmlFor="pattern"> Pattern </label>
+        <div className="message-body">
+            <label className="label" htmlFor="pattern"> Pattern </label>
+            <div className="control">
                 <input
                     id="pattern"
-                    className="form-control"
+                    className="input"
                     value={answer.pattern || ''}
                     onChange={(e) => changeAnswer([answer.uid, 'pattern'], e.target.value)}
                 />
             </div>
-            <div className="form-group">
-                <label htmlFor="next-clue"> Next Clue </label>
+            <label className="label" htmlFor="next-clue"> Next Clue </label>
+            <div className="control select">
                 <select
                     id="next-clue"
-                    className="form-control"
                     value={answer.nextClue}
                     onChange={(e) => changeAnswer([answer.uid, 'nextClue'], e.target.value)}
                 >

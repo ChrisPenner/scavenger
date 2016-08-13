@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom'
-import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
+import { Router, Route, IndexRoute, IndexRedirect, Link, browserHistory} from 'react-router'
 import {Provider, connect} from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
@@ -22,36 +22,45 @@ const App = connect(({loading})=>({loading}))(
 
     return (
         <div>
-            <nav className="navbar navbar-default">
-                <div className="container-fluid">
-                    <div className="navbar-header">
-                        <Link to="/" className="navbar-brand" >Scavenger</Link>
-                    </div>
-                    <ul className="nav navbar-nav">
-                        <li>
-                            <Link activeClassName="active" to={Routes.explorer()}>Explorer</Link>
-                        </li>
-                        <li>
-                            <Link activeClassName="active" to={Routes.storyIndex()}>Stories</Link>
-                        </li>
-                    </ul>
+            <nav className="nav has-shadow">
+                <div className="nav-left">
+                    <span className="nav-item is-brand">
+                        Scavenger
+                    </span>
+                </div>
+                <div className="nav-right">
+                    <Link to={Routes.explorer()} activeClassName="is-active" className="nav-item is-tab">
+                        Explorer
+                    </Link>
+                    <Link to={Routes.stories()} activeClassName="is-active" className="nav-item is-tab">
+                        Stories
+                    </Link>
                 </div>
             </nav>
-            <div className="container-fluid">
-                {main ? main : (
-                    <div className="row">
-                        <div className="col-sm-4">
-                            {story}
-                        </div>
-                        <div className="col-sm-4">
-                            {clue}
-                        </div>
-                        <div className="col-sm-4">
-                            {answer}
-                        </div>
-                    </div>)
-                }
-            </div>
+                <section className="section is-fullwidth">
+                    {main ? main : (
+                        <div className="columns">
+                            {story ?
+                                (<div className="column is-4">
+                                    {story}
+                                </div>)
+                                : null
+                            }
+                            {clue ?
+                                (<div className="column is-4">
+                                    {clue}
+                                </div>)
+                                : null
+                            }
+                            {answer ?
+                                (<div className="column is-4">
+                                    {answer}
+                                </div>)
+                                : null
+                            }
+                        </div>)
+                    }
+                </section>
         </div>
     )
 })
@@ -72,8 +81,9 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={syncHistoryWithStore(browserHistory, store)}>
             <Route path="/" component={App} onEnter={load}>
+                <IndexRedirect to={Routes.stories()} />
+                <Route path={Routes.stories()} components={{ story:Stories }} />
                 <Route path={Routes.explorer()} components={{ main:Explorer }}/>
-                <Route path={Routes.storyIndex()} components={{story:Stories}}/>
                 <Route path={Routes.story()} components={{story:Story}}/>
                 <Route path={Routes.clue()} components={{story:Story, clue:Clue}}/>
                 <Route path={Routes.answer()} components={{story:Story, clue:Clue, answer: Answer}}/>

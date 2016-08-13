@@ -45,25 +45,32 @@ class Create extends React.Component {
 
     render(){
         return (
-            <div>
-                <h1> New Story </h1>
-                <label> Id:
-                    <input
-                        type="text"
-                        onChange={(e) => this.updateUid(e.target.value)}
-                        value={this.state.uid}
-                    />
-                </label>
-                <br/>
-                <label> Default Hint:
-                    <br/>
-                    <textarea
-                        onChange={(e) => this.update({defaultHint: e.target.value})}
-                        value={this.state.defaultHint}
+            <div className="columns">
+                <div className="column is-half margin-auto">
+                    <h1 className="title"> New Story </h1>
+                    <label className="label" htmlFor="id"> Id </label>
+                    <div className="control">
+                        <input
+                            id="id"
+                            className="input"
+                            type="text"
+                            onChange={(e) => this.updateUid(e.target.value)}
+                            value={this.state.uid}
                         />
-                </label>
-                <br/>
-                <button onClick={this.create} className="btn btn-primary"> Create </button>
+                    </div>
+                    <label className="label" htmlFor="hint"> Default Hint </label>
+                    <div className="control">
+                        <textarea
+                            id="hint"
+                            className="textarea"
+                            onChange={(e) => this.update({defaultHint: e.target.value})}
+                            value={this.state.defaultHint}
+                        />
+                    </div>
+                    <button onClick={this.create} className="button is-success">
+                        Create
+                    </button>
+                </div>
             </div>
         )
     }

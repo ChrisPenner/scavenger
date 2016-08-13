@@ -50,33 +50,41 @@ class Create extends React.Component {
 
     render(){
         return (
-            <div>
-                <h1> New Clue </h1>
-                <label> Id:
-                    <input
-                        type="text"
-                        onChange={(e) => this.updateId(e.target.value)}
-                        value={this.state.id}
-                    />
-                </label>
-                <br/>
-                <label> Text:
-                    <br/>
-                    <textarea
-                        onChange={(e) => this.update({text: e.target.value})}
-                        value={this.state.text}
+            <div className="columns">
+                <div className="column is-half margin-auto">
+                    <h1 className="title"> New Clue </h1>
+                    <label className="label" htmlFor="id"> Id </label>
+                    <div className="control">
+                        <input
+                            id="id"
+                            className="input"
+                            type="text"
+                            onChange={(e) => this.updateId(e.target.value)}
+                            value={this.state.id}
                         />
-                </label>
-                <br/>
-                <label> Hint:
-                    <br/>
-                    <textarea
-                        onChange={(e) => this.update({hint: e.target.value})}
-                        value={this.state.hint}
+                    </div>
+                    <label className="label" htmlFor="hint"> Hint </label>
+                    <div className="control">
+                        <textarea
+                            id="hint"
+                            className="textarea"
+                            onChange={(e) => this.update({hint: e.target.value})}
+                            value={this.state.hint}
                         />
-                </label>
-                <br/>
-                <button onClick={this.create} className="btn btn-primary"> Create </button>
+                    </div>
+                    <label className="label" htmlFor="text"> Text </label>
+                    <div className="control">
+                        <textarea
+                            id="text"
+                            className="textarea"
+                            onChange={(e) => this.update({text: e.target.value})}
+                            value={this.state.text}
+                        />
+                    </div>
+                    <button onClick={this.create} className="button is-success">
+                        Create
+                    </button>
+                </div>
             </div>
         )
     }

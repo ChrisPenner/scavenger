@@ -16,34 +16,36 @@ const stateToProps = (state, {params}) => {
 }
 const Clue = ({clue, changeClue, saveClue}) => {
     return (
-        <div className="panel panel-warning">
-            <div className="panel-heading">
+        <div className="message is-warning">
+            <div className="message-header level is-marginless">
                 {clue.uid}
-                <a className="pull-right" onClick={() => saveClue(clue.uid)} >Save</a>
+                <button className="button is-success is-pulled-right" onClick={() => saveClue(clue.uid)}>
+                    Save
+                </button>
             </div>
-            <div className="panel-body">
-                <div className="form-group">
-                    <label htmlFor="text"> Text </label>
+            <div className="message-body">
+                <label className="label" htmlFor="text"> Text </label>
+                <div className="control">
                     <input
                         id="text"
-                        className="form-control"
+                        className="input"
                         value={clue.text || ''}
                         onChange={(e)=>changeClue([clue.uid, 'text'], e.target.value)}
                     />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="hint"> Hint: </label>
+                <label className="label" htmlFor="hint"> Hint: </label>
+                <div className="control">
                     <input
                         id="hint"
-                        className="form-control"
+                        className="input"
                         value={clue.hint || ''}
                         onChange={(e)=>changeClue([clue.uid, 'hint'], e.target.value)}
                     />
                 </div>
-                <h3> Answers </h3>
+                <label className="label"> Answers </label>
+                <Answers clueUid={clue.uid} />
             </div>
-            <Answers clueUid={clue.uid} />
-    </div>
+        </div>
     )
 }
 Clue.propTypes = {

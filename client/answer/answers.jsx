@@ -14,19 +14,26 @@ const stateToProps = (state, {clueUid}) => {
 
 const Answers = ({answers, storyId, clueId}) => {
     const answerLinks = answers.map(answer => (
-        <Link
-            key={answer.uid}
-            to={Routes.answer(answer.uid)}
-            className="list-group-item">
-            <span className="text-info">{answer.uid}</span>
-        </Link>))
+        <tr key={answer.uid}>
+            <td>
+                <Link to={Routes.answer(answer.uid)}>
+                    {answer.uid}
+                </Link>
+            </td>
+        </tr>))
     return (
-        <div className="list-group">
-            {answerLinks}
-            <Link to={{ pathname: Routes.createAnswer(storyId, clueId)}} className="list-group-item list-group-item-success">
-                + Add Answer
-            </Link>
-        </div>
+        <table className="table is-bordered">
+            <tbody>
+                {answerLinks}
+                <tr key="addAnswer">
+                    <td>
+                        <Link to={{ pathname: Routes.createAnswer(storyId, clueId)}}>
+                            + Add Answer
+                        </Link>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     )
 }
 

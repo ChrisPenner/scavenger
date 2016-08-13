@@ -13,32 +13,27 @@ const Stories = ({story, storiesList}) => {
     }
 
     const stories = storiesList.map(story =>(
-        <Link key={story.uid}
-            to={Routes.story(story.uid)}
-            className="list-group-item">
-            <span className="text-info">
-                {story.uid}
-            </span>
-        </Link>
+        <tr key={story.uid}>
+            <td>
+                <Link to={Routes.story(story.uid)}>
+                    {story.uid}
+                </Link>
+            </td>
+        </tr>
     ))
 
     return (
         <div>
-            <div className="row">
-                <div className="col-xs-12">
-                    <h2> Stories </h2>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-xs-6">
-                    <div className="list-group">
-                        {stories}
-                    </div>
-                    <Link to={Routes.createStory()} className="btn btn-primary">
-                        Add Story
+            <h1 className="title"> Stories </h1>
+            <table className="table is-bordered">
+                <tbody>
+                    {stories}
+                    <Link to={Routes.createStory()}
+                        className="button is-success">
+                        + Add Story
                     </Link>
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
     )
 }
