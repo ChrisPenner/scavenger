@@ -70,6 +70,12 @@ class TestScavenger(TestCase):
         self.assertEqual(200, response.status_int)
 
     def test_flow_through_story(self):
+        # start non-existent story
+        self.request.POST['Body'] = 'start asdf'
+        response = self.request.get_response(app)
+        self.assertEqual(200, response.status_int)
+        self.assertIn(STORY_NOT_FOUND.text, response.body)
+
         # start story
         self.request.POST['Body'] = 'start {}'.format(self.story.uid)
         response = self.request.get_response(app)
@@ -200,7 +206,7 @@ class TestPerformAction(TestCase):
     def test_returns_expected_story_not_found(self):
         user = Mock()
         result = perform_action(START_STORY, 'start blah', user, None)
-        self.assertEqual([STORY_NOT_FOUND], result)
+        self.assertEqual([STORY_NOT_FOUND], result.messages)
 
     @patch('app.scavenger.Group')
     @patch('app.scavenger.Clue')

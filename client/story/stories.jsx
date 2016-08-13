@@ -28,10 +28,14 @@ const Stories = ({story, storiesList}) => {
             <table className="table is-bordered">
                 <tbody>
                     {stories}
-                    <Link to={Routes.createStory()}
-                        className="button is-success">
-                        + Add Story
-                    </Link>
+                    <tr>
+                        <td>
+                            <Link to={Routes.createStory()}
+                                className="button is-success">
+                                + Add Story
+                            </Link>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

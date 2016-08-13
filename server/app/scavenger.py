@@ -82,7 +82,7 @@ def determine_message_type(message):
 
 def perform_action(message_type, message, user, group):
     if message_type == START_STORY:
-        return start_story(message, user)
+        return start_story(message, user, group)
     elif message_type == JOIN_GROUP:
         return join_group(message, user)
     if not user.group_uid:
@@ -93,13 +93,13 @@ def perform_action(message_type, message, user, group):
         return answer(message, user, group)
 
 
-def start_story(message, user):
+def start_story(message, user, group):
     match = regex_match(r'^start (?P<code>.+)', message.lower())
     story_uid = match.groupdict().get('code')
     start_clue = Clue.get_by_id('{}:START'.format(story_uid)) if story_uid else None
     if not start_clue:
         logging.info("Couldn't find story for story_uid: %s", story_uid)
-        return [STORY_NOT_FOUND]
+        return Result(response_type=INFO, messages=[STORY_NOT_FOUND], user=user, group=group)
     group_code = Group.gen_uid()
     group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_uid, user_keys=[user.key])
     return Result(
