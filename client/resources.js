@@ -1,23 +1,7 @@
 import toastr from 'toastr'
-import changeCase from 'change-case'
+import { camelizeKeys, decamelizeKeys} from 'humps'
 import Routes, { INDEX } from 'api'
 
-const mapKeys = R.curry((f, obj) =>
-  R.fromPairs(R.map(R.adjust(f, 0), R.toPairs(obj))));
-
-const deepMapKeys = R.curry((f, data) => {
-    switch (R.type(data)){
-        case "Object":
-            return mapKeys(f, data)
-        case "Array":
-            return R.map(mapKeys(f),  data)
-        default:
-            return data
-    }
-})
-
-const camelize = mapKeys(changeCase.camelCase)
-const snakify = mapKeys(changeCase.snakeCase)
 const handleError = err => { toastr.error(err, 'Error'); throw err }
 
 const processResponse = (respPromise) => {
@@ -37,27 +21,27 @@ const createResource = ({route, factory}) => {
     return class Resource {
         static index(){
             return R.compose(processResponse, fetch, route)(INDEX)
-                .then(R.map(camelize))
+                .then(R.map(camelizeKeys))
         }
 
         static get(uid){
             return R.compose(processResponse, fetch, route)(uid)
-                .then(camelize)
+                .then(camelizeKeys)
         }
 
         static put(uid, payload){
             return processResponse(fetch(route(uid), {
                 method: 'put',
-                body: JSON.stringify(snakify(payload)),
-            })).then(camelize)
+                body: JSON.stringify(decamelizeKeys(payload)),
+            })).then(camelizeKeys)
         }
 
         static post(uid, payload){
             return fetch(route(uid), {
                 method: 'post',
-                body: JSON.stringify(snakify(payload)),
+                body: JSON.stringify(decamelizeKeys(payload)),
             }).then(resp => resp.json())
-              .then(camelize)
+              .then(camelizeKeys)
         }
 
         static new(args){

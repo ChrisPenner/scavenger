@@ -5,6 +5,7 @@
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "change-case": "github:blakeembrey/change-case",
+    "humps": "^1.1.0",
     "jquery": "^3.1.0",
     "ramda": "^0.21.0",
     "react": "^15.3.0",
@@ -36,7 +37,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --inline --hot --progress --colors --port 3000",
-    "test": "mocha-webpack --webpack-config webpack.config-test.js \"spec/**/*.spec.js\"",
+    "test": "mocha-webpack --webpack-config webpack.config.js \"spec/**/*.spec.js\"",
     "postinstall": "npm run build",
     "build": "webpack",
     "watch": "webpack --watch",
