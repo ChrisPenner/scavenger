@@ -18,6 +18,7 @@ from app.scavenger import twiml_response, format_message, determine_message_type
 from models.story import Story
 from models.user import User
 
+
 class TestScavenger(TestCase):
     def setUp(self):
         self.request = Request.blank('/api/message')
@@ -274,9 +275,7 @@ class TestGetNextClue(TestCase):
 
 
 class TestAnswerClue(TestCase):
-
-    @patch('app.scavenger.ndb.get_multi')
-    def test_sets_next_clue_on_group(self, get_answers_mock):
+    def test_sets_next_clue_on_group(self):
         user = MagicMock()
         answers = [
             Answer(

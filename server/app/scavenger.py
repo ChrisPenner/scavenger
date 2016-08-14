@@ -3,7 +3,6 @@ import re
 import logging
 from collections import namedtuple
 
-from google.appengine.ext import ndb
 from webapp2 import RequestHandler, abort
 
 from models.clue import Clue

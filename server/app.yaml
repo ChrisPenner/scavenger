@@ -1,5 +1,5 @@
 application: look-go
-version: 6
+version: 10
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -8,18 +8,14 @@ handlers:
 - url: /api/.*
   script: app.main.app
 
-- url: /js
-  static_dir: ../dist/js
-
-- url: /css
-  static_dir: ../dist/css
-
-- url: /assets
-  static_dir: ../dist/assets
+- url: /static
+  expiration: 364d
+  static_dir: static
 
 - url: /.*
-  static_files: ../dist/index.html
-  upload: ../dist/index.html
+  expiration: 1s
+  static_files: static/index.html
+  upload: static/index.html
 
 libraries:
 - name: jinja2

@@ -44,7 +44,7 @@ const clues = (clues={}, action) => {
             return R.assoc(action.payload.uid, action.payload, clues)
         case at.SET_ANSWER:
             const { clueUid } = splitUid(action.payload.uid)
-            return R.evolve({[clueUid]: {answer_uids: R.append(action.payload.uid)}}, clues)
+            return R.evolve({[clueUid]: {answerUids: R.append(action.payload.uid)}}, clues)
         default:
             return clues
     }

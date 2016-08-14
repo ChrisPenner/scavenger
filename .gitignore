@@ -1,7 +1,8 @@
 *.pyc
 app/secrets.py*
-images/
-media/
+/assets/
+/media/
 /node_modules/
 /dist/
+/server/static/
 npm-debug.log
