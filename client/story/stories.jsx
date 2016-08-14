@@ -4,47 +4,47 @@ import Routes from 'routes'
 import { getStoriesList } from 'reducers'
 
 const stateToProps = (state) => ({
-    storiesList: getStoriesList(state),
+  storiesList: getStoriesList(state),
 })
 
 const Stories = ({story, storiesList}) => {
-    if (story){
-        return <Story story={story} />
-    }
+  if (story) {
+    return <Story story={story} />
+  }
 
-    const stories = storiesList.map(story =>(
-        <tr key={story.uid}>
+  const stories = storiesList.map(story => (
+    <tr key={story.uid}>
+      <td>
+        <Link to={Routes.story(story.uid)}>
+        {story.uid}
+        </Link>
+      </td>
+    </tr>
+  ))
+
+  return (
+    <div>
+      <h1 className="title">Stories</h1>
+      <table className="table is-bordered">
+        <tbody>
+          {stories}
+          <tr>
             <td>
-                <Link to={Routes.story(story.uid)}>
-                    {story.uid}
-                </Link>
+              <Link
+                to={Routes.createStory()}
+                className="button is-success"> + Add Story
+              </Link>
             </td>
-        </tr>
-    ))
-
-    return (
-        <div>
-            <h1 className="title"> Stories </h1>
-            <table className="table is-bordered">
-                <tbody>
-                    {stories}
-                    <tr>
-                        <td>
-                            <Link to={Routes.createStory()}
-                                className="button is-success">
-                                + Add Story
-                            </Link>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    )
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
 }
 
 Stories.propTypes = {
-    story: React.PropTypes.object,
-    storiesList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+  story: React.PropTypes.object,
+  storiesList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
 export default connect(stateToProps)(Stories)
