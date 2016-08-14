@@ -28,15 +28,12 @@ module.exports = {
         loaders: [
             {
                 test: /\.jsx?$/,
-                loaders: [
-                    'react-hot',
-                    'babel-loader',
-                ],
+                loaders: [ 'react-hot', 'babel'],
                 exclude: path.resolve(__dirname, "node_modules"),
             },
             {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader'
+                loaders: ['style', 'css'],
             }
         ]
     },
