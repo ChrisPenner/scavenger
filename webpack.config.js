@@ -15,9 +15,7 @@ module.exports = {
     devtool: 'cheap-module-eval-source-map',
     devServer: {
         contentBase: './server/static',
-        historyApiFallback: {
-            index: 'index.html'
-        },
+        historyApiFallback: true,
         proxy: {
             "/api/*": {
                 target: 'http://localhost:8080',
