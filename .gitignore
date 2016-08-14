@@ -6,3 +6,4 @@ app/secrets.py*
 /dist/
 /server/static/
 npm-debug.log
+/.tmp/

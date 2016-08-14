@@ -1,41 +1,45 @@
 {
-    "name": "",
-    "version": "0.0.1",
-    "dependencies": {
-        "babel-loader": "^6.2.4",
-        "babel-plugin-transform-object-rest-spread": "^6.8.0",
-        "change-case": "github:blakeembrey/change-case",
-        "jquery": "^3.1.0",
-        "ramda": "^0.21.0",
-        "react": "^15.3.0",
-        "react-dom": "^15.2.1",
-        "react-redux": "^4.4.5",
-        "react-router": "^2.5.2",
-        "react-router-redux": "^4.0.5",
-        "redux": "^3.5.2",
-        "redux-thunk": "^2.1.0",
-        "toastr": "^2.1.2",
-        "webpack": "^1.13.1",
-        "xml2js-es6-promise": "^1.0.3"
-    },
-    "devDependencies": {
-        "babel-core": "^6.10.4",
-        "babel-preset-es2015": "^6.9.0",
-        "babel-preset-react": "^6.11.1",
-        "copy-webpack-plugin": "^3.0.1",
-        "css-loader": "^0.23.1",
-        "extract-text-webpack-plugin": "^1.0.1",
-        "html-webpack-plugin": "^2.22.0",
-        "react-hot-loader": "^1.3.0",
-        "style-loader": "^0.13.1",
-        "webpack-dev-server": "^1.14.1",
-        "webpack-hot-middleware": "^2.12.2"
-    },
-    "scripts": {
-        "start": "webpack-dev-server --inline --hot --progress --colors --port 3000",
-        "postinstall": "npm run build",
-        "build": "webpack",
-        "watch": "webpack --watch",
-        "deploy": "npm run build && appcfg.py update ./server/app.yaml"
-    }
+  "name": "",
+  "version": "0.0.1",
+  "dependencies": {
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "change-case": "github:blakeembrey/change-case",
+    "jquery": "^3.1.0",
+    "ramda": "^0.21.0",
+    "react": "^15.3.0",
+    "react-dom": "^15.2.1",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.5.2",
+    "react-router-redux": "^4.0.5",
+    "redux": "^3.5.2",
+    "redux-thunk": "^2.1.0",
+    "toastr": "^2.1.2",
+    "webpack": "^1.13.1",
+    "xml2js-es6-promise": "^1.0.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.10.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "copy-webpack-plugin": "^3.0.1",
+    "css-loader": "^0.23.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.22.0",
+    "mocha": "^3.0.2",
+    "mocha-webpack": "^0.6.0",
+    "react-hot-loader": "^1.3.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1",
+    "webpack-hot-middleware": "^2.12.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --inline --hot --progress --colors --port 3000",
+    "test": "mocha-webpack --webpack-config webpack.config-test.js \"spec/**/*.spec.js\"",
+    "postinstall": "npm run build",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "deploy": "npm run build && appcfg.py update ./server/app.yaml"
+  }
 }
