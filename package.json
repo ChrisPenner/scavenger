@@ -35,6 +35,7 @@
         "start": "webpack-dev-server --inline --hot --progress --colors --port 3000",
         "postinstall": "npm run build",
         "build": "webpack",
-        "watch": "webpack --watch"
+        "watch": "webpack --watch",
+        "deploy": "npm run build && appcfg.py update ./server/app.yaml"
     }
 }
