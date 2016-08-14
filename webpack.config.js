@@ -8,13 +8,13 @@ module.exports = {
     entry: "./main",
     output: {
         path: "./server/static/",
-        publicPath: "/static",
+        publicPath: "/",
         filename: "[name].[hash].js",
         sourceMapFilename: "[name].[hash].map.js",
     },
     devtool: 'cheap-module-eval-source-map',
     devServer: {
-        contentBase: './dist',
+        contentBase: './server/static',
         historyApiFallback: {
             index: 'index.html'
         },
