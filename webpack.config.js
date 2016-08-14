@@ -7,15 +7,18 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
     entry: "./main",
     output: {
-        path: "./server/static/",
-        publicPath: "/",
+        path: "./server/static",
+        publicPath: "/static/",
         filename: "[name].[hash].js",
         sourceMapFilename: "[name].[hash].map.js",
     },
     devtool: 'cheap-module-eval-source-map',
     devServer: {
-        contentBase: './server/static',
-        historyApiFallback: true,
+        contentBase: './server/static/',
+        publicPath: '/static/',
+        historyApiFallback: {
+            index: '/static/index.html'
+        },
         proxy: {
             "/api/*": {
                 target: 'http://localhost:8080',
