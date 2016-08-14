@@ -1,18 +1,21 @@
 application: look-go
-version: 10
+version: 14
 runtime: python27
 api_version: 1
 threadsafe: yes
 
 handlers:
+
 - url: /api/.*
   script: app.main.app
 
 - url: /static
+  login: admin
   expiration: 364d
   static_dir: static
 
 - url: /.*
+  login: admin
   expiration: 1s
   static_files: static/index.html
   upload: static/index.html
