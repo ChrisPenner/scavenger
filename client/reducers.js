@@ -63,7 +63,7 @@ const answers = (answers={}, action) => {
     }
 }
 
-const explorer = (explorer={text:'', toNumber:'', fromNumber:'', texts:[]}, action) => {
+const explorer = (explorer={text:'', toNumber:'server', fromNumber:'testing', texts:[]}, action) => {
     switch (action.type) {
         case at.CHANGE_EXPLORER:
             return R.assocPath(action.path, action.value, explorer)
