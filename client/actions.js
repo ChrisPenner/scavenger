@@ -13,12 +13,21 @@ const fetchResource = (Resource, actionType) => (dispatch) => {
     }))
 }
 
-const setter = (type) => (path, value) => ({
+const changer = (type) => (path, value) => ({
   type: type,
   path,
   value,
 })
 
+const adder = (type) => (payload) => ({
+  type,
+  payload,
+})
+
+const setter = (type) => (payload) => ({
+  type,
+  payload,
+})
 
 const successMessage = message => () => toastr.success(message, 'Success')
 const handleError = err => {
@@ -84,41 +93,22 @@ export const loadStories = fetchResource(Story, at.LOAD_STORIES)
 export const loadClues = fetchResource(Clue, at.LOAD_CLUES)
 export const loadAnswers = fetchResource(Answer, at.LOAD_ANSWERS)
 
-export const changeStory = setter(at.CHANGE_STORY)
-export const changeClue = setter(at.CHANGE_CLUE)
-export const changeAnswer = setter(at.CHANGE_ANSWER)
+export const changeStory = changer(at.CHANGE_STORY)
+export const changeClue = changer(at.CHANGE_CLUE)
+export const changeAnswer = changer(at.CHANGE_ANSWER)
+export const changeExplorer = changer(at.CHANGE_EXPLORER)
 
 export const saveStory = saveResource(Story, at.SAVE_STORY, getStory)
 export const saveClue = saveResource(Clue, at.SAVE_CLUE, getClue)
 export const saveAnswer = saveResource(Answer, at.SAVE_ANSWER, getAnswer)
 
-export const addStory = (payload) => ({
-  type: at.ADD_STORY,
-  payload
-})
-export const addClue = (payload) => ({
-  type: at.ADD_CLUE,
-  payload
-})
-export const addAnswer = (payload) => ({
-  type: at.ADD_ANSWER,
-  payload
-})
+export const addStory = adder(at.ADD_STORY)
+export const addClue = adder(at.ADD_CLUE)
+export const addAnswer = adder(at.ADD_ANSWER)
 
-export const setStory = (payload) => ({
-  type: at.SET_STORY,
-  payload,
-})
-export const setClue = (payload) => ({
-  type: at.SET_CLUE,
-  payload,
-})
-export const setAnswer = (payload) => ({
-  type: at.SET_ANSWER,
-  payload,
-})
-
-export const changeExplorer = setter(at.CHANGE_EXPLORER)
+export const setStory = setter(at.SET_STORY)
+export const setClue = setter(at.SET_CLUE)
+export const setAnswer = setter(at.SET_ANSWER)
 
 export const createStory = (payload) => (dispatch) => {
   Story.put(payload.uid, payload)

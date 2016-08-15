@@ -5,16 +5,16 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin")
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: "./main",
+entry: "./main",
   output: {
-    path: "./server/static",
+    path: path.resolve(__dirname, "server", "static"),
     publicPath: "/static/",
     filename: "[name].[hash].js",
     sourceMapFilename: "[name].[hash].map.js",
   },
   devtool: 'cheap-module-eval-source-map',
   devServer: {
-    contentBase: './server/static/',
+    contentBase: path.resolve(__dirname, 'server', 'static'),
     publicPath: '/static/',
     historyApiFallback: {
       index: '/static/index.html'
@@ -46,7 +46,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './client/html/index.ejs',
+      template: path.resolve(__dirname, 'client', 'html', 'index.ejs'),
     }),
     new webpack.ProvidePlugin({
       'React': 'react',
