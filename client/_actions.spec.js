@@ -20,11 +20,11 @@ import {
 describe("Action Creators ->", () => {
   describe("receiveMessage", () => {
     it("returns an action with the message embedded", () => {
-      const message = {
+      const payload = {
         text: "my-message"
       };
-      const action = receiveMessage(message)
-      expect(action.message).to.equal(message)
+      const action = receiveMessage(payload)
+      expect(action.payload).to.equal(payload)
       expect(action.type).to.equal(at.RECEIVE_MESSAGE)
     })
   })

@@ -41,10 +41,10 @@ const saveResource = (Resource, actionType, getResourceState) => (uid) => (dispa
     .then(successMessage('Saved'))
 }
 
-export const receiveMessage = (message) => {
+export const receiveMessage = (payload) => {
   return {
     type: at.RECEIVE_MESSAGE,
-    message,
+    payload,
   }
 }
 
@@ -70,7 +70,7 @@ export const sendMessage = () => (dispatch, getState) => {
   const {fromNumber, toNumber, text} = getExplorer(getState())
   dispatch({
     type: at.SEND_MESSAGE,
-    message: {
+    payload: {
       to: toNumber,
       from: fromNumber,
       body: text,
