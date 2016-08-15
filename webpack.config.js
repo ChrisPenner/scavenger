@@ -46,6 +46,7 @@ entry: "./main",
   },
   plugins: [
     new HtmlWebpackPlugin({
+      title: 'look-go',
       template: path.resolve(__dirname, 'client', 'html', 'index.ejs'),
     }),
     new webpack.ProvidePlugin({

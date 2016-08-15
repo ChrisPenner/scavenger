@@ -28,7 +28,7 @@ const App = connect(({loading}) => ({
       <div>
         <nav className="nav has-shadow">
           <div className="nav-left">
-            <span className="nav-item is-brand">Scavenger</span>
+            <span className="nav-item is-brand">Look-Go</span>
           </div>
           <div className="nav-right">
             <Link
