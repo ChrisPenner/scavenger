@@ -5,7 +5,28 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin")
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-entry: "./main",
+  entry: {
+    'main': './main',
+    'styles': [
+      './client/css/style',
+      './client/css/bulma',
+      './client/css/toastr'
+    ],
+    'vendor': [
+      'react',
+      'react-dom',
+      'react-redux',
+      'react-router',
+      'react-router-redux',
+      'redux',
+      'redux-thunk',
+      'xml2js-es6-promise',
+      'ramda',
+      'toastr',
+      'humps',
+      'jquery',
+    ],
+  },
   output: {
     path: path.resolve(__dirname, "server", "static"),
     publicPath: "/static/",
@@ -54,6 +75,9 @@ entry: "./main",
       'R': 'ramda',
       'jquery': 'jquery',
       'toastr': 'toastr'
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['vendor', 'styles']
     }),
   // new CopyWebpackPlugin([
   //     { from: 'assets' },
