@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import * as at from 'action-types'
 import reducer from './answer'
-import { loadAnswers, changeAnswer, setAnswer } from 'actions'
+import { changeAnswer, setAnswer } from 'actions'
 import { Answer } from 'resources'
 
 describe('Answer Reducer', function() {
@@ -26,13 +26,6 @@ describe('Answer Reducer', function() {
 
   describe(at.LOAD_ANSWERS, function() {
     it('should overwrite answers', function() {
-      const newAnswer = Answer.new({
-        uid: 'STORY:NEWCLUE:NEWANSWER',
-        storyUid: 'NEWSTORY',
-        clueUid: 'NEWCLUE',
-        pattern: 'new pattern',
-        nextClue: 'STORY:NEW-NEXT-CLUE',
-      })
       const payload = {
         [newAnswer.uid]: newAnswer,
       }
