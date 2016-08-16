@@ -35,8 +35,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --inline --hot --progress --colors --port 3000",
-    "test": "mocha-webpack --webpack-config webpack.config-test.js \"client/**/*.spec.js\"",
-    "test:watch": "mocha-webpack --watch --webpack-config webpack.config-test.js \"client/**/*.spec.js\"",
+    "test": "mocha-webpack --webpack-config webpack.test-config.js \"client/**/*.spec.js\"",
+    "test:watch": "mocha-webpack --watch --webpack-config webpack.test-config.js \"client/**/*.spec.js\"",
     "postinstall": "npm run build",
     "build": "webpack",
     "watch": "webpack --watch",
