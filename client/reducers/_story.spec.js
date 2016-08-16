@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import * as at from 'action-types'
 import reducer from './story'
-import { changeStory, setStory } from 'actions'
-import { Story } from 'resources'
+import { changeStory, setStory, setClue } from 'actions'
+import { Story, Clue } from 'resources'
 
 describe('Story Reducer', function() {
   const startStory = Story.new({
@@ -54,6 +54,22 @@ describe('Story Reducer', function() {
       const action = setStory(newStory)
       const newState = reducer(startStories, action)
       expect(newState[startStory.uid]).to.eql(newStory)
+    });
+  });
+
+  describe(at.SET_CLUE, function() {
+    it('should add a clue to the story', function() {
+      const newClue = Clue.new({
+        uid: 'STORY:NEWCLUE',
+        storyUid: 'STORY',
+        text: 'text',
+        hint: 'hint',
+        mediaUrl: 'media.url',
+        answerUids: ['answer'],
+      })
+      const action = setClue(newClue)
+      const newState = reducer(startStories, action)
+      expect(newState[startStory.uid].clues).to.contain('STORY:NEWCLUE')
     });
   });
 });

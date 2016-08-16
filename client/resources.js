@@ -66,7 +66,7 @@ const clueFactory = (args) => ({
   text: '',
   hint: '',
   mediaUrl: '',
-  answers: [],
+  answerUids: [],
   ...args,
 })
 

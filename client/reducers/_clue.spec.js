@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import * as at from 'action-types'
 import reducer from './clue'
-import { changeClue, setClue } from 'actions'
-import { Clue } from 'resources'
+import { changeClue, setClue, setAnswer } from 'actions'
+import { Clue, Answer } from 'resources'
 
 describe('Clue Reducer', function() {
   const startClue = Clue.new({
@@ -11,7 +11,7 @@ describe('Clue Reducer', function() {
     text: 'text',
     hint: 'hint',
     mediaUrl: 'media.url',
-    answers: ['answer'],
+    answerUids: ['answer'],
   })
   const startClues = {
     [startClue.uid]: startClue,
@@ -23,7 +23,7 @@ describe('Clue Reducer', function() {
     text: 'new text',
     hint: 'new hint',
     mediaUrl: 'newmedia.url',
-    answers: ['new'],
+    answerUids: ['new'],
   })
 
   describe(at.LOAD_CLUES, function() {
@@ -60,6 +60,21 @@ describe('Clue Reducer', function() {
       const action = setClue(newClue)
       const newState = reducer(startClues, action)
       expect(newState[startClue.uid]).to.eql(newClue)
+    });
+  });
+
+  describe(at.SET_ANSWER, function() {
+    it('should add an answer to the clue', function() {
+      const newAnswer = Answer.new({
+        uid: 'STORY:CLUE:ANSWER',
+        storyUid: 'STORY',
+        clueUid: 'STORY:CLUE',
+        pattern: 'my-pattern',
+        nextClue: 'MY-NEXT-CLUE',
+      })
+      const action = setAnswer(newAnswer)
+      const newState = reducer(startClues, action)
+      expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:ANSWER')
     });
   });
 });

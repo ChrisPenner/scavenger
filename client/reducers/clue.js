@@ -1,4 +1,5 @@
 import * as at from 'action-types'
+import { splitUid } from './'
 
 export default (clues = {}, action) => {
   switch (action.type) {

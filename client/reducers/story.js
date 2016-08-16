@@ -1,4 +1,5 @@
 import * as at from 'action-types'
+import { splitUid } from './'
 
 export default (stories = {}, action) => {
   switch (action.type) {
