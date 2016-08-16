@@ -1,7 +1,17 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
+import stories from './story'
+import answers from './answer'
+import clues from './clue'
+import explorer from './explorer'
 
-import * as at from 'action-types'
+export default combineReducers({
+  routing: routerReducer,
+  stories,
+  clues,
+  answers,
+  explorer,
+})
 
 const concatWithColon = (prev, next) => `${prev}:${next}`
 export const splitUid = (uid) => {
@@ -17,86 +27,6 @@ export const uidsFromParams = (params) => {
   const uids = R.zipObj(['storyUid', 'clueUid', 'answerUid'], R.scan(concatWithColon, R.head(splitList), R.tail(splitList)))
   return uids
 }
-
-const stories = (stories = {}, action) => {
-  switch (action.type) {
-    case at.LOAD_STORIES:
-      return action.payload
-    case at.CHANGE_STORY:
-      return R.assocPath(action.path, action.value, stories)
-    case at.SET_CLUE:
-      const {storyUid} = splitUid(action.payload.uid)
-      return R.evolve({
-        [storyUid]: {
-          clues: R.append(action.payload.uid)
-        }
-      }, stories)
-    case at.SET_STORY:
-      return R.assoc(action.payload.uid, action.payload, stories)
-    default:
-      return stories
-  }
-}
-
-const clues = (clues = {}, action) => {
-  switch (action.type) {
-    case at.LOAD_CLUES:
-      return action.payload
-    case at.CHANGE_CLUE:
-      return R.assocPath(action.path, action.value, clues)
-    case at.SET_CLUE:
-      return R.assoc(action.payload.uid, action.payload, clues)
-    case at.SET_ANSWER:
-      const {clueUid} = splitUid(action.payload.uid)
-      return R.evolve({
-        [clueUid]: {
-          answerUids: R.append(action.payload.uid)
-        }
-      }, clues)
-    default:
-      return clues
-  }
-}
-
-const answers = (answers = {}, action) => {
-  switch (action.type) {
-    case at.LOAD_ANSWERS:
-      return action.payload
-    case at.CHANGE_ANSWER:
-      return R.assocPath(action.path, action.value, answers)
-    case at.SET_ANSWER:
-      return R.assoc(action.payload.uid, action.payload, answers)
-    default:
-      return answers
-  }
-}
-
-const explorer = (explorer = {
-    text: '',
-    toNumber: 'server',
-    fromNumber: 'testing',
-    texts: []
-  } , action) => {
-  switch (action.type) {
-    case at.CHANGE_EXPLORER:
-      return R.assocPath(action.path, action.value, explorer)
-    case at.RECEIVE_MESSAGE:
-    case at.SEND_MESSAGE:
-      return R.evolve({
-        texts: R.prepend(action.payload)
-      })(explorer)
-    default:
-      return explorer
-  }
-}
-
-export default combineReducers({
-  routing: routerReducer,
-  stories,
-  clues,
-  answers,
-  explorer,
-})
 
 const listFromMapping = (mapping) => Object.keys(mapping).map(key => mapping[key])
 
