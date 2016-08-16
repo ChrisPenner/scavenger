@@ -1,6 +1,6 @@
 import * as at from 'action-types'
 
-const explorer = (explorer = {
+export default (explorer = {
     text: '',
     toNumber: 'server',
     fromNumber: 'testing',
