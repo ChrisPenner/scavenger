@@ -20,38 +20,20 @@ const processResponse = (respPromise) => {
   }).catch(handleError)
 }
 
-const createResource = ({route, factory}) => {
-  return class Resource {
-    static index() {
-      return R.compose(processResponse, fetch, route)(INDEX)
-        .then(R.map(camelizeKeys))
-    }
-
-    static get(uid) {
-      return R.compose(processResponse, fetch, route)(uid)
-        .then(camelizeKeys)
-    }
-
-    static put(uid, payload) {
-      return processResponse(fetch(route(uid), {
-        method: 'put',
-        body: JSON.stringify(decamelizeKeys(payload)),
-      })).then(camelizeKeys)
-    }
-
-    static post(uid, payload) {
-      return fetch(route(uid), {
-        method: 'post',
-        body: JSON.stringify(decamelizeKeys(payload)),
-      }).then(resp => resp.json())
-        .then(camelizeKeys)
-    }
-
-    static new(args) {
-      return factory(args)
-    }
+const apiRequest = (route, method='get', payload=undefined) => {
+  const options = {
+    method,
   }
+  if (payload !== undefined) {
+    options.body = JSON.stringify(decamelizeKeys(payload))
+  }
+  return processResponse(fetch(route, options)).then(R.map(camelizeKeys))
 }
+
+export const index = (resource) => apiRequest(resource.route(INDEX))
+export const get = (resource, uid) => apiRequest(resource.route(uid))
+export const put = (resource, uid, payload) => apiRequest(resource.route(uid), 'put', payload)
+export const post = (resource, uid, payload) => apiRequest(resource.route(uid), 'post', payload)
 
 const storyFactory = (args) => ({
   uid: null,
@@ -79,15 +61,20 @@ const answerFactory = (args) => ({
   ...args,
 })
 
-export const Story = createResource({
+export const Story = {
   route: Routes.story,
-  factory: storyFactory
-})
-export const Clue = createResource({
+  new: storyFactory,
+  type: 'STORY',
+}
+
+export const Clue = {
   route: Routes.clue,
-  factory: clueFactory
-})
-export const Answer = createResource({
+  new: clueFactory,
+  type: 'CLUE',
+}
+
+export const Answer = {
   route: Routes.answer,
-  factory: answerFactory
-})
+  new: answerFactory,
+  type: 'ANSWER',
+}
