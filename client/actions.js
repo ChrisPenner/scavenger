@@ -35,7 +35,7 @@ const handleError = err => {
   throw err
 }
 
-const saveResource = (Resource, actionType, getResourceState) => (uid) => (dispatch, getState) => {
+const saveResource = (Resource, getResourceState) => (uid) => (dispatch, getState) => {
   const currentState = getResourceState(getState(), uid)
   return put(Resource, uid, currentState)
     .then(successMessage('Saved'))
@@ -98,9 +98,9 @@ export const changeClue = changer(at.change(Clue.type))
 export const changeAnswer = changer(at.change(Answer.type))
 export const changeExplorer = changer(at.CHANGE_EXPLORER)
 
-export const saveStory = saveResource(Story, at.SAVE_STORY, getStory)
-export const saveClue = saveResource(Clue, at.SAVE_CLUE, getClue)
-export const saveAnswer = saveResource(Answer, at.SAVE_ANSWER, getAnswer)
+export const saveStory = saveResource(Story, getStory)
+export const saveClue = saveResource(Clue, getClue)
+export const saveAnswer = saveResource(Answer, getAnswer)
 
 export const addStory = adder(at.ADD_STORY)
 export const addClue = adder(at.ADD_CLUE)

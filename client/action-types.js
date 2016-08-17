@@ -2,10 +2,6 @@ export const load = (resourceType) => `LOAD_${resourceType.toUpperCase()}`
 export const change = (resourceType) => `CHANGE_${resourceType.toUpperCase()}`
 export const set = (resourceType) => `SET_${resourceType.toUpperCase()}`
 
-export const SAVE_STORY = 'SAVE_STORY'
-export const SAVE_CLUE = 'SAVE_CLUE'
-export const SAVE_ANSWER = 'SAVE_ANSWER'
-
 export const CHANGE_EXPLORER = 'CHANGE_EXPLORER'
 export const SEND_MESSAGE = 'SEND_MESSAGE'
 export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'
