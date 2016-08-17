@@ -35,6 +35,7 @@ export const index = (resource) => apiRequest(resource.route(INDEX)).then(R.map(
 export const get = (resource, uid) => apiRequest(resource.route(uid)).then(camelizeKeys)
 export const put = (resource, uid, payload) => apiRequest(resource.route(uid), 'put', payload).then(camelizeKeys)
 export const post = (resource, uid, payload) => apiRequest(resource.route(uid), 'post', payload).then(camelizeKeys)
+export const del = (resource, uid) => apiRequest(resource.route(uid), 'delete')
 
 const storyFactory = (args) => ({
   uid: null,

@@ -9,12 +9,20 @@ export default (clues = {}, action) => {
   if (baseResult !== undefined){
     return baseResult
   }
+  let clueUid
   switch (action.type) {
     case at.set(Answer.type):
-      const {clueUid} = splitUid(action.payload.uid)
+      clueUid = splitUid(action.payload.uid).clueUid
       return R.evolve({
         [clueUid]: {
           answerUids: R.append(action.payload.uid)
+        }
+      }, clues)
+    case at.del(Answer.type):
+      clueUid = splitUid(action.payload.uid).clueUid
+      return R.evolve({
+        [clueUid]: {
+          answerUids: R.without(action.payload.uid)
         }
       }, clues)
     default:

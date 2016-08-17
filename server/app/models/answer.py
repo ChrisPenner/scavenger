@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 from app.models.clue import Clue
+from app.models.utils import get_clue_uid, get_story_uid
 
 from .validators import not_empty
 
@@ -9,8 +10,8 @@ class Answer(ndb.Model):
 
     pattern = ndb.StringProperty(required=True, validator=not_empty)
     next_clue = ndb.StringProperty(required=True)
-    story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
-    clue_uid = ndb.ComputedProperty(lambda s: ':'.join(s.uid.split(':')[:2]))
+    story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
+    clue_uid = ndb.ComputedProperty(lambda s: get_clue_uid(s.uid))
     uid = ndb.StringProperty(required=True)
 
     @classmethod
@@ -34,14 +35,15 @@ class Answer(ndb.Model):
         clue = Clue.get_by_id(self.clue_uid)
         if clue is None:
             raise ValueError("A clue doesn't exist for this answer")
-        clue.add_answer(self)
+        clue.add_answer(self.uid)
         clue.put()
 
-    def _pre_delete_hook(self):
-        clue = Clue.get_by_id(self.clue_uid)
+    @classmethod
+    def _pre_delete_hook(cls, key):
+        clue = Clue.get_by_id(get_clue_uid(key.id()))
         if clue is None:
             return
 
-        clue.remove_answer(self)
+        clue.remove_answer(key.id())
         clue.put()
 

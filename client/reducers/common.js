@@ -8,6 +8,9 @@ export const baseResourceReducer = (resourceType, state, action) => {
       return R.assocPath(action.path, action.value, state)
     case at.set(resourceType):
       return R.assoc(action.payload.uid, action.payload, state)
+    case at.del(resourceType):
+      debugger
+      return R.dissoc(action.payload.uid, state)
     default:
       return undefined
   }

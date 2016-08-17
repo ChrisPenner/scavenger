@@ -101,6 +101,12 @@ def create_resource_handler(Model, id_key='uid'):
             item.put()
             return item.to_dict()
 
+        def delete(self, uid):
+            logging.info('PUT: %s', uid)
+            Model.build_key(uid=uid).delete()
+            return {}
+
+
     return ResourceHandler
 
 
@@ -108,5 +114,5 @@ def ResourceRoutes(route_prefix, Model, id_key='uid'):
     handler = create_resource_handler(Model, id_key=id_key)
     return PathPrefixRoute('/{}'.format(route_prefix), [
             Route('/', handler=handler, handler_method='index', methods=['GET']),
-            Route('/<uid:[^/]+>', handler=handler, methods=['GET', 'PUT']),
+            Route('/<uid:[^/]+>', handler=handler, methods=['GET', 'PUT', 'DELETE']),
         ])

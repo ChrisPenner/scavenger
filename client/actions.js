@@ -1,5 +1,5 @@
 import xml2js from 'xml2js-es6-promise'
-import { Story, Clue, Answer, index, put } from 'resources'
+import { Story, Clue, Answer, index, put, del } from 'resources'
 import { getStory, getClue, getAnswer, getExplorer } from 'reducers'
 import { push } from 'react-router-redux'
 import Routes from 'routes'
@@ -29,7 +29,7 @@ const setter = (type) => (payload) => ({
   payload,
 })
 
-const successMessage = message => () => toastr.success(message, 'Success')
+const successMessage = message => () => toastr.success(message)
 const handleError = err => {
   toastr.error(err, 'Error');
   throw err
@@ -40,6 +40,18 @@ const saveResource = (Resource, getResourceState) => (uid) => (dispatch, getStat
   return put(Resource, uid, currentState)
     .then(successMessage('Saved'))
 }
+
+const deleted = (resourceType, uid) => ({
+  type: at.del(resourceType),
+  payload: { uid },
+})
+
+const deleteResource = (Resource) => (uid) => (dispatch) => {
+  return del(Resource, uid)
+    .then(() => dispatch(deleted(Resource.type, uid)))
+    .then(successMessage('Deleted'))
+}
+
 
 export const receiveMessage = (payload) => {
   return {
@@ -102,9 +114,9 @@ export const saveStory = saveResource(Story, getStory)
 export const saveClue = saveResource(Clue, getClue)
 export const saveAnswer = saveResource(Answer, getAnswer)
 
-export const addStory = adder(at.ADD_STORY)
-export const addClue = adder(at.ADD_CLUE)
-export const addAnswer = adder(at.ADD_ANSWER)
+export const deleteStory = deleteResource(Story)
+export const deleteClue = deleteResource(Clue)
+export const deleteAnswer = deleteResource(Answer)
 
 export const setStory = setter(at.set(Story.type))
 export const setClue = setter(at.set(Clue.type))
@@ -125,9 +137,8 @@ export const createClue = (payload) => (dispatch) => {
 }
 
 export const createAnswer = (payload) => (dispatch) => {
-  const [storyId, clueId, _] = payload.uid.split(':')
   put(Answer, payload.uid, payload)
     .then((answer) => dispatch(setAnswer(answer)))
-    .then(() => dispatch(push(Routes.clue(`${storyId}:${clueId}`))))
+    .then(() => dispatch(push(Routes.answer(payload.uid))))
     .then(successMessage('Created'))
 }

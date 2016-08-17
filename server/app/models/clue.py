@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 from app.models.story import Story
+from app.models.utils import get_story_uid
 
 
 class Clue(ndb.Model):
@@ -9,7 +10,7 @@ class Clue(ndb.Model):
     hint = ndb.StringProperty(None)
     media_url = ndb.StringProperty()
     answer_uids = ndb.StringProperty(repeated=True)
-    story_uid = ndb.ComputedProperty(lambda s: s.uid.split(':')[0])
+    story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
     uid = ndb.StringProperty(required=True)
 
     @property
@@ -49,21 +50,22 @@ class Clue(ndb.Model):
         story = Story.get_by_id(self.story_uid)
         if story is None:
             raise ValueError("A story doesn't exist for this clue")
-        story.add_clue(self)
+        story.add_clue(self.uid)
         story.put()
 
-    def _pre_delete_hook(self):
-        story = Story.get_by_id(self.story_uid)
+    @classmethod
+    def _pre_delete_hook(cls, key):
+        story = Story.get_by_id(get_story_uid(key.id()))
         if story is None:
             return
 
-        story.remove_clue(self)
+        story.remove_clue(key.id())
         story.put()
 
-    def add_answer(self, answer):
-        if answer.uid not in self.answer_uids:
-            self.answer_uids.append(answer.uid)
+    def add_answer(self, answer_uid):
+        if answer_uid not in self.answer_uids:
+            self.answer_uids.append(answer_uid)
 
-    def remove_answer(self, answer):
-        if answer.uid in self.answer_uids:
-            self.answer_uids.remove(answer.uid)
+    def remove_answer(self, answer_uid):
+        if answer_uid in self.answer_uids:
+            self.answer_uids.remove(answer_uid)
