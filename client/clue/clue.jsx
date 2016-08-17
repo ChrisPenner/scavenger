@@ -4,9 +4,9 @@ import Routes, { CREATE } from 'routes'
 import * as Res from 'resources'
 import { Answers } from 'answer'
 import { getClue, getCluesListByStory } from 'reducers'
-import { changeClue, saveClue } from 'actions'
+import { changeClue, saveClue, deleteClue } from 'actions'
 import { push } from 'react-router-redux'
-import { uidsFromParams } from 'reducers'
+import { uidsFromParams, splitUid } from 'reducers'
 
 const stateToProps = (state, {params}) => {
   const {clueUid} = uidsFromParams(params)
@@ -14,11 +14,16 @@ const stateToProps = (state, {params}) => {
     clue: getClue(state, clueUid),
   }
 }
-const Clue = ({clue, changeClue, saveClue}) => {
+const Clue = ({clue, changeClue, saveClue, deleteClue }) => {
   return (
     <div className="message is-warning">
       <div className="message-header level is-marginless">
         {clue.uid}
+      <button
+        className="button is-danger is-pulled-right"
+        onClick={() => deleteClue(clue.uid)}>
+        Delete
+      </button>
         <button
           className="button is-success is-pulled-right"
           onClick={() => saveClue(clue.uid)}>
@@ -62,8 +67,14 @@ Clue.propTypes = {
   clue: React.PropTypes.object.isRequired,
   changeClue: React.PropTypes.func.isRequired,
   saveClue: React.PropTypes.func.isRequired,
+  deleteClue: React.PropTypes.func.isRequired,
 }
 export default connect(stateToProps, {
   saveClue,
-  changeClue
+  changeClue,
+  deleteClue: (uid) => (dispatch) => {
+    const { storyUid } = splitUid(uid)
+    dispatch(push(Routes.story(storyUid)))
+    dispatch(deleteClue(uid))
+  },
 })(Clue)

@@ -57,6 +57,8 @@ Answer.propTypes = {
   answer: React.PropTypes.object.isRequired,
   clueUids: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
   changeAnswer: React.PropTypes.func.isRequired,
+  saveAnswer: React.PropTypes.func.isRequired,
+  deleteAnswer: React.PropTypes.func.isRequired,
 }
 
 const getAnswerId = R.compose(R.prop('answerId'), splitUid)
@@ -76,7 +78,6 @@ export default connect(stateToProps, {
   deleteAnswer: (uid) => (dispatch) => {
     const { clueUid } = splitUid(uid)
     dispatch(push(Routes.clue(clueUid)))
-    debugger
     dispatch(deleteAnswer(uid))
   },
 })(Answer)

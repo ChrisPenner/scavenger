@@ -55,10 +55,12 @@ class Clue(ndb.Model):
 
     @classmethod
     def _pre_delete_hook(cls, key):
-        story = Story.get_by_id(get_story_uid(key.id()))
+        clue = cls.get_by_id(key.id())
+        ndb.delete_multi([ndb.Key('Answer', uid) for uid in clue.answer_uids])
+
+        story = Story.get_by_id(clue.story_uid)
         if story is None:
             return
-
         story.remove_clue(key.id())
         story.put()
 
