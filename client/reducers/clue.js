@@ -1,15 +1,16 @@
 import * as at from 'action-types'
 import { splitUid } from './'
+import { Clue, Answer } from 'resources'
+import { baseResourceReducer } from './common'
 
 export default (clues = {}, action) => {
+  const baseResult = baseResourceReducer(Clue.type, clues, action)
+  debugger
+  if (baseResult !== undefined){
+    return baseResult
+  }
   switch (action.type) {
-    case at.LOAD_CLUES:
-      return action.payload
-    case at.CHANGE_CLUE:
-      return R.assocPath(action.path, action.value, clues)
-    case at.SET_CLUE:
-      return R.assoc(action.payload.uid, action.payload, clues)
-    case at.SET_ANSWER:
+    case at.set(Answer.type):
       const {clueUid} = splitUid(action.payload.uid)
       return R.evolve({
         [clueUid]: {

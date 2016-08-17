@@ -24,13 +24,13 @@ describe('Answer Reducer', function() {
     nextClue: 'STORY:NEW-NEXT-CLUE',
   })
 
-  describe(at.LOAD_ANSWERS, function() {
+  describe(at.load(Answer.type), function() {
     it('should overwrite answers', function() {
       const payload = {
         [newAnswer.uid]: newAnswer,
       }
       const action = {
-        type: at.LOAD_ANSWERS,
+        type: at.load(Answer.type),
         payload
       }
       const newState = reducer(startAnswers, action)
@@ -38,7 +38,7 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.CHANGE_ANSWER, function() {
+  describe(at.change(Answer.type), function() {
     it('should change fields on answer', function() {
       const action = changeAnswer([startAnswer.uid, 'pattern'], '42')
       const newState = reducer(startAnswers, action)
@@ -52,7 +52,7 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.SET_ANSWER, function() {
+  describe(at.set(Answer.type), function() {
     it('should overwrite the answer', function() {
       const newAnswer = R.assoc('pattern', 'new-pattern', startAnswer)
       const action = setAnswer(newAnswer)

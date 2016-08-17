@@ -1,13 +1,13 @@
 import * as at from 'action-types'
+import { baseResourceReducer } from './common'
+import { Answer } from 'resources'
 
 export default (answers = {}, action) => {
+  const baseResult = baseResourceReducer(Answer.type, answers, action)
+  if (baseResult !== undefined){
+    return baseResult
+  }
   switch (action.type) {
-    case at.LOAD_ANSWERS:
-      return action.payload
-    case at.CHANGE_ANSWER:
-      return R.assocPath(action.path, action.value, answers)
-    case at.SET_ANSWER:
-      return R.assoc(action.payload.uid, action.payload, answers)
     default:
       return answers
   }

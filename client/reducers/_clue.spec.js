@@ -26,13 +26,13 @@ describe('Clue Reducer', function() {
     answerUids: ['new'],
   })
 
-  describe(at.LOAD_CLUES, function() {
+  describe(at.load(Clue.type), function() {
     it('should overwrite clues', function() {
       const payload = {
         [newClue.uid]: newClue,
       }
       const action = {
-        type: at.LOAD_CLUES,
+        type: at.load(Clue.type),
         payload
       }
       const newState = reducer(startClues, action)
@@ -40,7 +40,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.CHANGE_CLUE, function() {
+  describe(at.change(Clue.type), function() {
     it('should change fields on clue', function() {
       const action = changeClue([startClue.uid, 'hint'], '42')
       const newState = reducer(startClues, action)
@@ -54,7 +54,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.SET_CLUE, function() {
+  describe(at.set(Clue.type), function() {
     it('should overwrite the clue', function() {
       const newClue = R.assoc('hint', 'new-hint', startClue)
       const action = setClue(newClue)
@@ -63,7 +63,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.SET_ANSWER, function() {
+  describe(at.set(Answer.type), function() {
     it('should add an answer to the clue', function() {
       const newAnswer = Answer.new({
         uid: 'STORY:CLUE:ANSWER',
