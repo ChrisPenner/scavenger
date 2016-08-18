@@ -25,9 +25,9 @@ class Story(ndb.Model):
         return story_id
 
     @classmethod
-    def build_key(cls, story_id):
-        story_id = story_id.upper()
-        return ndb.Key(cls, cls.build_uid(story_id))
+    def build_key(cls, uid):
+        uid = uid.upper()
+        return ndb.Key(cls, cls.build_uid(uid))
 
     def add_clue(self, clue_uid):
         if clue_uid not in self.clues:
@@ -36,3 +36,8 @@ class Story(ndb.Model):
     def remove_clue(self, clue_uid):
         if clue_uid in self.clues:
             self.clues.remove(clue_uid)
+
+    @classmethod
+    def _pre_delete_hook(cls, key):
+        story = cls.get_by_id(key.id())
+        ndb.delete_multi([ndb.Key('Clue', uid) for uid in story.clues])
