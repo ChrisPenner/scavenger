@@ -4,7 +4,7 @@ from app.models.utils import get_story_uid
 
 
 class Clue(ndb.Model):
-    DATA_FIELDS = ['text', 'hint', 'media_url']
+    DATA_FIELDS = ['text', 'hint', 'media_url', 'answer_uids']
 
     text = ndb.TextProperty(required=True)
     hint = ndb.StringProperty(None)

@@ -5,7 +5,6 @@ import { baseResourceReducer } from './common'
 
 export default (clues = {}, action) => {
   const baseResult = baseResourceReducer(Clue.type, clues, action)
-  debugger
   if (baseResult !== undefined){
     return baseResult
   }

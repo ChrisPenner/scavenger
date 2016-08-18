@@ -4,6 +4,7 @@ import stories from './story'
 import answers from './answer'
 import clues from './clue'
 import explorer from './explorer'
+import ui from './ui'
 
 export default combineReducers({
   routing: routerReducer,
@@ -11,6 +12,7 @@ export default combineReducers({
   clues,
   answers,
   explorer,
+  ui,
 })
 
 const concatWithColon = (prev, next) => `${prev}:${next}`
@@ -50,3 +52,5 @@ export const getAnswersByClue = (state, clueUid) => getClue(state, clueUid).answ
 export const getAnswersListByClue = (state, clueUid) => listFromMapping(getAnswersByClue(state, clueUid))
 
 export const getExplorer = (state) => state.explorer
+
+export const getDragData = (state) => state.ui.dragData

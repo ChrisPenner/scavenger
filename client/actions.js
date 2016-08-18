@@ -1,6 +1,6 @@
 import xml2js from 'xml2js-es6-promise'
 import { Story, Clue, Answer, index, put, del } from 'resources'
-import { getStory, getClue, getAnswer, getExplorer } from 'reducers'
+import { getStory, getClue, getAnswer, getExplorer, getDragData } from 'reducers'
 import { push } from 'react-router-redux'
 import Routes from 'routes'
 import * as at from 'action-types'
@@ -150,3 +150,16 @@ export const reorderAnswer = (uid, index) => ({
       index
     }
 })
+
+export const startDrag = (payload) => ({
+  type: at.START_DRAG,
+  payload,
+})
+
+export const stopDrag = () => ({ type: at.START_DRAG })
+
+export const dropAnswer = (index) => (dispatch, getState) => {
+  const answerUid = getDragData(getState())
+  dispatch(reorderAnswer(answerUid, index))
+  dispatch(stopDrag)
+}
