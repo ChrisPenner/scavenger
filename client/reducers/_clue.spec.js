@@ -1,18 +1,20 @@
 import { expect } from 'chai'
 import * as at from 'action-types'
 import reducer from './clue'
-import { changeClue, setClue, setAnswer, deleted } from 'actions'
+import { changeClue, setClue, setAnswer, deleted, reorderAnswer } from 'actions'
 import { Clue, Answer } from 'resources'
 
 describe('Clue Reducer', function() {
   const answerUid = 'STORY:CLUE:ANSWER'
+  const secondAnswerUid = 'STORY:CLUE:SECONDANSWER'
+  const thirdAnswerUid = 'STORY:CLUE:THIRDANSWER'
   const startClue = Clue.new({
     uid: 'STORY:CLUE',
     storyUid: 'STORY',
     text: 'text',
     hint: 'hint',
     mediaUrl: 'media.url',
-    answerUids: [answerUid],
+    answerUids: [answerUid, secondAnswerUid, thirdAnswerUid],
   })
   const startClues = {
     [startClue.uid]: startClue,
@@ -91,15 +93,27 @@ describe('Clue Reducer', function() {
     it('should delete the answer from answerUids', function() {
       const action = deleted(Answer.type, answerUid)
       const newState = reducer(startClues, action)
-      expect(newState[startClue.uid].answerUids).to.eql([])
+      expect(newState[startClue.uid].answerUids).to.not.contain(startClue.uid)
     });
   });
 
-  describe(at.del(Answer.type), function() {
-    it('should delete the answer from answerUids', function() {
-      const action = deleted(Answer.type, answerUid)
+  describe(at.REORDER_ANSWER, function() {
+    it("should move an answer earlier", function() {
+      const action = reorderAnswer(answerUid, 2)
       const newState = reducer(startClues, action)
-      expect(newState[startClue.uid].answerUids).to.eql([])
+      expect(newState[startClue.uid].answerUids).to.eql([secondAnswerUid, thirdAnswerUid, answerUid])
+    });
+
+    it("should move an answer later", function() {
+      const action = reorderAnswer(thirdAnswerUid, 1)
+      const newState = reducer(startClues, action)
+      expect(newState[startClue.uid].answerUids).to.eql([answerUid, thirdAnswerUid, secondAnswerUid])
+    });
+
+    it("should not move an answer when same index", function() {
+      const action = reorderAnswer(secondAnswerUid, 1)
+      const newState = reducer(startClues, action)
+      expect(newState[startClue.uid].answerUids).to.eql([answerUid, secondAnswerUid, thirdAnswerUid])
     });
   });
 

@@ -6,3 +6,4 @@ export const del = (resourceType) => `DELETE_${resourceType.toUpperCase()}`
 export const CHANGE_EXPLORER = 'CHANGE_EXPLORER'
 export const SEND_MESSAGE = 'SEND_MESSAGE'
 export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'
+export const REORDER_ANSWER = 'REORDER_ANSWER '

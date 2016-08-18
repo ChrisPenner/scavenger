@@ -9,7 +9,7 @@ export default (clues = {}, action) => {
   if (baseResult !== undefined){
     return baseResult
   }
-  let clueUid
+  let clueUid, answerUid
   switch (action.type) {
     case at.set(Answer.type):
       clueUid = splitUid(action.payload.uid).clueUid
@@ -23,6 +23,15 @@ export default (clues = {}, action) => {
       return R.evolve({
         [clueUid]: {
           answerUids: R.without(action.payload.uid)
+        }
+      }, clues)
+    case at.REORDER_ANSWER:
+      clueUid = splitUid(action.payload.uid).clueUid
+      answerUid = action.payload.uid
+      const newIndex = action.payload.index
+      return R.evolve({
+        [clueUid]: {
+          answerUids: R.compose(R.insert(newIndex, answerUid), R.without(answerUid))
         }
       }, clues)
     default:

@@ -142,3 +142,11 @@ export const createAnswer = (payload) => (dispatch) => {
     .then(() => dispatch(push(Routes.answer(payload.uid))))
     .then(successMessage('Created'))
 }
+
+export const reorderAnswer = (uid, index) => ({
+  type: at.REORDER_ANSWER,
+    payload: {
+      uid,
+      index
+    }
+})
