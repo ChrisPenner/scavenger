@@ -41,7 +41,7 @@ const saveResource = (Resource, getResourceState) => (uid) => (dispatch, getStat
     .then(successMessage('Saved'))
 }
 
-const deleted = (resourceType, uid) => ({
+export const deleted = (resourceType, uid) => ({
   type: at.del(resourceType),
   payload: { uid },
 })

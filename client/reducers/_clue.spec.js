@@ -1,17 +1,18 @@
 import { expect } from 'chai'
 import * as at from 'action-types'
 import reducer from './clue'
-import { changeClue, setClue, setAnswer } from 'actions'
+import { changeClue, setClue, setAnswer, deleted } from 'actions'
 import { Clue, Answer } from 'resources'
 
 describe('Clue Reducer', function() {
+  const answerUid = 'STORY:CLUE:ANSWER'
   const startClue = Clue.new({
     uid: 'STORY:CLUE',
     storyUid: 'STORY',
     text: 'text',
     hint: 'hint',
     mediaUrl: 'media.url',
-    answerUids: ['answer'],
+    answerUids: [answerUid],
   })
   const startClues = {
     [startClue.uid]: startClue,
@@ -23,7 +24,7 @@ describe('Clue Reducer', function() {
     text: 'new text',
     hint: 'new hint',
     mediaUrl: 'newmedia.url',
-    answerUids: ['new'],
+    answerUids: ['STORY:CLUE:NEW'],
   })
 
   describe(at.load(Clue.type), function() {
@@ -77,4 +78,29 @@ describe('Clue Reducer', function() {
       expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:ANSWER')
     });
   });
+
+  describe(at.del(Clue.type), function() {
+    it('should delete the clue', function() {
+      const action = deleted(Clue.type, startClue.uid)
+      const newState = reducer(startClues, action)
+      expect(newState).to.eql({})
+    });
+  });
+
+  describe(at.del(Answer.type), function() {
+    it('should delete the answer from answerUids', function() {
+      const action = deleted(Answer.type, answerUid)
+      const newState = reducer(startClues, action)
+      expect(newState[startClue.uid].answerUids).to.eql([])
+    });
+  });
+
+  describe(at.del(Answer.type), function() {
+    it('should delete the answer from answerUids', function() {
+      const action = deleted(Answer.type, answerUid)
+      const newState = reducer(startClues, action)
+      expect(newState[startClue.uid].answerUids).to.eql([])
+    });
+  });
+
 });
