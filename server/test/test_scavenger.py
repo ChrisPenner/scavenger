@@ -260,14 +260,12 @@ class TestPerformAction(TestCase):
 
 
 class TestGetNextClue(TestCase):
-    @patch('app.scavenger.ndb.get_multi')
-    def test_answers_clue_properly(self, get_multi_mock):
+    def test_answers_clue_properly(self):
         answers = [
             Answer(pattern=r'\w+\s+(?P<second_word>\w+)', next_clue='TWOWORDS'),
             Answer(pattern=r'steve', next_clue="STEVE"),
             Answer(pattern=r'.*', next_clue='CATCHALL'),
         ]
-        get_multi_mock.return_value = answers
         message = 'test answer'
         next_clue, answer_data = get_next_clue(message, answers)
         self.assertEqual('TWOWORDS', next_clue)
