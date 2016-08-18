@@ -11,12 +11,12 @@ from app.models.group import Group
 
 from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
     ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story
-from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER, Result, JOINED, INFO
+from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER, JOINED, INFO
 
 from app.scavenger import twiml_response, format_message, determine_message_type, perform_action, \
     split_data, get_next_clue, answer
-from models.story import Story
-from models.user import User
+from app.models.story import Story
+from app.models.user import User
 
 
 class TestScavenger(TestCase):

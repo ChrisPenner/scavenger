@@ -1,9 +1,9 @@
 from unittest import TestCase
 from google.appengine.ext import testbed, ndb
 
-from models.answer import Answer
-from models.clue import Clue
-from models.story import Story
+from app.models.answer import Answer
+from app.models.clue import Clue
+from app.models.story import Story
 
 
 class TestClue(TestCase):
