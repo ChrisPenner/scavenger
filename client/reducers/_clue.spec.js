@@ -72,6 +72,19 @@ describe('Clue Reducer', function() {
   describe(at.set(Answer.type), function() {
     it('should add an answer to the clue', function() {
       const newAnswer = Answer.new({
+        uid: 'STORY:CLUE:NEWANSWER',
+        storyUid: 'STORY',
+        clueUid: 'STORY:CLUE',
+        pattern: 'my-pattern',
+        nextClue: 'MY-NEXT-CLUE',
+      })
+      const action = setAnswer(newAnswer)
+      const newState = reducer(startClues, action)
+      expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:NEWANSWER')
+    });
+
+    it('should not add an answer to the clue if it already exists', function() {
+      const newAnswer = Answer.new({
         uid: 'STORY:CLUE:ANSWER',
         storyUid: 'STORY',
         clueUid: 'STORY:CLUE',
@@ -80,7 +93,7 @@ describe('Clue Reducer', function() {
       })
       const action = setAnswer(newAnswer)
       const newState = reducer(startClues, action)
-      expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:ANSWER')
+      expect(R.allUniq(newState[startClue.uid].answerUids)).to.be.true
     });
   });
 

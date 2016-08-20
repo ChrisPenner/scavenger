@@ -31,6 +31,7 @@ const Answers = ({answers, storyId, clueId, startDrag, dropAnswer, highlightUid}
       {answerLinks}
       <Link
         className="my-list-item"
+        key="add-answer"
         to={{ pathname: Routes.createAnswer(storyId, clueId) }}> + Add Answer
       </Link>
     </div>

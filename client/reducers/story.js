@@ -17,7 +17,7 @@ export default (stories: Object = {}, action: Object) => {
       storyUid = splitUid(action.payload.uid).storyUid
       return R.evolve({
         [storyUid]: {
-          clues: R.append(action.payload.uid)
+          clues: R.compose(R.uniq, R.append(action.payload.uid))
         }
       }, stories)
     case at.del(Clue.type):

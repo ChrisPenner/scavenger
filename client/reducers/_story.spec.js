@@ -74,5 +74,19 @@ describe('Story Reducer', function() {
       const newState = reducer(startStories, action)
       expect(newState[startStory.uid].clues).to.contain('STORY:NEWCLUE')
     });
+
+    it('should not add a clue to the story if it already exists', function() {
+      const newClue = Clue.new({
+        uid: 'STORY:CLUE',
+        storyUid: 'STORY',
+        text: 'text',
+        hint: 'hint',
+        mediaUrl: 'media.url',
+        answerUids: ['answer'],
+      })
+      const action = setClue(newClue)
+      const newState = reducer(startStories, action)
+      expect(R.allUniq(newState[startStory.uid].clues)).to.be.true
+    });
   });
 });

@@ -16,7 +16,7 @@ export default (clues: Object = {}, action: Object) => {
       clueUid = splitUid(action.payload.uid).clueUid
       return R.evolve({
         [clueUid]: {
-          answerUids: R.append(action.payload.uid)
+          answerUids: R.compose(R.uniq, R.append(action.payload.uid))
         }
       }, clues)
     case at.del(Answer.type):
