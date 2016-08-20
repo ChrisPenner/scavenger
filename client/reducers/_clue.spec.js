@@ -1,4 +1,6 @@
+/* @flow */
 import { expect } from 'chai'
+import R from 'ramda'
 
 import * as at from '../action-types'
 import reducer from './clue'
