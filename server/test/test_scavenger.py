@@ -19,15 +19,27 @@ from app.models.story import Story
 from app.models.user import User
 
 
+USER_PHONE = '+5551234567'
+
+def create_request(message="texty text", from_phone=USER_PHONE):
+    request = Request.blank('/api/message')
+    request.method = 'POST'
+    request.POST.update({
+        'From': from_phone,
+        'Body': message,
+    })
+    return request
+
+
+def send_message(message='texty text', from_phone=USER_PHONE):
+    request = create_request(message=message, from_phone=from_phone)
+    response = request.get_response(app)
+    return response.status_int, response.body
+
+
 class TestScavenger(TestCase):
+    """ Integration tests """
     def setUp(self):
-        self.request = Request.blank('/api/message')
-        self.request.method = 'POST'
-        self.user_phone = '+5555551234'
-        self.request.POST.update({
-            'From': self.user_phone,
-            'Body': 'texty text'
-        })
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         self.testbed.init_datastore_v3_stub()
@@ -50,59 +62,51 @@ class TestScavenger(TestCase):
         self.testbed.deactivate()
 
     def test_post_requires_body(self):
-        del self.request.POST['Body']
-        response = self.request.get_response(app)
-        self.assertEqual(400, response.status_int)
+        status, _ = send_message(message=None)
+        self.assertEqual(400, status)
 
     def test_post_requires_from_phone(self):
-        del self.request.POST['From']
-        response = self.request.get_response(app)
-        self.assertEqual(400, response.status_int)
+        status, _ = send_message(from_phone=None)
+        self.assertEqual(400, status)
 
     def test_get_start_info(self):
-        response = self.request.get_response(app)
-        self.assertIn(HOW_TO_START.text, response.body)
-        self.assertEqual(200, response.status_int)
+        status, response = send_message()
+        self.assertIn(HOW_TO_START.text, response)
+        self.assertEqual(200, status)
 
     def test_start_new_story(self):
-        self.request.POST['Body'] = 'start {}'.format(self.story.uid)
-        response = self.request.get_response(app)
-        self.assertIn(self.start_clue.text, response.body)
-        self.assertEqual(200, response.status_int)
+        status, response = send_message('start {}'.format(self.story.uid))
+        self.assertIn(self.start_clue.text, response)
+        self.assertEqual(200, status)
 
     def test_flow_through_story(self):
         # start non-existent story
-        self.request.POST['Body'] = 'start asdf'
-        response = self.request.get_response(app)
-        self.assertEqual(200, response.status_int)
-        self.assertIn(STORY_NOT_FOUND.text, response.body)
+        status, response = send_message('start asdf')
+        self.assertEqual(200, status)
+        self.assertIn(STORY_NOT_FOUND.text, response)
 
         # start story
-        self.request.POST['Body'] = 'start {}'.format(self.story.uid)
-        response = self.request.get_response(app)
-        self.assertEqual(200, response.status_int)
-        self.assertIn(self.start_clue.text, response.body)
+        status, response = send_message('start {}'.format(self.story.uid))
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.text, response)
 
         # Answer incorrectly
-        self.request.POST['Body'] = 'blargh'
-        response = self.request.get_response(app)
-        self.assertIn(self.start_clue.hint, response.body)
-        self.assertEqual(200, response.status_int)
+        status, response = send_message('blargh')
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.hint, response)
 
         # Answer correctly
-        self.request.POST['Body'] = 'my answer is 42'
-        response = self.request.get_response(app)
-        self.assertIn(self.start_clue.text, response.body)
-        user = User.get_by_id(self.user_phone)
+        status, response = send_message('my answer is 42')
+        self.assertIn(self.start_clue.text, response)
+        user = User.get_by_id(USER_PHONE)
+        self.assertEqual(200, status)
         self.assertEqual(user.data, {'user_answer': '42'})
-        self.assertEqual(200, response.status_int)
 
         # Restart
-        self.request.POST['Body'] = 'restart'
-        response = self.request.get_response(app)
-        self.assertIn(RESTARTED.text, response.body)
-        self.assertIn(self.start_clue.text, response.body)
-        self.assertEqual(200, response.status_int)
+        status, response = send_message('restart')
+        self.assertIn(RESTARTED.text, response)
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.text, response)
 
 
 class TestSplitData(TestCase):
