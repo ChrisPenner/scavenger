@@ -25,7 +25,6 @@ module.exports = {
       'toastr',
       'humps',
       'jquery',
-      'es6-promise',
     ],
   },
   output: {
@@ -70,9 +69,6 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       'React': 'react',
-      'R': 'ramda',
-      'jquery': 'jquery',
-      'toastr': 'toastr'
     }),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['vendor', 'styles']
