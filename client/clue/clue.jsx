@@ -73,6 +73,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             value={clue.hint || ''}
             onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
         </div>
+        <hr/>
         <label
           className="label"
           htmlFor="test-message">
@@ -83,6 +84,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             id="test-message"
             className="input"
             value={testMessage}
+            placeholder="Enter a message (The matching answer will be highlighted)"
             onChange={(e) => changeTestMessage(e.target.value)} />
         </div>
         <label className="label">
