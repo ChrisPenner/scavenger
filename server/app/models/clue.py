@@ -6,12 +6,13 @@ from app.models.utils import get_story_uid
 class Clue(ndb.Model):
     DATA_FIELDS = ['text', 'hint', 'media_url', 'answer_uids']
 
+    uid = ndb.StringProperty(required=True)
+    story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
+    answer_uids = ndb.StringProperty(repeated=True)
     text = ndb.TextProperty(required=True)
     hint = ndb.StringProperty(None)
     media_url = ndb.StringProperty()
-    answer_uids = ndb.StringProperty(repeated=True)
-    story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
-    uid = ndb.StringProperty(required=True)
+    sender = ndb.StringProperty()
 
     @property
     def answers(self):

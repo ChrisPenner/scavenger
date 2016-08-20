@@ -21,18 +21,18 @@ from app.models.user import User
 
 USER_PHONE = '+5551234567'
 
-def create_request(message="texty text", from_phone=USER_PHONE):
+def create_request(message="texty text", sender=USER_PHONE):
     request = Request.blank('/api/message')
     request.method = 'POST'
     request.POST.update({
-        'From': from_phone,
+        'From': sender,
         'Body': message,
     })
     return request
 
 
-def send_message(message='texty text', from_phone=USER_PHONE):
-    request = create_request(message=message, from_phone=from_phone)
+def send_message(message='texty text', sender=USER_PHONE):
+    request = create_request(message=message, sender=sender)
     response = request.get_response(app)
     return response.status_int, response.body
 
@@ -65,8 +65,8 @@ class TestScavenger(TestCase):
         status, _ = send_message(message=None)
         self.assertEqual(400, status)
 
-    def test_post_requires_from_phone(self):
-        status, _ = send_message(from_phone=None)
+    def test_post_requires_sender(self):
+        status, _ = send_message(sender=None)
         self.assertEqual(400, status)
 
     def test_get_start_info(self):
@@ -174,6 +174,10 @@ class TestTwimlResponse(TestCase):
         self.assertIn('my_clue', response)
         self.assertIn('my_other_clue', response)
 
+    def test_sends_from_specific_number_if_specified(self):
+        messages = [Clue(text='my_clue', sender='+1112223333')]
+        response = twiml_response(self.user, None, ANSWER, messages)
+        self.assertIn('from="+1112223333"', response)
 
 class TestFormatResponse(TestCase):
     def test_formats_user_data(self):

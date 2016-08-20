@@ -63,21 +63,17 @@ export const receiveMessage = (payload: any) => {
 
 const parseTwiML = xml2js
 
-const messageLens = R.lensPath(['Response', 'Message', 0])
-const bodyLens = R.compose(
-  messageLens,
-  R.lensPath(['Body', 0])
-)
-
-const toLens = R.compose(
-  messageLens,
-  R.lensPath(['$', 'to'])
-)
-
-const makeTextObj = (twimlObj) => ({
-  body: R.view(bodyLens, twimlObj),
-  to: R.view(toLens, twimlObj),
+const focusMessages = R.lensPath(['Response', 'Message'])
+const focusBody = R.lensPath(['Body', 0])
+const focusTo = R.lensPath(['$', 'to'])
+const focusFrom = R.lensPath(['$', 'from'])
+const intoMessage = R.applySpec({
+  body: R.view(focusBody),
+  to: R.view(focusTo)
+  from: R.view(focusFrom)
 })
+
+const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))
 
 export const sendMessage = () => (dispatch: any, getState: any) => {
   const {fromNumber, toNumber, text} = getExplorer(getState())
@@ -98,8 +94,8 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
     body: formData,
   }).then(resp => resp.text())
     .then(parseTwiML)
-    .then(makeTextObj)
-    .then(R.compose(dispatch, receiveMessage))
+    .then(makeMessageObjects)
+    .then(R.map(R.compose(dispatch, receiveMessage)))
 }
 
 type SimpleAction = {

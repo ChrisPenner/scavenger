@@ -12,7 +12,7 @@ from models.group import Group
 from models.story import Story
 from models.message import Message
 from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, SEPARATOR_STRING, start_new_story
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story
 
 # Message Types
 START_STORY = 'START_STORY'
@@ -34,17 +34,16 @@ regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
 def twiml_response(user, group, response_type, messages):
     media_urls = [m.media_url for m in messages
                   if not isinstance(m, basestring) and m.media_url]
-    messages = [m.text for m in messages]
     recipients = [user.phone]
-    joined_messages = SEPARATOR_STRING.join(messages)
     if group and group.users and (response_type == CLUE or response_type == HINT):
         recipients = group.users
     resp = twiml.Response()
     for recipient in recipients:
-        message = twiml.Message(msg=joined_messages, to=recipient)
-        for media_url in media_urls:
-            message.append(twiml.Media(url=media_url))
-        resp.append(message)
+        for message in messages:
+            message = twiml.Message(msg=message.text, to=recipient, sender=message.sender)
+            for media_url in media_urls:
+                message.append(twiml.Media(url=media_url))
+            resp.append(message)
     return str(resp)
 
 
