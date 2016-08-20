@@ -36,9 +36,10 @@ const setter = (type: ActionKind) => (payload: any) => ({
 })
 
 const successMessage = message => () => toastr.success(message)
-const saveResource = (Resource, getResourceState) => (uid: string) => (dispatch: any, getState: () => Object) => {
+const saveResource = (Resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: () => Object) => {
   const currentState = getResourceState(getState(), uid)
   return put(Resource, uid, currentState)
+    .then((result) => dispatch(setResource(result)))
     .then(successMessage('Saved'))
 }
 
@@ -117,10 +118,6 @@ export const changeTestMessage = (payload: any): SimpleAction => ({
   payload,
 })
 
-export const saveStory = saveResource(Story, getStory)
-export const saveClue = saveResource(Clue, getClue)
-export const saveAnswer = saveResource(Answer, getAnswer)
-
 export const deleteStory = deleteResource(Story)
 export const deleteClue = deleteResource(Clue)
 export const deleteAnswer = deleteResource(Answer)
@@ -128,6 +125,10 @@ export const deleteAnswer = deleteResource(Answer)
 export const setStory = setter(at.set(Story.type))
 export const setClue = setter(at.set(Clue.type))
 export const setAnswer = setter(at.set(Answer.type))
+
+export const saveStory = saveResource(Story, setStory, getStory)
+export const saveClue = saveResource(Clue, setClue, getClue)
+export const saveAnswer = saveResource(Answer, setAnswer, getAnswer)
 
 export const createStory = (payload: any) => (dispatch: any) => {
   put(Story, payload.uid, payload)

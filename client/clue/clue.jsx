@@ -61,6 +61,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             value={clue.text || ''}
             onChange={(e) => changeClue([clue.uid, 'text'], e.target.value)} />
         </div>
+
         <label
           className="label"
           htmlFor="hint">
@@ -73,6 +74,20 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             value={clue.hint || ''}
             onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
         </div>
+
+        <label
+          className="label"
+          htmlFor="sender">
+          Sender:
+        </label>
+        <div className="control">
+          <input
+            id="sender"
+            className="input"
+            value={clue.sender || ''}
+            onChange={(e) => changeClue([clue.uid, 'sender'], e.target.value)} />
+        </div>
+
         <hr/>
         <label
           className="label"

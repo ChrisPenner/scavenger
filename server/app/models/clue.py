@@ -1,10 +1,11 @@
 from google.appengine.ext import ndb
 from app.models.story import Story
 from app.models.utils import get_story_uid
+from .validators import phone_number
 
 
 class Clue(ndb.Model):
-    DATA_FIELDS = ['text', 'hint', 'media_url', 'answer_uids']
+    DATA_FIELDS = ['text', 'hint', 'media_url', 'answer_uids', 'sender']
 
     uid = ndb.StringProperty(required=True)
     story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
@@ -12,7 +13,7 @@ class Clue(ndb.Model):
     text = ndb.TextProperty(required=True)
     hint = ndb.StringProperty(None)
     media_url = ndb.StringProperty()
-    sender = ndb.StringProperty()
+    sender = ndb.StringProperty(validator=phone_number)
 
     @property
     def answers(self):
