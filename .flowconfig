@@ -1,5 +1,4 @@
 [ignore]
-.*/node_modules/fbjs
 
 [include]
 
@@ -7,3 +6,4 @@
 .flow-declarations/
 
 [options]
+suppress_type=$FlowIssue
