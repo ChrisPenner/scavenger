@@ -1,9 +1,12 @@
-import * as at from 'action-types'
+/* @flow */
+import R from 'ramda'
+
+import * as at from '../action-types'
 import { baseResourceReducer } from './common'
-import { Story, Clue } from 'resources'
+import { Story, Clue } from '../resources'
 import { splitUid } from './'
 
-export default (stories = {}, action) => {
+export default (stories: Object = {}, action: Object) => {
   const baseResult = baseResourceReducer(Story.type, stories, action)
   if (baseResult !== undefined){
     return baseResult

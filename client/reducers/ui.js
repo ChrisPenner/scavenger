@@ -1,4 +1,4 @@
-import * as at from 'action-types'
+import * as at from '../action-types'
 
 export default (ui={dragData: null}, action) => {
   switch (action.type) {

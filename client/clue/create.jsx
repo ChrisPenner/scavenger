@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
-import { createClue } from 'actions'
-import { getClues } from 'reducers'
+
+import { createClue } from '../actions'
+import { getClues } from '../reducers'
 
 const stateToProps = (state) => {
   return {

@@ -1,6 +1,6 @@
-import * as at from 'action-types'
+import * as at from '../action-types'
 import { splitUid } from './'
-import { Clue, Answer } from 'resources'
+import { Clue, Answer } from '../resources'
 import { baseResourceReducer } from './common'
 
 export default (clues = {}, action) => {

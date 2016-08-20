@@ -1,9 +1,9 @@
 import xml2js from 'xml2js-es6-promise'
-import { Story, Clue, Answer, index, put, del } from 'resources'
-import { getStory, getClue, getAnswer, getExplorer, getDragData } from 'reducers'
 import { push } from 'react-router-redux'
-import Routes from 'routes'
-import * as at from 'action-types'
+import { Story, Clue, Answer, index, put, del } from './resources'
+import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
+import Routes from './routes'
+import * as at from './action-types'
 
 const fetchResource = (Resource, actionType) => (dispatch) => {
   return index(Resource)

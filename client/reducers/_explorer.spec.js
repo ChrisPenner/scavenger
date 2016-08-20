@@ -1,7 +1,8 @@
 import { expect } from 'chai'
-import * as at from 'action-types'
+
+import * as at from '../action-types'
 import reducer from './explorer'
-import { changeExplorer } from 'actions'
+import { changeExplorer } from '../actions'
 
 describe('Explorer Reducer', function() {
   const baseExplorer = {

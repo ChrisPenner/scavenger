@@ -25,6 +25,7 @@ module.exports = {
       'toastr',
       'humps',
       'jquery',
+      'es6-promise',
     ],
   },
   output: {
@@ -61,9 +62,6 @@ module.exports = {
   },
   resolve: {
     extensions: ["", ".js", ".jsx", ".css", ".min.css"],
-    root: [
-      path.resolve('./client')
-    ],
   },
   plugins: [
     new HtmlWebpackPlugin({

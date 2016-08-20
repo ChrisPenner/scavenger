@@ -1,8 +1,9 @@
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import { getAnswersListByClue, splitUid } from 'reducers'
-import Routes, { CREATE } from 'routes'
-import { reorderAnswer, startDrag, dropAnswer } from 'actions'
+
+import { getAnswersListByClue, splitUid } from '../reducers'
+import Routes, { CREATE } from '../routes'
+import { reorderAnswer, startDrag, dropAnswer } from '../actions'
 
 const Answers = ({answers, storyId, clueId, startDrag, dropAnswer}) => {
   const answerLinks = answers.map((answer, index) => (

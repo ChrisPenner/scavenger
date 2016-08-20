@@ -1,9 +1,10 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import Routes from 'routes'
-import { getAnswer, getClueUidsByStory, splitUid, uidsFromParams } from 'reducers'
-import { changeAnswer, saveAnswer, deleteAnswer } from 'actions'
+
+import Routes from '../routes'
+import { getAnswer, getClueUidsByStory, splitUid, uidsFromParams } from '../reducers'
+import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => (
   <div className="message is-danger">

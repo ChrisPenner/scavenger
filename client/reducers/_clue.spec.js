@@ -1,8 +1,9 @@
 import { expect } from 'chai'
-import * as at from 'action-types'
+
+import * as at from '../action-types'
 import reducer from './clue'
-import { changeClue, setClue, setAnswer, deleted, reorderAnswer } from 'actions'
-import { Clue, Answer } from 'resources'
+import { changeClue, setClue, setAnswer, deleted, reorderAnswer } from '../actions'
+import { Clue, Answer } from '../resources'
 
 describe('Clue Reducer', function() {
   const answerUid = 'STORY:CLUE:ANSWER'

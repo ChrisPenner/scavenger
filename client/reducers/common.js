@@ -1,4 +1,4 @@
-import * as at from 'action-types'
+import * as at from '../action-types'
 
 export const baseResourceReducer = (resourceType, state, action) => {
   switch (action.type) {

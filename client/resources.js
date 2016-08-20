@@ -1,6 +1,7 @@
 import toastr from 'toastr'
 import { camelizeKeys, decamelizeKeys } from 'humps'
-import Routes, { INDEX } from 'api'
+
+import Routes, { INDEX } from './api'
 
 const handleError = err => {
   toastr.error(err, 'Error');

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
-import { createStory } from 'actions'
-import { getStories } from 'reducers'
+import { createStory } from '../actions'
+import { getStories } from '../reducers'
 
 const stateToProps = (state) => {
   return getStories(state)

@@ -1,8 +1,9 @@
 import { expect } from 'chai'
-import * as at from 'action-types'
+
+import * as at from '../action-types'
 import reducer from './answer'
-import { changeAnswer, setAnswer, deleted } from 'actions'
-import { Answer, Clue } from 'resources'
+import { changeAnswer, setAnswer, deleted } from '../actions'
+import { Answer, Clue } from '../resources'
 
 describe('Answer Reducer', function() {
   const startAnswer = Answer.new({

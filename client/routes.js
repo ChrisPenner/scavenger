@@ -1,5 +1,5 @@
-export { Routes as API } from 'api'
-import { splitUid } from 'reducers'
+export { Routes as API } from './api'
+import { splitUid } from './reducers'
 
 const STORY_ID_PARAM = ':storyId'
 const CLUE_ID_PARAM = ':clueId'

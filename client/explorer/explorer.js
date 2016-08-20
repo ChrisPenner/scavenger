@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
-import { getExplorer } from 'reducers'
-import { changeExplorer, sendMessage } from 'actions'
+
+import { getExplorer } from '../reducers'
+import { changeExplorer, sendMessage } from '../actions'
 
 const Texts = ({texts}) => {
   const textsView = texts.map(({from, to, body} , i) => {

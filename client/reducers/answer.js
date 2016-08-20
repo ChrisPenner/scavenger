@@ -1,6 +1,6 @@
-import * as at from 'action-types'
+import * as at from '../action-types'
 import { baseResourceReducer } from './common'
-import { Answer, Clue } from 'resources'
+import { Answer, Clue } from '../resources'
 
 export default (answers = {}, action) => {
   const baseResult = baseResourceReducer(Answer.type, answers, action)

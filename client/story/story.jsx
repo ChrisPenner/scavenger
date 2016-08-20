@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
-import Routes, { CREATE } from 'routes'
-import { getStory, getClue, getCluesByStory, uidsFromParams } from 'reducers'
-import { changeStory, saveStory } from 'actions'
-import { Clues } from 'clue'
+import Routes, { CREATE } from '../routes'
+import { getStory, getClue, getCluesByStory, uidsFromParams } from '../reducers'
+import { changeStory, saveStory } from '../actions'
+import { Clues } from '../clue'
 
 const stateToProps = (state, {params}) => {
   const {storyUid} = uidsFromParams(params)

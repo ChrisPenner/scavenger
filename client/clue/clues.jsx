@@ -1,12 +1,15 @@
+/* @flow */
+import React from 'react'
+
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
-import { getCluesListByStory, uidsFromParams } from 'reducers'
-import Routes from 'routes'
+import { getCluesByStory, uidsFromParams } from '../reducers'
+import Routes from '../routes'
 
 const stateToProps = (state, {storyUid}) => {
   return {
-    clues: getCluesListByStory(state, storyUid),
+    clues: getCluesByStory(state, storyUid),
     storyUid,
   }
 }

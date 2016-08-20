@@ -1,7 +1,8 @@
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import Routes from 'routes'
-import { getStoriesList } from 'reducers'
+
+import Routes from '../routes'
+import { getStoriesList } from '../reducers'
 
 const stateToProps = (state) => ({
   storiesList: getStoriesList(state),

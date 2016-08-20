@@ -3,7 +3,7 @@ import thunk from 'redux-thunk'
 import { routerMiddleware } from 'react-router-redux'
 import { browserHistory } from 'react-router'
 
-import reducer from 'reducers'
+import reducer from './reducers'
 
 const middleware = compose(
   applyMiddleware(routerMiddleware(browserHistory), thunk),

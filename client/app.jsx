@@ -3,15 +3,15 @@ import { Router, Route, IndexRoute, IndexRedirect, Link, browserHistory } from '
 import { Provider, connect } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
-import store from 'store'
+import store from './store'
 
-import { Stories, Story, CreateStory } from 'story'
-import { Clue, CreateClue } from 'clue'
-import { Answer, CreateAnswer } from 'answer'
-import Routes from 'routes'
-import { fetchResource, loadStories, loadClues, loadAnswers } from 'actions'
-import * as Res from 'resources'
-import { Explorer } from 'explorer'
+import { Stories, Story, CreateStory } from './story'
+import { Clue, CreateClue } from './clue'
+import { Answer, CreateAnswer } from './answer'
+import Routes from './routes'
+import { fetchResource, loadStories, loadClues, loadAnswers } from './actions'
+import * as Res from './resources'
+import { Explorer } from './explorer'
 
 
 const App = connect(({loading}) => ({

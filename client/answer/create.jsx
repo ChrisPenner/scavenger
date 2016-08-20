@@ -1,16 +1,26 @@
+/* @flow */
+import React from 'react'
+import R from 'ramda'
 import { connect } from 'react-redux'
-import { createAnswer } from 'actions'
-import { getCluesByStory, getAnswers } from 'reducers'
+
+import { createAnswer } from '../actions'
+import { getCluesByStory, getAnswers } from '../reducers'
 
 const stateToProps = (state, {params: {storyId, clueId}}) => {
   return {
     answers: getAnswers(state),
     clues: getCluesByStory(state, storyId),
+    stories: getCluesByStory(state, storyId),
     storyId,
     clueId,
   }
 }
 class Create extends React.Component {
+  create: () => void
+  createAnswer: (a: Object) => void
+  state: Object
+  storyId: string
+  clueId: string
   constructor({createAnswer, clues, storyId, clueId}) {
     super()
     this.state = {
@@ -28,15 +38,16 @@ class Create extends React.Component {
     this.setState(changes)
   }
 
-  getUId() {
+  getUid() {
     const {answerId} = this.state
     return [this.storyId, this.clueId, answerId].join(':')
   }
 
   idErrors() {
+    const {answerId} = this.state
     if (answerId === '') {
       return "Please enter an Id";
-    } else if (stories[this.getUId()]) {
+    } else if (R.contains(this.getUid(), this.props.clue.answerUids)){
       return `A Answer by this answerId already exists!`
     } else if (!/^[A-Z0-9-]+$/.test(answerId)) {
       return "answerId must contain only letters, numbers or '-'"
@@ -52,7 +63,7 @@ class Create extends React.Component {
 
   create() {
     this.createAnswer({
-      uid: this.getUId(),
+      uid: this.getUid(),
       pattern: this.state.pattern,
       nextClue: this.state.nextClue,
     })
