@@ -1,10 +1,8 @@
 /* @flow */
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
 
-import Routes from '../routes'
-import { getStory, getClue, getCluesByStory, uidsFromParams } from '../reducers'
+import { getStory, uidsFromParams } from '../reducers'
 import { changeStory, saveStory } from '../actions'
 import { Clues } from '../clue'
 

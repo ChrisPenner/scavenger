@@ -1,6 +1,6 @@
 /* @flow */
 import ReactDOM from 'react-dom'
-import { Router, Route, IndexRoute, IndexRedirect, Link, browserHistory } from 'react-router'
+import { Router, Route, IndexRedirect, Link, browserHistory } from 'react-router'
 import { Provider, connect } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
@@ -11,7 +11,6 @@ import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import Routes from './routes'
 import { loadStories, loadClues, loadAnswers } from './actions'
-import * as Res from './resources'
 import { Explorer } from './explorer'
 
 

@@ -23,22 +23,12 @@ const changer = (type) => (path: Array<string>, value: any) => ({
   value,
 })
 
-const adder = (type) => (payload: any) => ({
-  type,
-  payload,
-})
-
 const setter = (type) => (payload: any) => ({
   type,
   payload,
 })
 
 const successMessage = message => () => toastr.success(message)
-const handleError = err => {
-  toastr.error(err, 'Error');
-  throw err
-}
-
 const saveResource = (Resource, getResourceState) => (uid: string) => (dispatch: any, getState: () => Object) => {
   const currentState = getResourceState(getState(), uid)
   return put(Resource, uid, currentState)

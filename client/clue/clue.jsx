@@ -1,11 +1,9 @@
 /* @flow */
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
 import { push } from 'react-router-redux'
 
 import Routes from '../routes'
-import * as Res from '../resources'
 import { Answers } from '../answer'
 import { getClue } from '../reducers'
 import { changeClue, saveClue, deleteClue } from '../actions'

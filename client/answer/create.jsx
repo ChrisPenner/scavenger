@@ -1,6 +1,5 @@
 /* @flow */
 import React from 'react'
-import R from 'ramda'
 import { connect } from 'react-redux'
 
 import { createAnswer } from '../actions'

@@ -30,7 +30,6 @@ const apiRequest = (route, method: MethodType='GET', payload=undefined) => {
   if (payload !== undefined) {
     options.body = JSON.stringify(decamelizeKeys(payload))
   }
-  let transform = camelizeKeys
   return processResponse(fetch(route, options))
 }
 

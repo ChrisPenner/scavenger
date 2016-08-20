@@ -1,7 +1,6 @@
 /* @flow */
 import React from 'react'
 import R from 'ramda'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
@@ -64,8 +63,6 @@ Answer.propTypes = {
   saveAnswer: React.PropTypes.func.isRequired,
   deleteAnswer: React.PropTypes.func.isRequired,
 }
-
-const getAnswerId = R.compose(R.prop('answerId'), splitUid)
 
 const stateToProps = (state, {params}) => {
   const {answerUid} = uidsFromParams(params)
