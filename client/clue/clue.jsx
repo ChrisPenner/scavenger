@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { push } from 'react-router-redux'
 
-import Routes, { CREATE } from '../routes'
+import Routes from '../routes'
 import * as Res from '../resources'
 import { Answers } from '../answer'
 import { getClue } from '../reducers'

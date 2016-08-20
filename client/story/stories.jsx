@@ -1,3 +1,5 @@
+/* @flow */
+import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
@@ -8,11 +10,7 @@ const stateToProps = (state) => ({
   storiesList: getStoriesList(state),
 })
 
-const Stories = ({story, storiesList}) => {
-  if (story) {
-    return <Story story={story} />
-  }
-
+const Stories = ({storiesList}) => {
   const stories = storiesList.map(story => (
     <tr key={story.uid}>
       <td>

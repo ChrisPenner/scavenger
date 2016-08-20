@@ -1,11 +1,15 @@
+/* @flow */
 import xml2js from 'xml2js-es6-promise'
+import toastr from 'toastr'
+import R from 'ramda'
 import { push } from 'react-router-redux'
+
 import { Story, Clue, Answer, index, put, del } from './resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
 import Routes from './routes'
 import * as at from './action-types'
 
-const fetchResource = (Resource, actionType) => (dispatch) => {
+const fetchResource = (Resource, actionType) => (dispatch: any) => {
   return index(Resource)
     .then(json => dispatch({
       type: actionType,
@@ -13,18 +17,18 @@ const fetchResource = (Resource, actionType) => (dispatch) => {
     }))
 }
 
-const changer = (type) => (path, value) => ({
+const changer = (type) => (path: Array<string>, value: any) => ({
   type: type,
   path,
   value,
 })
 
-const adder = (type) => (payload) => ({
+const adder = (type) => (payload: any) => ({
   type,
   payload,
 })
 
-const setter = (type) => (payload) => ({
+const setter = (type) => (payload: any) => ({
   type,
   payload,
 })
@@ -35,25 +39,25 @@ const handleError = err => {
   throw err
 }
 
-const saveResource = (Resource, getResourceState) => (uid) => (dispatch, getState) => {
+const saveResource = (Resource, getResourceState) => (uid: string) => (dispatch: any, getState: () => Object) => {
   const currentState = getResourceState(getState(), uid)
   return put(Resource, uid, currentState)
     .then(successMessage('Saved'))
 }
 
-export const deleted = (resourceType, uid) => ({
+export const deleted = (resourceType: string, uid: string) => ({
   type: at.del(resourceType),
   payload: { uid },
 })
 
-const deleteResource = (Resource) => (uid) => (dispatch) => {
+const deleteResource = (Resource) => (uid: string) => (dispatch: any) => {
   return del(Resource, uid)
     .then(() => dispatch(deleted(Resource.type, uid)))
     .then(successMessage('Deleted'))
 }
 
 
-export const receiveMessage = (payload) => {
+export const receiveMessage = (payload: any) => {
   return {
     type: at.RECEIVE_MESSAGE,
     payload,
@@ -78,7 +82,7 @@ const makeTextObj = (twimlObj) => ({
   to: R.view(toLens, twimlObj),
 })
 
-export const sendMessage = () => (dispatch, getState) => {
+export const sendMessage = () => (dispatch: any, getState: any) => {
   const {fromNumber, toNumber, text} = getExplorer(getState())
   dispatch({
     type: at.SEND_MESSAGE,
@@ -93,7 +97,7 @@ export const sendMessage = () => (dispatch, getState) => {
   formData.append('From', fromNumber)
   formData.append('Body', text)
   return fetch(Routes.message(), {
-    method: 'post',
+    method: 'POST',
     body: formData,
   }).then(resp => resp.text())
     .then(parseTwiML)
@@ -122,28 +126,28 @@ export const setStory = setter(at.set(Story.type))
 export const setClue = setter(at.set(Clue.type))
 export const setAnswer = setter(at.set(Answer.type))
 
-export const createStory = (payload) => (dispatch) => {
+export const createStory = (payload: any) => (dispatch: any) => {
   put(Story, payload.uid, payload)
     .then((story) => dispatch(setStory(story)))
     .then(() => dispatch(push(Routes.story(payload.uid))))
     .then(successMessage('Created'))
 }
 
-export const createClue = (payload) => (dispatch) => {
+export const createClue = (payload: any) => (dispatch: any) => {
   put(Clue, payload.uid, payload)
     .then((clue) => dispatch(setClue(clue)))
     .then(() => dispatch(push(Routes.clue(payload.uid))))
     .then(successMessage('Created'))
 }
 
-export const createAnswer = (payload) => (dispatch) => {
+export const createAnswer = (payload: any) => (dispatch: any) => {
   put(Answer, payload.uid, payload)
     .then((answer) => dispatch(setAnswer(answer)))
     .then(() => dispatch(push(Routes.answer(payload.uid))))
     .then(successMessage('Created'))
 }
 
-export const reorderAnswer = (uid, index) => ({
+export const reorderAnswer = (uid: string, index: number) => ({
   type: at.REORDER_ANSWER,
     payload: {
       uid,
@@ -151,14 +155,14 @@ export const reorderAnswer = (uid, index) => ({
     }
 })
 
-export const startDrag = (payload) => ({
+export const startDrag = (payload: any) => ({
   type: at.START_DRAG,
   payload,
 })
 
 export const stopDrag = () => ({ type: at.START_DRAG })
 
-export const dropAnswer = (index) => (dispatch, getState) => {
+export const dropAnswer = (index: number) => (dispatch: any, getState: () => Object) => {
   const answerUid = getDragData(getState())
   dispatch(reorderAnswer(answerUid, index))
   dispatch(stopDrag)

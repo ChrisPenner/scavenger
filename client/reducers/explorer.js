@@ -1,11 +1,14 @@
+/* @flow */
+import R from 'ramda'
+
 import * as at from '../action-types'
 
-export default (explorer = {
+export default (explorer:Object = {
     text: '',
     toNumber: 'server',
     fromNumber: 'testing',
     texts: []
-  } , action) => {
+  } , action: Object) => {
   switch (action.type) {
     case at.CHANGE_EXPLORER:
       return R.assocPath(action.path, action.value, explorer)

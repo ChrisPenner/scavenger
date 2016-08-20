@@ -43,17 +43,6 @@ class Create extends React.Component {
     return [this.storyId, this.clueId, answerId].join(':')
   }
 
-  idErrors() {
-    const {answerId} = this.state
-    if (answerId === '') {
-      return "Please enter an Id";
-    } else if (R.contains(this.getUid(), this.props.clue.answerUids)){
-      return `A Answer by this answerId already exists!`
-    } else if (!/^[A-Z0-9-]+$/.test(answerId)) {
-      return "answerId must contain only letters, numbers or '-'"
-    }
-  }
-
   updateAnswerId(newAnswerId) {
     newAnswerId = newAnswerId.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
     this.setState({

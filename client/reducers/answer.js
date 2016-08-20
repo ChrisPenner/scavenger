@@ -1,8 +1,11 @@
+/* @flow */
+import R from 'ramda'
+
 import * as at from '../action-types'
 import { baseResourceReducer } from './common'
 import { Answer, Clue } from '../resources'
 
-export default (answers = {}, action) => {
+export default (answers: Object = {}, action: Object) => {
   const baseResult = baseResourceReducer(Answer.type, answers, action)
   if (baseResult !== undefined){
     return baseResult

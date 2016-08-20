@@ -1,3 +1,5 @@
+/* @flow */
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { createClue } from '../actions'
@@ -9,6 +11,10 @@ const stateToProps = (state) => {
   }
 }
 class Create extends React.Component {
+  state: Object
+  storyId: string
+  create: () => void
+  createClue: (c: Object) => void
   constructor({createClue, params: {storyId}}) {
     super()
     this.state = {
@@ -23,17 +29,6 @@ class Create extends React.Component {
 
   update(changes) {
     this.setState(changes)
-  }
-
-  idErrors() {
-    const {id} = this.state
-    if (id === '') {
-      return "Please enter an Id";
-    } else if (stories[id]) {
-      return `A Clue by this id already exists!`
-    } else if (!/^[A-Z0-9-]+$/.test(id)) {
-      return "id must contain only letters, numbers or '-'"
-    }
   }
 
   updateId(newId) {

@@ -1,3 +1,5 @@
+/* @flow */
+import React from 'react'
 import { connect } from 'react-redux'
 import { createStory } from '../actions'
 import { getStories } from '../reducers'
@@ -6,6 +8,9 @@ const stateToProps = (state) => {
   return getStories(state)
 }
 class Create extends React.Component {
+  state: Object
+  create: () => void
+  createStory: (s: Object) => void
   constructor({createStory}) {
     super()
     this.state = {
@@ -18,17 +23,6 @@ class Create extends React.Component {
 
   update(changes) {
     this.setState(changes)
-  }
-
-  idErrors() {
-    const {uid} = this.state
-    if (uid === '') {
-      return "Please enter an Id";
-    } else if (stories[uid]) {
-      return `A Story by this uid already exists!`
-    } else if (!/^[A-Z0-9-]+$/.test(uid)) {
-      return "uid must contain only letters, numbers or '-'"
-    }
   }
 
   updateUid(newUid) {

@@ -1,3 +1,5 @@
+/* @flow */
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { getExplorer } from '../reducers'
@@ -45,7 +47,7 @@ const Texts = ({texts}) => {
     </div>
   )
 }
-Text.propTypes = {
+Texts.propTypes = {
   texts: React.PropTypes.arrayOf(React.PropTypes.object),
 }
 

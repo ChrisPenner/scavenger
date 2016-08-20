@@ -1,6 +1,7 @@
-const story = (uid) => `/api/stories/${uid}`
-const clue = (uid) => `/api/clues/${uid}`
-const answer = (uid) => `/api/answers/${uid}`
+/* @flow */
+const story = (uid: string) => `/api/stories/${uid}`
+const clue = (uid: string) => `/api/clues/${uid}`
+const answer = (uid: string) => `/api/answers/${uid}`
 
 const Routes = {
     story, clue, answer,

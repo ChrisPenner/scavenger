@@ -1,3 +1,5 @@
+/* @flow */
+import R from 'ramda'
 import toastr from 'toastr'
 import { camelizeKeys, decamelizeKeys } from 'humps'
 
@@ -21,8 +23,8 @@ const processResponse = (respPromise) => {
   }).catch(handleError)
 }
 
-const apiRequest = (route, method='get', payload=undefined) => {
-  const options = {
+const apiRequest = (route, method: MethodType='GET', payload=undefined) => {
+  const options: Object = {
     method,
   }
   if (payload !== undefined) {
@@ -32,20 +34,20 @@ const apiRequest = (route, method='get', payload=undefined) => {
   return processResponse(fetch(route, options))
 }
 
-export const index = (resource) => apiRequest(resource.route(INDEX)).then(R.map(camelizeKeys))
-export const get = (resource, uid) => apiRequest(resource.route(uid)).then(camelizeKeys)
-export const put = (resource, uid, payload) => apiRequest(resource.route(uid), 'put', payload).then(camelizeKeys)
-export const post = (resource, uid, payload) => apiRequest(resource.route(uid), 'post', payload).then(camelizeKeys)
-export const del = (resource, uid) => apiRequest(resource.route(uid), 'delete')
+export const index = (resource: Object) => apiRequest(resource.route(INDEX)).then(R.map(camelizeKeys))
+export const get = (resource: Object, uid: string) => apiRequest(resource.route(uid)).then(camelizeKeys)
+export const put = (resource: Object, uid: string, payload: Object) => apiRequest(resource.route(uid), 'PUT', payload).then(camelizeKeys)
+export const post = (resource: Object, uid: string, payload: Object) => apiRequest(resource.route(uid), 'POST', payload).then(camelizeKeys)
+export const del = (resource: Object, uid: string) => apiRequest(resource.route(uid), 'DELETE')
 
-const storyFactory = (args) => ({
+const storyFactory = (args: Object) => ({
   uid: null,
   defaultHint: '',
   clues: [],
   ...args,
 })
 
-const clueFactory = (args) => ({
+const clueFactory = (args: Object) => ({
   uid: null,
   storyUid: null,
   text: '',
@@ -55,7 +57,7 @@ const clueFactory = (args) => ({
   ...args,
 })
 
-const answerFactory = (args) => ({
+const answerFactory = (args: Object) => ({
   uid: null,
   storyUid: null,
   clueUid: null,
