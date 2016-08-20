@@ -43,7 +43,6 @@
     "test:watch": "mocha-webpack --watch --webpack-config webpack.test-config.js \"client/**/*.spec.js\"",
     "test:all": "npm test && npm run test:server",
     "test:server": "nosetests server/test",
-    "postinstall": "npm run build",
     "build": "webpack",
     "watch": "webpack --watch",
     "deploy": "npm run build && appcfg.py update ./server/app.yaml"

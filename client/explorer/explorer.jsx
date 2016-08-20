@@ -6,9 +6,9 @@ import { getExplorer } from '../reducers'
 import { changeExplorer, sendMessage } from '../actions'
 
 const Texts = ({texts}) => {
-  const textsView = texts.map(({sender, to, body} , i) => {
+  const textsView = texts.map(({sender, to, body, source} , i) => {
     return (
-      <tr key={i}>
+      <tr key={i} className={source === 'user' ? 'green': 'blue'}>
         <td>
           {sender}
         </td>
@@ -26,7 +26,7 @@ const Texts = ({texts}) => {
       <label>
         Results
       </label>
-      <table className="table is-striped is-bordered">
+      <table className="table is-bordered">
         <thead>
           <tr>
             <th>

@@ -54,8 +54,8 @@ const deleteResource = (Resource) => (uid: string) => (dispatch: any) => {
     .then(successMessage('Deleted'))
 }
 
-
 export const receiveMessage = (payload: any) => {
+  payload.source = 'server'
   return {
     type: at.RECEIVE_MESSAGE,
     payload,
@@ -84,6 +84,7 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
       to: toNumber,
       sender: senderNumber,
       body: text,
+      source: 'user',
     }
   })
   // https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters
