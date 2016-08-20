@@ -2,37 +2,38 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
+import classnames from 'classnames'
 
 import { getAnswersListByClue, splitUid } from '../reducers'
 import Routes from '../routes'
 import { startDrag, dropAnswer } from '../actions'
 
-const Answers = ({answers, storyId, clueId, startDrag, dropAnswer}) => {
-  const answerLinks = answers.map((answer, index) => (
-    <tr key={answer.uid}>
-      <td
+const Answers = ({answers, storyId, clueId, startDrag, dropAnswer, highlightUid}) => {
+  const answerLinks = answers.map((answer, index) => {
+    const classes = classnames('my-list-item', {
+      'highlighted': highlightUid === answer.uid,
+    })
+    return (
+      <Link
+        to={Routes.answer(answer.uid)}
+        className={classes}
+        key={answer.uid}
         draggable="true"
         onDrag={() => startDrag(answer.uid)}
         onDrop={() => dropAnswer(index)}
-        onDragOver={(e) => e.preventDefault()}
-      >
-        <Link to={Routes.answer(answer.uid)}>
-        {answer.uid}
-        </Link>
-      </td>
-    </tr>))
+        onDragOver={(e) => e.preventDefault()}>
+      {answer.uid}
+      </Link>
+    )
+  })
   return (
-    <table className="table is-bordered">
-      <tbody>
-        {answerLinks}
-        <tr key="addAnswer">
-          <td>
-            <Link to={{ pathname: Routes.createAnswer(storyId, clueId) }}> + Add Answer
-            </Link>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div className="my-list">
+      {answerLinks}
+      <Link
+        className="my-list-item"
+        to={{ pathname: Routes.createAnswer(storyId, clueId) }}> + Add Answer
+      </Link>
+    </div>
   )
 }
 
@@ -51,5 +52,9 @@ Answers.propTypes = {
   answers: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
   storyId: React.PropTypes.string.isRequired,
   clueId: React.PropTypes.string.isRequired,
+  highlight: React.PropTypes.string,
 }
-export default connect(stateToProps, { startDrag, dropAnswer })(Answers)
+export default connect(stateToProps, {
+  startDrag,
+  dropAnswer
+})(Answers)

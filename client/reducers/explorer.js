@@ -11,7 +11,7 @@ export default (explorer:Object = {
   } , action: Object) => {
   switch (action.type) {
     case at.CHANGE_EXPLORER:
-      return R.assocPath(action.path, action.value, explorer)
+      return R.assocPath(action.path, action.payload, explorer)
     case at.RECEIVE_MESSAGE:
     case at.SEND_MESSAGE:
       return R.evolve({

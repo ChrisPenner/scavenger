@@ -56,11 +56,15 @@ module.exports = {
       {
         test: /\.css$/,
         loaders: ['style', 'css'],
+      },
+      {
+        test: /\.scss$/,
+        loaders: ['style', 'css', 'sass'],
       }
     ]
   },
   resolve: {
-    extensions: ["", ".js", ".jsx", ".css", ".min.css"],
+    extensions: ["", ".js", ".jsx", ".css", ".min.css", ".scss"],
   },
   plugins: [
     new HtmlWebpackPlugin({

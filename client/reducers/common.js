@@ -1,11 +1,14 @@
+/* @flow */
 import * as at from '../action-types'
+import R from 'ramda'
+import type { ResourceType } from '../resources'
 
-export const baseResourceReducer = (resourceType, state, action) => {
+export const baseResourceReducer = (resourceType: ResourceType, state: any, action: Object) => {
   switch (action.type) {
     case at.load(resourceType):
       return action.payload
     case at.change(resourceType):
-      return R.assocPath(action.path, action.value, state)
+      return R.assocPath(action.path, action.payload, state)
     case at.set(resourceType):
       return R.assoc(action.payload.uid, action.payload, state)
     case at.del(resourceType):

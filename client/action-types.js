@@ -1,13 +1,19 @@
 /* @flow */
-export const load = (resourceType: string) => `LOAD_${resourceType.toUpperCase()}`
-export const change = (resourceType: string) => `CHANGE_${resourceType.toUpperCase()}`
-export const set = (resourceType: string) => `SET_${resourceType.toUpperCase()}`
-export const del = (resourceType: string) => `DELETE_${resourceType.toUpperCase()}`
+export type ActionKind = string
 
-export const CHANGE_EXPLORER = 'CHANGE_EXPLORER'
-export const SEND_MESSAGE = 'SEND_MESSAGE'
-export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE'
-export const REORDER_ANSWER = 'REORDER_ANSWER '
+export const load = (resourceType: string): ActionKind => `LOAD_${resourceType.toUpperCase()}`
+export const change = (resourceType: string): ActionKind => `CHANGE_${resourceType.toUpperCase()}`
+export const set = (resourceType: string): ActionKind => `SET_${resourceType.toUpperCase()}`
+export const del = (resourceType: string): ActionKind => `DELETE_${resourceType.toUpperCase()}`
 
-export const START_DRAG = 'START_DRAG'
-export const STOP_DRAG = 'STOP_DRAG'
+export const CHANGE_EXPLORER: ActionKind = 'CHANGE_EXPLORER'
+export const SEND_MESSAGE: ActionKind = 'SEND_MESSAGE'
+export const RECEIVE_MESSAGE: ActionKind = 'RECEIVE_MESSAGE'
+
+export const CHANGE_TEST_MESSAGE: ActionKind = 'CHANGE_TEST_MESSAGE'
+
+export const REORDER_ANSWER: ActionKind = 'REORDER_ANSWER'
+
+
+export const START_DRAG: ActionKind = 'START_DRAG'
+export const STOP_DRAG: ActionKind = 'STOP_DRAG'

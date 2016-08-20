@@ -8,6 +8,7 @@ import answers from './answer'
 import clues from './clue'
 import explorer from './explorer'
 import ui from './ui'
+import tools from './tools'
 
 export default combineReducers({
   routing: routerReducer,
@@ -15,6 +16,7 @@ export default combineReducers({
   clues,
   answers,
   explorer,
+  tools,
   ui,
 })
 
@@ -55,5 +57,6 @@ export const getAnswersByClue = (state: Object, clueUid: string) => getClue(stat
 export const getAnswersListByClue = (state: Object, clueUid: string) => listFromMapping(getAnswersByClue(state, clueUid))
 
 export const getExplorer = (state: Object) => state.explorer
+export const getToolData = (state: Object) => state.tools
 
 export const getDragData = (state: Object) => state.ui.dragData

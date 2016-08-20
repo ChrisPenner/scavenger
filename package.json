@@ -5,8 +5,10 @@
     "babel-loader": "6.2.4",
     "babel-plugin-syntax-flow": "^6.13.0",
     "babel-plugin-transform-object-rest-spread": "6.8.0",
+    "classnames": "^2.2.5",
     "humps": "1.1.0",
     "jquery": "3.1.0",
+    "node-sass": "^3.8.0",
     "ramda": "0.21.0",
     "react": "15.3.0",
     "react-dom": "15.2.1",
@@ -15,6 +17,7 @@
     "react-router-redux": "4.0.5",
     "redux": "3.5.2",
     "redux-thunk": "2.1.0",
+    "sass-loader": "^4.0.0",
     "toastr": "2.1.2",
     "webpack": "1.13.1",
     "xml2js-es6-promise": "1.0.3"

@@ -39,14 +39,28 @@ export const put = (resource: Object, uid: string, payload: Object) => apiReques
 export const post = (resource: Object, uid: string, payload: Object) => apiRequest(resource.route(uid), 'POST', payload).then(camelizeKeys)
 export const del = (resource: Object, uid: string) => apiRequest(resource.route(uid), 'DELETE')
 
-const storyFactory = (args: Object) => ({
+export type StoryType = {
+  uid: string,
+  defaultHint: string,
+  clues: Array<string>,
+}
+
+const storyFactory = (args: Object): StoryType => ({
   uid: null,
   defaultHint: '',
   clues: [],
   ...args,
 })
 
-const clueFactory = (args: Object) => ({
+export type ClueType = {
+  uid: string,
+  storyUid: string,
+  hint: string,
+  mediaUrl: string,
+  answerUids: Array<string>,
+}
+
+const clueFactory = (args: Object): ClueType => ({
   uid: null,
   storyUid: null,
   text: '',
@@ -56,7 +70,15 @@ const clueFactory = (args: Object) => ({
   ...args,
 })
 
-const answerFactory = (args: Object) => ({
+export type AnswerType = {
+  uid: string,
+  storyUid: string,
+  clueUid: string,
+  pattern: string,
+  nextClue: string,
+}
+
+const answerFactory = (args: Object): AnswerType => ({
   uid: null,
   storyUid: null,
   clueUid: null,
@@ -82,3 +104,5 @@ export const Answer = {
   new: answerFactory,
   type: 'ANSWER',
 }
+
+export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER'

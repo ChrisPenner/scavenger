@@ -8,6 +8,7 @@ import { Story, Clue, Answer, index, put, del } from './resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
 import Routes from './routes'
 import * as at from './action-types'
+import type { ActionKind } from './action-types'
 
 const fetchResource = (Resource, actionType) => (dispatch: any) => {
   return index(Resource)
@@ -17,13 +18,19 @@ const fetchResource = (Resource, actionType) => (dispatch: any) => {
     }))
 }
 
-const changer = (type) => (path: Array<string>, value: any) => ({
+type ChangeAction = {
+  type: ActionKind,
+  path: Array<string>,
+  payload: any,
+}
+
+const changer = (type: ActionKind) => (path: Array<string>, payload: any):ChangeAction => ({
   type: type,
   path,
-  value,
+  payload,
 })
 
-const setter = (type) => (payload: any) => ({
+const setter = (type: ActionKind) => (payload: any) => ({
   type,
   payload,
 })
@@ -35,7 +42,7 @@ const saveResource = (Resource, getResourceState) => (uid: string) => (dispatch:
     .then(successMessage('Saved'))
 }
 
-export const deleted = (resourceType: string, uid: string) => ({
+export const deleted = (resourceType: ActionKind, uid: string) => ({
   type: at.del(resourceType),
   payload: { uid },
 })
@@ -95,6 +102,11 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
     .then(R.compose(dispatch, receiveMessage))
 }
 
+type SimpleAction = {
+  type: ActionKind,
+  payload?: any,
+}
+
 export const loadStories = fetchResource(Story, at.load(Story.type))
 export const loadClues = fetchResource(Clue, at.load(Clue.type))
 export const loadAnswers = fetchResource(Answer, at.load(Answer.type))
@@ -103,6 +115,11 @@ export const changeStory = changer(at.change(Story.type))
 export const changeClue = changer(at.change(Clue.type))
 export const changeAnswer = changer(at.change(Answer.type))
 export const changeExplorer = changer(at.CHANGE_EXPLORER)
+
+export const changeTestMessage = (payload: any): SimpleAction => ({
+  type: at.CHANGE_TEST_MESSAGE,
+  payload,
+})
 
 export const saveStory = saveResource(Story, getStory)
 export const saveClue = saveResource(Clue, getClue)
@@ -137,7 +154,7 @@ export const createAnswer = (payload: any) => (dispatch: any) => {
     .then(successMessage('Created'))
 }
 
-export const reorderAnswer = (uid: string, index: number) => ({
+export const reorderAnswer = (uid: string, index: number): SimpleAction => ({
   type: at.REORDER_ANSWER,
     payload: {
       uid,
@@ -145,12 +162,12 @@ export const reorderAnswer = (uid: string, index: number) => ({
     }
 })
 
-export const startDrag = (payload: any) => ({
+export const startDrag = (payload: any): SimpleAction => ({
   type: at.START_DRAG,
   payload,
 })
 
-export const stopDrag = () => ({ type: at.START_DRAG })
+export const stopDrag = ():SimpleAction => ({ type: at.STOP_DRAG })
 
 export const dropAnswer = (index: number) => (dispatch: any, getState: () => Object) => {
   const answerUid = getDragData(getState())
