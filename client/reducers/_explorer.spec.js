@@ -10,7 +10,7 @@ describe('Explorer Reducer', function() {
   const baseExplorer = {
     text: 'start text',
     toNumber: '1234',
-    fromNumber: '555',
+    senderNumber: '555',
     texts: []
   }
   describe(at.CHANGE_EXPLORER, function() {

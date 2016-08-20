@@ -66,28 +66,28 @@ const parseTwiML = xml2js
 const focusMessages = R.lensPath(['Response', 'Message'])
 const focusBody = R.lensPath(['Body', 0])
 const focusTo = R.lensPath(['$', 'to'])
-const focusFrom = R.lensPath(['$', 'from'])
+const focusSender = R.lensPath(['$', 'from'])
 const intoMessage = R.applySpec({
   body: R.view(focusBody),
-  to: R.view(focusTo)
-  from: R.view(focusFrom)
+  to: R.view(focusTo),
+  sender: R.view(focusSender),
 })
 
 const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))
 
 export const sendMessage = () => (dispatch: any, getState: any) => {
-  const {fromNumber, toNumber, text} = getExplorer(getState())
+  const {senderNumber, toNumber, text} = getExplorer(getState())
   dispatch({
     type: at.SEND_MESSAGE,
     payload: {
       to: toNumber,
-      from: fromNumber,
+      sender: senderNumber,
       body: text,
     }
   })
   // https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters
   const formData = new FormData()
-  formData.append('From', fromNumber)
+  formData.append('From', senderNumber)
   formData.append('Body', text)
   return fetch(Routes.message(), {
     method: 'POST',

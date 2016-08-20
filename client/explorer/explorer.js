@@ -6,11 +6,11 @@ import { getExplorer } from '../reducers'
 import { changeExplorer, sendMessage } from '../actions'
 
 const Texts = ({texts}) => {
-  const textsView = texts.map(({from, to, body} , i) => {
+  const textsView = texts.map(({sender, to, body} , i) => {
     return (
       <tr key={i}>
         <td>
-          {from}
+          {sender}
         </td>
         <td>
           {to}
@@ -30,7 +30,7 @@ const Texts = ({texts}) => {
         <thead>
           <tr>
             <th>
-              From
+              Sender
             </th>
             <th>
               To
@@ -54,7 +54,7 @@ Texts.propTypes = {
 const stateToProps = (state) => {
   return getExplorer(state)
 }
-const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, texts}) => {
+const Explorer = ({toNumber, senderNumber, text, changeExplorer, sendMessage, texts}) => {
   return (
     <div>
       <h1 className="title">Explorer</h1>
@@ -78,14 +78,14 @@ const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, text
               <label
                 className="label"
                 htmlFor="from">
-                From #
+                Sender #
               </label>
               <input
                 id="from"
                 className="input"
-                value={fromNumber}
+                value={senderNumber}
                 placeholder="+555-123-4567"
-                onChange={(e) => changeExplorer(['fromNumber'], e.target.value)} />
+                onChange={(e) => changeExplorer(['senderNumber'], e.target.value)} />
             </div>
             <label
               className="label"
@@ -116,7 +116,7 @@ const Explorer = ({toNumber, fromNumber, text, changeExplorer, sendMessage, text
 }
 Explorer.propTypes = {
   toNumber: React.PropTypes.string.isRequired,
-  fromNumber: React.PropTypes.string.isRequired,
+  senderNumber: React.PropTypes.string.isRequired,
   text: React.PropTypes.string.isRequired,
   texts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
   changeExplorer: React.PropTypes.func.isRequired,
