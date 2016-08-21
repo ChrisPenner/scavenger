@@ -8,11 +8,14 @@ from .validators import not_empty
 class Answer(ndb.Model):
     DATA_FIELDS = ['pattern', 'next_clue']
 
+    uid = ndb.StringProperty(required=True)
+    clue_uid = ndb.ComputedProperty(lambda s: get_clue_uid(s.uid))
+    story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
+
     pattern = ndb.StringProperty(required=True, validator=not_empty)
     next_clue = ndb.StringProperty(required=True)
-    story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))
-    clue_uid = ndb.ComputedProperty(lambda s: get_clue_uid(s.uid))
-    uid = ndb.StringProperty(required=True)
+    receiver = ndb.StringProperty()
+
 
     @classmethod
     def from_uid(cls, uid, **kwargs):

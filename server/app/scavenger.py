@@ -68,11 +68,12 @@ def format_message(message, user, group):
 
 
 def determine_message_type(message):
-    if message.lower().startswith('start'):
+    text = message.lower()
+    if text.startswith('start'):
         return START_STORY
-    elif message.lower().startswith('join'):
+    elif text.startswith('join'):
         return JOIN_GROUP
-    elif message.lower().startswith('restart'):
+    elif text.startswith('restart'):
         return RESTART
     else:
         return ANSWER
@@ -92,7 +93,7 @@ def perform_action(message_type, message, user, group):
 
 
 def start_story(message, user, group):
-    match = regex_match(r'^start (?P<code>.+)', message.lower())
+    match = regex_match(r'^start (?P<code>.+)', message.text.lower())
     story_uid = match.groupdict().get('code')
     start_clue = Clue.get_by_id('{}:START'.format(story_uid)) if story_uid else None
     if not start_clue:
@@ -111,7 +112,7 @@ def start_story(message, user, group):
 
 def join_group(message, user):
     """ Join group by code """
-    match = regex_match(r'^join (?P<group_uid>.+)', message.lower())
+    match = regex_match(r'^join (?P<group_uid>.+)', message.text.lower())
     group_uid = match.groupdict().get('group_uid')
     if user.group_uid == group_uid:
         logging.info("Already in group for group_uid: %s", group_uid)
@@ -138,9 +139,13 @@ def restart(user, group):
 
 
 def get_next_clue(message, answers):
-    next_clue, answer_data = next(((answer.next_clue, regex_match(answer.pattern, message).groupdict())
-                                   for answer in answers
-                                   if regex_match(answer.pattern, message)), (None, None))
+    next_clue, answer_data = next(
+        ((answer.next_clue, regex_match(answer.pattern, message.text).groupdict())
+         for answer in answers
+         if regex_match(answer.pattern, message.text)
+         and (answer.receiver == message.receiver or not answer.receiver)
+         ),
+        (None, None))
     return next_clue, answer_data
 
 
@@ -155,7 +160,7 @@ def answer(message, user, group):
         user_data, group_data = split_data(answer_data)
         user.data.update(user_data)
         group.data.update(group_data)
-        return Result(response_type=CLUE, messages=[user.group.clue], user=user, group=group)
+        return Result(response_type=CLUE, messages=[group.clue], user=user, group=group)
     # They got the answer wrong - send them a hint
     logging.info('Sending hint')
     if clue.hint:
@@ -170,10 +175,13 @@ class TwilioHandler(RequestHandler):
             logging.error('Body and From params required')
             abort(400, 'Body and From params required')
 
-        message = self.request.get('Body').strip()
+        message = Message(
+            text=self.request.POST.get('Body').strip(),
+            receiver=self.request.POST.get('To'),
+        )
 
         from_phone = self.request.get('From')
-        logging.info('Received text from %s with message:\n%s', from_phone, message)
+        logging.info('Received text from %s with message:\n%s', from_phone, message.text)
 
         user = User.get_by_id(from_phone)
         if user:
@@ -182,7 +190,7 @@ class TwilioHandler(RequestHandler):
             logging.info('Creating new user for %s', from_phone)
             user = User(id=from_phone)
 
-        message_type = determine_message_type(message)
+        message_type = determine_message_type(message.text)
         logging.info('Message of type: %s', message_type)
         group = user.group
         response_type, messages, user, group = perform_action(message_type, message, user, group)

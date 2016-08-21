@@ -1,5 +1,7 @@
 from unittest import TestCase
 from webapp2 import Request
+
+from app.models.message import Message
 from mock import Mock, patch, MagicMock
 
 from google.appengine.ext import testbed, ndb
@@ -20,19 +22,22 @@ from app.models.user import User
 
 
 USER_PHONE = '+5551234567'
+PRIMARY_SERVER_PHONE = '+9998765432'
+SECONDARY_SERVER_PHONE = '+7775554321'
 
-def create_request(message="texty text", sender=USER_PHONE):
+def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE):
     request = Request.blank('/api/message')
     request.method = 'POST'
     request.POST.update({
         'From': sender,
         'Body': message,
+        'To': receiver,
     })
     return request
 
 
-def send_message(message='texty text', sender=USER_PHONE):
-    request = create_request(message=message, sender=sender)
+def send_message(message, sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE):
+    request = create_request(message=message, sender=sender, receiver=receiver)
     response = request.get_response(app)
     return response.status_int, response.body
 
@@ -49,7 +54,7 @@ class TestScavenger(TestCase):
         self.story.put()
         self.start_clue = Clue.from_uid(Clue.build_uid(self.story.uid, 'START'), text='Start the story', hint='clue hint')
         self.start_clue.put()
-        self.next_clue = Clue.from_uid(Clue.build_uid(self.story.uid, 'NEXT'), text='You made it!')
+        self.next_clue = Clue.from_uid(Clue.build_uid(self.story.uid, 'NEXT'), text='You made it!', sender="+555")
         self.next_clue.put()
         self.answer = Answer.from_uid(
             Answer.build_uid('STORY', 'START', 'TRANSITION'),
@@ -62,15 +67,15 @@ class TestScavenger(TestCase):
         self.testbed.deactivate()
 
     def test_post_requires_body(self):
-        status, _ = send_message(message=None)
+        status, _ = send_message(None)
         self.assertEqual(400, status)
 
     def test_post_requires_sender(self):
-        status, _ = send_message(sender=None)
+        status, _ = send_message('some message', sender=None)
         self.assertEqual(400, status)
 
     def test_get_start_info(self):
-        status, response = send_message()
+        status, response = send_message('lkjlkj')
         self.assertIn(HOW_TO_START.text, response)
         self.assertEqual(200, status)
 
@@ -78,6 +83,20 @@ class TestScavenger(TestCase):
         status, response = send_message('start {}'.format(self.story.uid))
         self.assertIn(self.start_clue.text, response)
         self.assertEqual(200, status)
+
+    def test_answer_requires_proper_receiver(self):
+        self.answer.receiver = SECONDARY_SERVER_PHONE
+        self.answer.put()
+
+        send_message('start {}'.format(self.story.uid))
+
+        status, response = send_message('my answer is 42')
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.hint, response)
+
+        status, response = send_message('my answer is 42', receiver=SECONDARY_SERVER_PHONE)
+        self.assertEqual(200, status)
+        self.assertIn(self.next_clue.text, response)
 
     def test_flow_through_story(self):
         # start non-existent story
@@ -97,7 +116,8 @@ class TestScavenger(TestCase):
 
         # Answer correctly
         status, response = send_message('my answer is 42')
-        self.assertIn(self.start_clue.text, response)
+        self.assertIn(self.next_clue.text, response)
+        self.assertIn(self.next_clue.sender, response)
         user = User.get_by_id(USER_PHONE)
         self.assertEqual(200, status)
         self.assertEqual(user.data, {'user_answer': '42'})
@@ -208,13 +228,13 @@ class TestDetermineMessageType(TestCase):
 class TestPerformAction(TestCase):
     def test_returns_expected_how_to_start(self):
         user = User()
-        result = perform_action(ANSWER, 'blah', user, None)
+        result = perform_action(ANSWER, Message('blah'), user, None)
         self.assertEqual([HOW_TO_START.text], [m.text for m in result.messages])
 
     @patch('app.scavenger.Clue.get_by_id', new=Mock(return_value=None))
     def test_returns_expected_story_not_found(self):
         user = Mock()
-        result = perform_action(START_STORY, 'start blah', user, None)
+        result = perform_action(START_STORY, Message('start blah'), user, None)
         self.assertEqual([STORY_NOT_FOUND], result.messages)
 
     @patch('app.scavenger.Group')
@@ -225,7 +245,7 @@ class TestPerformAction(TestCase):
         group_mock.return_value.current_clue = clue
         group_mock.gen_uid.return_value = 'abcd'
         user = User()
-        result = perform_action(START_STORY, 'start blah', user, None)
+        result = perform_action(START_STORY, Message('start blah'), user, None)
         expected_message_text = [start_new_story('abcd').text, clue.text]
         self.assertEqual(expected_message_text, [m.text for m in result.messages])
 
@@ -233,13 +253,13 @@ class TestPerformAction(TestCase):
     def test_returns_expected_group_not_found(self, group_mock):
         group_mock.get_by_id.return_value = None
         user = Mock()
-        result = perform_action(JOIN_GROUP, 'join blah', user, None)
+        result = perform_action(JOIN_GROUP, Message('join blah'), user, None)
         self.assertEqual([NO_GROUP_FOUND], result)
 
     @patch('app.scavenger.Group', new=Mock())
     def test_returns_expected_already_in_group(self):
         user = User(group_uid='code')
-        result = perform_action(JOIN_GROUP, 'join code', user, Group())
+        result = perform_action(JOIN_GROUP, Message('join code'), user, Group())
         self.assertEqual([ALREADY_IN_GROUP], result)
 
     @patch('app.scavenger.Group')
@@ -248,7 +268,7 @@ class TestPerformAction(TestCase):
         group = Mock(uid='code', clue_uid='MYSTORY:MYCLUE', clue=clue)
         group_mock.get_by_id.return_value = group
         user = User()
-        result = perform_action(JOIN_GROUP, 'join code', user, None)
+        result = perform_action(JOIN_GROUP, Message('join code'), user, None)
         self.assertEqual([JOINED_GROUP.text, 'clue text'], [m.text for m in result.messages])
 
     def test_returns_expected_restarted(self):
@@ -256,14 +276,14 @@ class TestPerformAction(TestCase):
         clue = Clue(text=start_message)
         user = Mock()
         group_mock = Mock(clue_uid='something', clue=clue)
-        result = perform_action(RESTART, 'restart', user, group_mock)
+        result = perform_action(RESTART, Message('restart'), user, group_mock)
         self.assertEqual([RESTARTED.text, start_message], [m.text for m in result.messages])
 
     def test_returns_expected_end_of_story(self):
         clue = Clue(text='blah', answer_uids=[])
         group_mock = Mock(clue=clue)
         user = Mock()
-        result = perform_action(ANSWER, 'asdf', user, group_mock)
+        result = perform_action(ANSWER, Message('asdf'), user, group_mock)
         self.assertEqual([END_OF_STORY.text], [m.text for m in result.messages])
 
 
@@ -274,7 +294,7 @@ class TestGetNextClue(TestCase):
             Answer(pattern=r'steve', next_clue="STEVE"),
             Answer(pattern=r'.*', next_clue='CATCHALL'),
         ]
-        message = 'test answer'
+        message = Message('test answer')
         next_clue, answer_data = get_next_clue(message, answers)
         self.assertEqual('TWOWORDS', next_clue)
         self.assertEqual({'second_word': 'answer'}, answer_data)
@@ -293,7 +313,7 @@ class TestAnswerClue(TestCase):
                 next_clue=r'STORY:GENERIC'
             )
         ]
-        message = 'test answer'
+        message = Message('test answer')
 
         group_mock = Mock(data={}, clue=Mock(is_endpoint=False, answers=answers))
         result = answer(message, user, group_mock)
@@ -303,7 +323,31 @@ class TestAnswerClue(TestCase):
     def test_gives_hints_if_incorrect(self):
         answers = [Answer(pattern=r'tough answer', next_clue='SOME:NEXTCLUE')]
         user = MagicMock()
-        message = 'this is not the correct answer'
+        message = Message('this is not the correct answer')
         group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
         result = answer(message, user, group_mock)
         self.assertEqual(['My Hint'], [r.text for r in result.messages])
+
+    def test_requires_matching_receiver(self):
+        answers = [
+            Answer(pattern=r'.*', next_clue='STORY:FIRSTCLUE', receiver=SECONDARY_SERVER_PHONE),
+            Answer(pattern=r'.*', next_clue='STORY:SECONDCLUE')
+        ]
+        user = MagicMock()
+        message = Message('correct answer')
+        group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
+        result = answer(message, user, group_mock)
+        self.assertEqual(CLUE, result.response_type)
+        self.assertEqual('STORY:SECONDCLUE', result.group.clue_uid)
+
+    def test_does_match_with_proper_receiver(self):
+        answers = [
+            Answer(pattern=r'.*', next_clue='STORY:FIRSTCLUE', receiver=SECONDARY_SERVER_PHONE),
+            Answer(pattern=r'.*', next_clue='STORY:SECONDCLUE')
+        ]
+        user = MagicMock()
+        message = Message('correct answer', receiver=SECONDARY_SERVER_PHONE)
+        group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
+        result = answer(message, user, group_mock)
+        self.assertEqual(CLUE, result.response_type)
+        self.assertEqual('STORY:FIRSTCLUE', result.group.clue_uid)

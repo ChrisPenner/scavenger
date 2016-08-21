@@ -3,12 +3,11 @@ import re
 from webapp2_extensions import UserFacingError
 def not_empty(prop, value):
     if not value:
-        raise UserFacingError('{} must not be empty'.format(prop._name))
+        raise UserFacingError(u'{} must not be empty'.format(prop._name))
     return value
 
 INVALID_PHONE_CHAR_REGEX = r'[^-+0-9\s()]'
 def phone_number(prop, value):
-    print 'Running PHONE validator', value, u'+{}'.format(re.sub('[^0-9]', '', value))
     if not value:
         return value
     if re.search(INVALID_PHONE_CHAR_REGEX, value):
