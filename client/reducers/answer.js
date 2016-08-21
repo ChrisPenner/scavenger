@@ -1,11 +1,19 @@
 /* @flow */
 import R from 'ramda'
+import transform from '../lib/transform'
 
 import * as at from '../action-types'
 import { baseResourceReducer } from './common'
 import { Answer, Clue } from '../resources'
+import { phoneNumber } from '../lib/validators'
 
-export default (answers: Object = {}, action: Object) => {
+const validate = R.map(R.evolve({
+  receiver: phoneNumber
+}))
+
+export default transform(
+  validate,
+  (answers: Object = {}, action: Object) => {
   const baseResult = baseResourceReducer(Answer.type, answers, action)
   if (baseResult !== undefined){
     return baseResult
@@ -18,5 +26,4 @@ export default (answers: Object = {}, action: Object) => {
     default:
       return answers
   }
-}
-
+})

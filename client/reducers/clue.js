@@ -13,9 +13,7 @@ const validate = R.map(R.evolve({
 }))
 
 export default transform(
-  R.map(R.evolve({
-    sender: phoneNumber
-  })),
+  validate,
   (clues: Object = {}, action: Object) => {
   const baseResult = baseResourceReducer(Clue.type, clues, action)
   if (baseResult !== undefined){
