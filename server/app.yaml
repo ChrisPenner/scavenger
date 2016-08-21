@@ -1,5 +1,5 @@
 application: look-go
-version: 19
+version: 20
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -8,6 +8,10 @@ handlers:
 
 - url: /api/.*
   script: app.main.app
+
+- url: /backup.*
+  script: app.main.app
+  login: admin
 
 - url: /static
   login: admin

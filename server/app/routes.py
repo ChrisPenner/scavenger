@@ -1,5 +1,7 @@
 from webapp2 import Route
 from webapp2_extras.routes import PathPrefixRoute
+
+from app.backup import BackupHandler
 from webapp2_extensions import ResourceRoutes
 
 from scavenger import TwilioHandler
@@ -14,4 +16,5 @@ ROUTES = [
         ResourceRoutes('answers', Answer),
         Route('/message', TwilioHandler)
         ]),
+    Route('/backup', BackupHandler),
 ]
