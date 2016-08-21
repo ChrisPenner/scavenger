@@ -2,11 +2,11 @@ from google.appengine.ext import ndb
 from app.models.clue import Clue
 from app.models.utils import get_clue_uid, get_story_uid
 
-from .validators import not_empty
+from .validators import not_empty, phone_number
 
 
 class Answer(ndb.Model):
-    DATA_FIELDS = ['pattern', 'next_clue']
+    DATA_FIELDS = ['pattern', 'next_clue', 'receiver']
 
     uid = ndb.StringProperty(required=True)
     clue_uid = ndb.ComputedProperty(lambda s: get_clue_uid(s.uid))
@@ -14,7 +14,7 @@ class Answer(ndb.Model):
 
     pattern = ndb.StringProperty(required=True, validator=not_empty)
     next_clue = ndb.StringProperty(required=True)
-    receiver = ndb.StringProperty()
+    receiver = ndb.StringProperty(validator=phone_number)
 
 
     @classmethod

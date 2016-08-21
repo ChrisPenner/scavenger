@@ -36,6 +36,21 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => (
           value={answer.pattern || ''}
           onChange={(e) => changeAnswer([answer.uid, 'pattern'], e.target.value)} />
       </div>
+
+      <label
+        className="label"
+        htmlFor="receiver">
+        Receiver <span className="faded"> (optional) </span>
+      </label>
+      <div className="control">
+        <input
+          id="receiver"
+          className="input"
+          value={answer.receiver || ''}
+          placeholder="Only messages to this number will match"
+          onChange={(e) => changeAnswer([answer.uid, 'receiver'], e.target.value)} />
+      </div>
+
       <label
         className="label"
         htmlFor="next-clue">
@@ -53,6 +68,7 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => (
                                    </option>)}
         </select>
       </div>
+
     </div>
   </div>
 )

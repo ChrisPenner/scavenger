@@ -5,8 +5,8 @@ import * as at from '../action-types'
 
 export default (explorer:Object = {
     text: '',
-    toNumber: 'server',
-    senderNumber: 'testing',
+    receiver: 'server',
+    sender: 'testing',
     texts: []
   } , action: Object) => {
   switch (action.type) {

@@ -59,6 +59,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             id="text"
             className="input"
             value={clue.text || ''}
+            placeholder="The text of the message"
             onChange={(e) => changeClue([clue.uid, 'text'], e.target.value)} />
         </div>
 
@@ -72,32 +73,35 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             id="hint"
             className="input"
             value={clue.hint || ''}
+            placeholder="A hint in case they get it wrong"
             onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
         </div>
 
         <label
           className="label"
           htmlFor="mediaUrl">
-          Media Url
+          Media Url <span className="faded"> (optional) </span>
         </label>
         <div className="control">
           <input
             id="mediaUrl"
             className="input"
             value={clue.mediaUrl || ''}
+            placeholder="e.g. https://placekitten.com/g/300/300"
             onChange={(e) => changeClue([clue.uid, 'mediaUrl'], e.target.value)} />
         </div>
 
         <label
           className="label"
           htmlFor="sender">
-          Sender:
+          Sender <span className="faded"> (optional) </span>
         </label>
         <div className="control">
           <input
             id="sender"
             className="input"
             value={clue.sender || ''}
+            placeholder="Which number to send the clue from"
             onChange={(e) => changeClue([clue.uid, 'sender'], e.target.value)} />
         </div>
 

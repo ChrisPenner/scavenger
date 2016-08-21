@@ -80,19 +80,20 @@ const intoMessage = R.applySpec({
 const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))
 
 export const sendMessage = () => (dispatch: any, getState: any) => {
-  const {senderNumber, toNumber, text} = getExplorer(getState())
+  const {sender, receiver, text} = getExplorer(getState())
   dispatch({
     type: at.SEND_MESSAGE,
     payload: {
-      to: toNumber,
-      sender: senderNumber,
+      receiver,
+      sender,
       body: text,
       source: 'user',
     }
   })
   // https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters
   const formData = new FormData()
-  formData.append('From', senderNumber)
+  formData.append('From', sender)
+  formData.append('To', receiver)
   formData.append('Body', text)
   return fetch(Routes.message(), {
     method: 'POST',

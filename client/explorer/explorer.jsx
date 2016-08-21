@@ -6,14 +6,14 @@ import { getExplorer } from '../reducers'
 import { changeExplorer, sendMessage } from '../actions'
 
 const Texts = ({texts}) => {
-  const textsView = texts.map(({sender, to, body, mediaUrl, source} , i) => {
+  const textsView = texts.map(({sender, receiver, body, mediaUrl, source} , i) => {
     return (
       <tr key={i} className={source === 'user' ? 'green': 'blue'}>
         <td>
           {sender}
         </td>
         <td>
-          {to}
+          {receiver}
         </td>
         <td>
           {body}
@@ -36,7 +36,7 @@ const Texts = ({texts}) => {
               Sender
             </th>
             <th>
-              To
+              Receiver
             </th>
             <th>
               Text
@@ -60,7 +60,7 @@ Texts.propTypes = {
 const stateToProps = (state) => {
   return getExplorer(state)
 }
-const Explorer = ({toNumber, senderNumber, text, changeExplorer, sendMessage, texts}) => {
+const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) => {
   return (
     <div>
       <h1 className="title">Explorer</h1>
@@ -70,15 +70,15 @@ const Explorer = ({toNumber, senderNumber, text, changeExplorer, sendMessage, te
             <div className="control">
               <label
                 className="label"
-                htmlFor="to">
-                To #
+                htmlFor="receiver">
+                Receiver #
               </label>
               <input
-                id="to"
+                id="receiver"
                 className="input"
-                value={toNumber}
+                value={receiver}
                 placeholder="+555-123-4567"
-                onChange={(e) => changeExplorer(['toNumber'], e.target.value)} />
+                onChange={(e) => changeExplorer(['receiver'], e.target.value)} />
             </div>
             <div className="control">
               <label
@@ -89,9 +89,9 @@ const Explorer = ({toNumber, senderNumber, text, changeExplorer, sendMessage, te
               <input
                 id="from"
                 className="input"
-                value={senderNumber}
+                value={sender}
                 placeholder="+555-123-4567"
-                onChange={(e) => changeExplorer(['senderNumber'], e.target.value)} />
+                onChange={(e) => changeExplorer(['sender'], e.target.value)} />
             </div>
             <label
               className="label"
@@ -121,8 +121,8 @@ const Explorer = ({toNumber, senderNumber, text, changeExplorer, sendMessage, te
   )
 }
 Explorer.propTypes = {
-  toNumber: React.PropTypes.string.isRequired,
-  senderNumber: React.PropTypes.string.isRequired,
+  receiver: React.PropTypes.string.isRequired,
+  sender: React.PropTypes.string.isRequired,
   text: React.PropTypes.string.isRequired,
   texts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
   changeExplorer: React.PropTypes.func.isRequired,
