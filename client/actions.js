@@ -67,12 +67,14 @@ const parseTwiML = xml2js
 
 const focusMessages = R.lensPath(['Response', 'Message'])
 const focusBody = R.lensPath(['Body', 0])
+const focusMedia = R.lensPath(['Media', 0])
 const focusTo = R.lensPath(['$', 'to'])
 const focusSender = R.lensPath(['$', 'from'])
 const intoMessage = R.applySpec({
   body: R.view(focusBody),
   to: R.view(focusTo),
   sender: R.view(focusSender),
+  mediaUrl: R.view(focusMedia),
 })
 
 const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))

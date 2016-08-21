@@ -6,7 +6,7 @@ import { getExplorer } from '../reducers'
 import { changeExplorer, sendMessage } from '../actions'
 
 const Texts = ({texts}) => {
-  const textsView = texts.map(({sender, to, body, source} , i) => {
+  const textsView = texts.map(({sender, to, body, mediaUrl, source} , i) => {
     return (
       <tr key={i} className={source === 'user' ? 'green': 'blue'}>
         <td>
@@ -17,6 +17,9 @@ const Texts = ({texts}) => {
         </td>
         <td>
           {body}
+        </td>
+        <td>
+          {mediaUrl && <div><img src={mediaUrl} /></div> }
         </td>
       </tr>
     )
@@ -37,6 +40,9 @@ const Texts = ({texts}) => {
             </th>
             <th>
               Text
+            </th>
+            <th>
+              Media
             </th>
           </tr>
         </thead>

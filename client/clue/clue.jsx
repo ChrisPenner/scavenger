@@ -65,7 +65,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
         <label
           className="label"
           htmlFor="hint">
-          Hint:
+          Hint
         </label>
         <div className="control">
           <input
@@ -73,6 +73,19 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
             className="input"
             value={clue.hint || ''}
             onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
+        </div>
+
+        <label
+          className="label"
+          htmlFor="mediaUrl">
+          Media Url
+        </label>
+        <div className="control">
+          <input
+            id="mediaUrl"
+            className="input"
+            value={clue.mediaUrl || ''}
+            onChange={(e) => changeClue([clue.uid, 'mediaUrl'], e.target.value)} />
         </div>
 
         <label
