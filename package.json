@@ -45,6 +45,6 @@
     "test:server": "nosetests server/test",
     "build": "webpack",
     "watch": "webpack --watch",
-    "deploy": "npm run build && appcfg.py update ./server/app.yaml"
+    "deploy": "npm run test:all && npm run build && appcfg.py update ./server/app.yaml"
   }
 }

@@ -55,9 +55,9 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
           Text
         </label>
         <div className="control">
-          <input
+          <textarea
             id="text"
-            className="input"
+            className="textarea"
             value={clue.text || ''}
             placeholder="The text of the message"
             onChange={(e) => changeClue([clue.uid, 'text'], e.target.value)} />
