@@ -32,18 +32,18 @@ regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
 
 
 def twiml_response(user, group, response_type, messages):
-    media_urls = [m.media_url for m in messages
-                  if not isinstance(m, basestring) and m.media_url]
     recipients = [user.phone]
     if group and group.users and (response_type == CLUE or response_type == HINT):
         recipients = group.users
     resp = twiml.Response()
     for recipient in recipients:
         for message in messages:
-            message = twiml.Message(msg=message.text, to=recipient, sender=message.sender)
-            for media_url in media_urls:
-                message.append(twiml.Media(url=media_url))
-            resp.append(message)
+            m = twiml.Message(msg=message.text, to=recipient)
+            if message.sender:
+                m.sender = message.sender
+            if message.media_url:
+                m.append(twiml.Media(url=message.media_url))
+            resp.append(m)
     return str(resp)
 
 
