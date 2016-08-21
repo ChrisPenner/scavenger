@@ -10,12 +10,12 @@ import Routes from './routes'
 import * as at from './action-types'
 import type { ActionKind } from './action-types'
 
-const fetchResource = (Resource, actionType) => (dispatch: any) => {
+const actionCreator = R.curry((type, payload) => ({type, payload}))
+const fetchResource = (Resource) => (dispatch: any) => {
+  const actionFactory = actionCreator(at.load(Resource.type))
   return index(Resource)
-    .then(json => dispatch({
-      type: actionType,
-      payload: json,
-    }))
+    .then(actionFactory)
+    .then(dispatch)
 }
 
 type ChangeAction = {
@@ -36,6 +36,7 @@ const setter = (type: ActionKind) => (payload: any) => ({
 })
 
 const successMessage = message => () => toastr.success(message)
+
 const saveResource = (Resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: () => Object) => {
   const currentState = getResourceState(getState(), uid)
   return put(Resource, uid, currentState)
@@ -105,9 +106,9 @@ type SimpleAction = {
   payload?: any,
 }
 
-export const loadStories = fetchResource(Story, at.load(Story.type))
-export const loadClues = fetchResource(Clue, at.load(Clue.type))
-export const loadAnswers = fetchResource(Answer, at.load(Answer.type))
+export const loadStories = fetchResource(Story)
+export const loadClues = fetchResource(Clue)
+export const loadAnswers = fetchResource(Answer)
 
 export const changeStory = changer(at.change(Story.type))
 export const changeClue = changer(at.change(Clue.type))

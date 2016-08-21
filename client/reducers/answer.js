@@ -10,12 +10,11 @@ export default (answers: Object = {}, action: Object) => {
   if (baseResult !== undefined){
     return baseResult
   }
-  switch (action.type) {
+  const {payload, type} = action
+  switch (type) {
       case at.del(Clue.type):
-        return R.pickBy(
-          ({ clueUid }, key) => clueUid !== action.payload.uid,
-          answers
-        )
+      const notEqualsClueUid = R.compose(R.not, R.equals(payload.uid), R.prop('clueUid'))
+      return R.pickBy(notEqualsClueUid, answers)
     default:
       return answers
   }

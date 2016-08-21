@@ -3,7 +3,7 @@ import * as at from '../action-types'
 import R from 'ramda'
 import type { ResourceType } from '../resources'
 
-export const baseResourceReducer = (resourceType: ResourceType, state: any, action: Object) => {
+export const baseResourceReducer = R.curry((resourceType: ResourceType, state: any, action: Object) => {
   switch (action.type) {
     case at.load(resourceType):
       return action.payload
@@ -12,10 +12,9 @@ export const baseResourceReducer = (resourceType: ResourceType, state: any, acti
     case at.set(resourceType):
       return R.assoc(action.payload.uid, action.payload, state)
     case at.del(resourceType):
-      debugger
       return R.dissoc(action.payload.uid, state)
     default:
       return undefined
   }
-}
+})
 
