@@ -188,6 +188,13 @@ class TestTwimlResponse(TestCase):
         self.assertIn('<Media>picture.com/my.png</Media>', response)
         self.assertIn('<Media>second.com/my.jpg</Media>', response)
 
+    def test_does_not_send_media_more_than_once(self):
+        messages = [Clue(text='my_clue', media_url='picture.com/my.png'),
+                    Clue(text='my_other_clue')]
+        response = twiml_response(self.user, None, START_STORY, messages)
+        count = response.count('picture.com/my.png')
+        self.assertEqual(1, count)
+
     def test_extracts_text_from_clues(self):
         messages = [Clue(text='my_clue'), Clue(text='my_other_clue')]
         response = twiml_response(self.user, None, START_STORY, messages)
@@ -198,6 +205,12 @@ class TestTwimlResponse(TestCase):
         messages = [Clue(text='my_clue', sender='+1112223333')]
         response = twiml_response(self.user, None, ANSWER, messages)
         self.assertIn('from="+1112223333"', response)
+
+    def test_does_not_include_sender_if_empty(self):
+        messages = [Clue(text='my_clue', sender='')]
+        response = twiml_response(self.user, None, ANSWER, messages)
+        self.assertNotIn('from', response)
+
 
 class TestFormatResponse(TestCase):
     def test_formats_user_data(self):

@@ -38,9 +38,7 @@ def twiml_response(user, group, response_type, messages):
     resp = twiml.Response()
     for recipient in recipients:
         for message in messages:
-            m = twiml.Message(msg=message.text, to=recipient)
-            if message.sender:
-                m.sender = message.sender
+            m = twiml.Message(msg=message.text, to=recipient, sender=message.sender or None)
             if message.media_url:
                 m.append(twiml.Media(url=message.media_url))
             resp.append(m)
