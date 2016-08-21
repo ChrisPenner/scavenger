@@ -10,15 +10,17 @@ import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => (
   <div className="message is-danger">
-    <div className="message-header level is-marginless">
-      {answer.uid}
+    <div className="message-header is-marginless level is-mobile">
+      <span className="level-item">
+        {answer.uid}
+      </span>
       <button
-        className="button is-danger is-pulled-right"
+        className="button is-danger is-narrow level-item"
         onClick={() => deleteAnswer(answer.uid)}>
         Delete
       </button>
       <button
-        className="button is-success is-pulled-right"
+        className="button is-success is-narrow level-item"
         onClick={() => saveAnswer(answer.uid)}>
         Save
       </button>

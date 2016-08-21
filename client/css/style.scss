@@ -33,6 +33,12 @@
   }
 }
 
+.message-header {
+  button + button {
+    margin-left: 5px;
+  }
+}
+
 .faded {
   color: #69707a;
   font-size: 0.9em;

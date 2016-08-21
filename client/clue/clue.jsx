@@ -35,15 +35,17 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
   const highlightAnswerUid = matchingAnswer ? matchingAnswer.uid : null
   return (
     <div className="message is-warning">
-      <div className="message-header level is-marginless">
-        {clue.uid}
+      <div className="message-header is-marginless level is-mobile">
+        <span className="level-item">
+          {clue.uid}
+        </span>
         <button
-          className="button is-danger is-pulled-right"
+          className="button is-danger is-narrow level-item"
           onClick={() => deleteClue(clue.uid)}>
           Delete
         </button>
         <button
-          className="button is-success is-pulled-right"
+          className="button is-success is-narrow level-item"
           onClick={() => saveClue(clue.uid)}>
           Save
         </button>

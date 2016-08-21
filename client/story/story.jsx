@@ -15,10 +15,12 @@ const stateToProps = (state, {params}) => {
 const Story = ({story, changeStory, saveStory}) => {
   return (
     <div className="message is-primary">
-      <div className="message-header level is-marginless">
-        {story.uid}
+      <div className="message-header is-marginless level is-mobile">
+        <span className="level-item">
+          {story.uid}
+        </span>
         <button
-          className="button is-success is-pulled-right"
+          className="button is-success is-narrow level-item"
           onClick={() => saveStory(story.uid)}>
           Save
         </button>
