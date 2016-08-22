@@ -31,8 +31,13 @@ const stateToProps = (state, {params}) => {
 }
 
 const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessage, testMessage}) => {
-  const matchingAnswer = findMatchingAnswer(testMessage, answers)
-  const highlightAnswerUid = matchingAnswer ? matchingAnswer.uid : null
+  let matchingAnswer, regexErr
+  try {
+    matchingAnswer = findMatchingAnswer(testMessage, answers)
+  } catch(err) {
+    matchingAnswer = null
+  }
+  const highlightAnswerUid = matchingAnswer && matchingAnswer.uid
   return (
     <div className="message is-warning">
       <div className="message-header is-marginless level is-mobile">
