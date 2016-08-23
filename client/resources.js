@@ -87,6 +87,12 @@ const answerFactory = (args: Object): AnswerType => ({
   ...args,
 })
 
+export type ResourceT = {
+  route: Function,
+  new: (o:Object) => Object,
+  type: string,
+}
+
 export const Story = {
   route: Routes.story,
   new: storyFactory,

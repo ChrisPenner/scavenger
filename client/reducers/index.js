@@ -9,6 +9,7 @@ import clues from './clue'
 import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
+import { loadedReducer } from '../lib/loaded'
 
 export default combineReducers({
   routing: routerReducer,
@@ -18,6 +19,7 @@ export default combineReducers({
   explorer,
   tools,
   ui,
+  loaded: loadedReducer,
 })
 
 const concatWithColon = (prev, next) => `${prev}:${next}`
@@ -60,3 +62,5 @@ export const getExplorer = (state: Object) => state.explorer
 export const getToolData = (state: Object) => state.tools
 
 export const getDragData = (state: Object) => state.ui.dragData
+
+export const isLoaded = ({loaded: { LOAD_STORY, LOAD_CLUE, LOAD_ANSWER }}: Object) => (LOAD_STORY && LOAD_CLUE && LOAD_ANSWER)

@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import classnames from 'classnames'
 
 import { getAnswersListByClue, splitUid } from '../reducers'
-import Routes from '../routes'
+import * as Routes from '../routes'
 import { startDrag, dropAnswer } from '../actions'
 
 const Answers = ({answers, storyId, clueId, startDrag, dropAnswer, highlightUid}) => {

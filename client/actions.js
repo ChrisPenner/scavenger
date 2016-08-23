@@ -3,68 +3,60 @@ import xml2js from 'xml2js-es6-promise'
 import toastr from 'toastr'
 import R from 'ramda'
 import { push } from 'react-router-redux'
+import { createAction, createActions } from 'redux-actions'
 
 import { Story, Clue, Answer, index, put, del } from './resources'
+import type { ResourceT } from './resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
-import Routes from './routes'
+import * as Routes from './routes'
+import type { routeT } from './routes'
 import * as at from './action-types'
 import type { ActionKind } from './action-types'
 
-const actionCreator = R.curry((type, payload) => ({type, payload}))
-const fetchResource = (Resource) => (dispatch: any) => {
-  const actionFactory = actionCreator(at.load(Resource.type))
-  return index(Resource)
-    .then(actionFactory)
-    .then(dispatch)
+export type FSA = {
+  type: string,
+  payload?: any,
+  error?: any,
+  meta?: any,
 }
 
-type ChangeAction = {
-  type: ActionKind,
-  path: Array<string>,
-  payload: any,
+const changer = (path: Array<string>, value: any) => ({path, value})
+const deleter = (resource:ResourceT) => (uid: string) => (dispatch: any) => {
+  return del(resource, uid)
+    .then(() => dispatch(deleted(resource.type, uid)))
+    .then(successMessage('Deleted'))
 }
 
-const changer = (type: ActionKind) => (path: Array<string>, payload: any):ChangeAction => ({
-  type: type,
-  path,
-  payload,
-})
-
-const setter = (type: ActionKind) => (payload: any) => ({
-  type,
-  payload,
-})
-
-const successMessage = message => () => toastr.success(message)
-
-const saveResource = (Resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: () => Object) => {
+const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function) => {
   const currentState = getResourceState(getState(), uid)
-  return put(Resource, uid, currentState)
+  return put(resource, uid, currentState)
     .then((result) => dispatch(setResource(result)))
     .then(successMessage('Saved'))
 }
+
 
 export const deleted = (resourceType: ActionKind, uid: string) => ({
   type: at.del(resourceType),
   payload: { uid },
 })
 
-const deleteResource = (Resource) => (uid: string) => (dispatch: any) => {
-  return del(Resource, uid)
-    .then(() => dispatch(deleted(Resource.type, uid)))
+
+// const fetchResource = (resource) => (dispatch) => {
+//   const actionFactory = createAction(at.load(resource.type))
+//   return index(resource)
+//     .then(actionFactory)
+//     .then(dispatch)
+// }
+
+export const successMessage = (message:string) => () => toastr.success(message)
+
+const deleteResource = (resource) => (uid: string) => (dispatch: any) => {
+  return del(resource, uid)
+    .then(() => dispatch(deleted(resource.type, uid)))
     .then(successMessage('Deleted'))
 }
 
-export const receiveMessage = (payload: any) => {
-  payload.source = 'server'
-  return {
-    type: at.RECEIVE_MESSAGE,
-    payload,
-  }
-}
-
 const parseTwiML = xml2js
-
 const focusMessages = R.lensPath(['Response', 'Message'])
 const focusBody = R.lensPath(['Body', 0])
 const focusMedia = R.lensPath(['Media', 0])
@@ -104,75 +96,90 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
     .then(R.map(R.compose(dispatch, receiveMessage)))
 }
 
-type SimpleAction = {
-  type: ActionKind,
-  payload?: any,
-}
-
-export const loadStories = fetchResource(Story)
-export const loadClues = fetchResource(Clue)
-export const loadAnswers = fetchResource(Answer)
-
-export const changeStory = changer(at.change(Story.type))
-export const changeClue = changer(at.change(Clue.type))
-export const changeAnswer = changer(at.change(Answer.type))
-export const changeExplorer = changer(at.CHANGE_EXPLORER)
-
-export const changeTestMessage = (payload: any): SimpleAction => ({
+export const changeTestMessage = (payload: any): FSA => ({
   type: at.CHANGE_TEST_MESSAGE,
   payload,
 })
 
-export const deleteStory = deleteResource(Story)
-export const deleteClue = deleteResource(Clue)
-export const deleteAnswer = deleteResource(Answer)
+export const {
+  changeStory,
+  changeClue,
+  changeAnswer,
+  changeExplorer,
 
-export const setStory = setter(at.set(Story.type))
-export const setClue = setter(at.set(Clue.type))
-export const setAnswer = setter(at.set(Answer.type))
+  deleteStory,
+  deleteClue,
+  deleteAnswer,
 
-export const saveStory = saveResource(Story, setStory, getStory)
-export const saveClue = saveResource(Clue, setClue, getClue)
-export const saveAnswer = saveResource(Answer, setAnswer, getAnswer)
+  setStory,
+  setClue,
+  setAnswer,
 
-export const createStory = (payload: any) => (dispatch: any) => {
-  put(Story, payload.uid, payload)
-    .then((story) => dispatch(setStory(story)))
-    .then(() => dispatch(push(Routes.story(payload.uid))))
+  loadStory,
+  loadClue,
+  loadAnswer,
+
+  startDrag,
+  stopDrag,
+  dropAnswer,
+
+  reorderAnswer,
+
+  receiveMessage,
+
+} = createActions({
+  CHANGE_STORY: changer,
+  CHANGE_CLUE: changer,
+  CHANGE_ANSWER: changer,
+  CHANGE_EXPLORER: changer,
+
+  DELETE_STORY: deleter(Story),
+  DELETE_CLUE: deleter(Clue),
+  DELETE_ANSWER: deleter(Answer),
+
+  LOAD_STORY: () => index(Story),
+  LOAD_CLUE: () => index(Clue),
+  LOAD_ANSWER: () => index(Answer),
+
+  DROP_ANSWER: (index: number) => (dispatch: any, getState: Function) => {
+    const answerUid = getDragData(getState())
+    dispatch(reorderAnswer(answerUid, index))
+    dispatch(stopDrag)
+  },
+
+  REORDER_ANSWER: (uid: string, index: number):Object => ({uid, index}),
+
+  RECEIVE_MESSAGE: R.assoc('source', 'server'),
+},
+  'SET_STORY',
+  'SET_CLUE',
+  'SET_ANSWER',
+  'START_DRAG',
+  'STOP_DRAG'
+)
+
+export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any) => {
+  return put(resource, payload.uid, payload)
+    .then((entity) => dispatch(setter(entity)))
+    .then(() => dispatch(push(route(payload.uid))))
     .then(successMessage('Created'))
 }
 
-export const createClue = (payload: any) => (dispatch: any) => {
-  put(Clue, payload.uid, payload)
-    .then((clue) => dispatch(setClue(clue)))
-    .then(() => dispatch(push(Routes.clue(payload.uid))))
-    .then(successMessage('Created'))
-}
+export const {
+  saveStory,
+  saveClue,
+  saveAnswer,
 
-export const createAnswer = (payload: any) => (dispatch: any) => {
-  put(Answer, payload.uid, payload)
-    .then((answer) => dispatch(setAnswer(answer)))
-    .then(() => dispatch(push(Routes.answer(payload.uid))))
-    .then(successMessage('Created'))
-}
+  createStory,
+  createClue,
+  createAnswer,
+} = createActions({
+  'SAVE_STORY': saveResource(Story, setStory, getStory),
+  'SAVE_CLUE': saveResource(Clue, setClue, getClue),
+  'SAVE_ANSWER': saveResource(Answer, setAnswer, getAnswer),
 
-export const reorderAnswer = (uid: string, index: number): SimpleAction => ({
-  type: at.REORDER_ANSWER,
-    payload: {
-      uid,
-      index
-    }
+  'CREATE_STORY': creator(Story, Routes.story, setStory),
+  'CREATE_CLUE': creator(Clue, Routes.clue, setClue),
+  'CREATE_ANSWER': creator(Answer, Routes.answer, setAnswer),
 })
 
-export const startDrag = (payload: any): SimpleAction => ({
-  type: at.START_DRAG,
-  payload,
-})
-
-export const stopDrag = ():SimpleAction => ({ type: at.STOP_DRAG })
-
-export const dropAnswer = (index: number) => (dispatch: any, getState: () => Object) => {
-  const answerUid = getDragData(getState())
-  dispatch(reorderAnswer(answerUid, index))
-  dispatch(stopDrag)
-}

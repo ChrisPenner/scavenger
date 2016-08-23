@@ -5,7 +5,7 @@ import classnames from 'classnames'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import Routes from '../routes'
+import * as Routes from '../routes'
 import { getAnswer, getClueUidsByStory, splitUid, uidsFromParams } from '../reducers'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 

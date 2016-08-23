@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 import { getCluesByStory } from '../reducers'
-import Routes from '../routes'
+import * as Routes from '../routes'
 
 const stateToProps = (state, {storyUid}) => {
   return {

@@ -22,6 +22,8 @@
     "react-router": "2.5.2",
     "react-router-redux": "4.0.5",
     "redux": "3.5.2",
+    "redux-actions": "^0.11.0",
+    "redux-promise": "^0.5.3",
     "redux-thunk": "2.1.0",
     "sass-loader": "^4.0.0",
     "style-loader": "0.13.1",

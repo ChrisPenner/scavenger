@@ -1,8 +1,12 @@
 /* @flow */
 import React from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 
-import { createAnswer } from '../actions'
+import * as Routes from '../routes'
+import { createAnswer, successMessage } from '../actions'
+import type { FSA } from '../actions'
+
 import { getCluesByStory, getAnswers } from '../reducers'
 
 const stateToProps = (state, {params: {storyId, clueId}}) => {
@@ -16,11 +20,12 @@ const stateToProps = (state, {params: {storyId, clueId}}) => {
 }
 class Create extends React.Component {
   create: () => void
-  createAnswer: (a: Object) => void
+  createAnswer: (a: Object) => Promise<FSA>
   state: Object
   storyId: string
   clueId: string
-  constructor({createAnswer, clues, storyId, clueId}) {
+  push: (path: string) => FSA
+  constructor({createAnswer, clues, storyId, clueId, push}) {
     super()
     this.state = {
       answerId: '',
@@ -31,6 +36,7 @@ class Create extends React.Component {
     this.createAnswer = createAnswer
     this.storyId = storyId
     this.clueId = clueId
+    this.push = push
   }
 
   update(changes) {
@@ -50,11 +56,13 @@ class Create extends React.Component {
   }
 
   create() {
-    this.createAnswer({
-      uid: this.getUid(),
+    const uid = this.getUid()
+    return this.createAnswer({
+      uid,
       pattern: this.state.pattern,
       nextClue: this.state.nextClue,
-    })
+    }).then(() => this.push(Routes.answer(uid)))
+      .then(successMessage('Created'))
   }
 
   render() {
@@ -123,5 +131,6 @@ Create.propTypes = {
   clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 export default connect(stateToProps, {
-  createAnswer
+  createAnswer,
+  push,
 })(Create)

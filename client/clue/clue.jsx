@@ -4,7 +4,7 @@ import R from 'ramda'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import Routes from '../routes'
+import * as Routes from '../routes'
 import { Answers } from '../answer'
 import { getClue, getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'

@@ -9,9 +9,10 @@ export default (explorer:Object = {
     sender: 'testing',
     texts: []
   } , action: Object) => {
+  const { payload } = action
   switch (action.type) {
     case at.CHANGE_EXPLORER:
-      return R.assocPath(action.path, action.payload, explorer)
+      return R.assocPath(payload.path, payload.value, explorer)
     case at.RECEIVE_MESSAGE:
     case at.SEND_MESSAGE:
       return R.evolve({
