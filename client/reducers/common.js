@@ -2,7 +2,7 @@
 import R from 'ramda'
 import type { ResourceType } from '../resources'
 
-export const baseResourceReducer = R.curry((resourceType: ResourceType, state: any, action: Object) => {
+const baseResourceReducer = R.curry((resourceType: ResourceType, state: any, action: Object) => {
   const { payload } = action
   switch (action.type) {
     case `LOAD_${resourceType}`:
@@ -14,7 +14,11 @@ export const baseResourceReducer = R.curry((resourceType: ResourceType, state: a
     case `DELETE_${resourceType}`:
       return R.dissoc(payload.uid, state)
     default:
-      return undefined
+      return state
   }
 })
 
+export default (resourceType: string, reducer: Function) => (state: Object, action: Object) => {
+  const baseResult = baseResourceReducer(resourceType, state, action)
+  return reducer(baseResult, action)
+}

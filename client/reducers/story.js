@@ -1,34 +1,29 @@
 /* @flow */
+import { handleActions } from 'redux-actions'
 import R from 'ramda'
 
 import at from '../action-types'
-import { baseResourceReducer } from './common'
+import commonReducer from './common'
 import { Story, Clue } from '../resources'
 import { splitUid } from '../utils'
 
-export default (stories: Object = {}, action: Object) => {
-  const baseResult = baseResourceReducer(Story.type, stories, action)
-  if (baseResult !== undefined){
-    return baseResult
-  }
-  let storyUid
-  switch (action.type) {
-    case at.SET_CLUE:
-      storyUid = splitUid(action.payload.uid).storyUid
+export const DEFAULT_STATE = {}
+export default commonReducer(Story.type,
+  handleActions({
+    [at.SET_CLUE]: (stories, {payload}) => {
+      const storyUid = splitUid(payload.uid).storyUid
       return R.evolve({
         [storyUid]: {
-          clues: R.compose(R.uniq, R.append(action.payload.uid))
+          clues: R.compose(R.uniq, R.append(payload.uid))
         }
-      }, stories)
-    case at.DELETE_CLUE:
-      storyUid = splitUid(action.payload.uid).storyUid
+      }, stories)},
+    [at.DELETE_CLUE]: (stories, {payload}) => {
+      const storyUid = splitUid(payload.uid).storyUid
       return R.evolve({
         [storyUid]: {
-          clues: R.without(action.payload.uid)
+          clues: R.without(payload.uid)
         }
       }, stories)
-    default:
-      return stories
-  }
-}
-
+    },
+  }, DEFAULT_STATE)
+)

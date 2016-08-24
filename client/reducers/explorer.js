@@ -1,25 +1,22 @@
 /* @flow */
+import { handleActions } from 'redux-actions'
 import R from 'ramda'
 
 import at from '../action-types'
 
-export default (explorer:Object = {
-    text: '',
-    receiver: 'server',
-    sender: 'testing',
-    texts: []
-  } , action: Object) => {
-  const { payload } = action
-  switch (action.type) {
-    case at.CHANGE_EXPLORER:
-      return R.assocPath(payload.path, payload.value, explorer)
-    case at.RECEIVE_MESSAGE:
-    case at.SEND_MESSAGE:
-      return R.evolve({
-        texts: R.prepend(action.payload)
-      })(explorer)
-    default:
-      return explorer
-  }
+const DEFAULT_STATE = {
+  text: '',
+  receiver: 'server',
+  sender: 'testing',
+  texts: []
 }
 
+const addMessage = (state, {payload}) => R.evolve({ texts: R.prepend(payload)}, state)
+
+export default handleActions({
+  [at.CHANGE_EXPLORER]: (state, {payload: {path, value}}) => (
+    R.assocPath(path, value, state)
+  ),
+    [at.RECEIVE_MESSAGE]: addMessage,
+    [at.SEND_MESSAGE]: addMessage,
+})

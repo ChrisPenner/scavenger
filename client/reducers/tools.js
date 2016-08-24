@@ -1,16 +1,10 @@
 /* @flow */
+import { handleActions } from 'redux-actions'
 import R from 'ramda'
 
 import at from '../action-types'
 
-export const DEFAULT_STATE = {
-  testMessage: ''
-}
-export default (data: Object = DEFAULT_STATE, action: Object) => {
-  switch (action.type) {
-    case at.CHANGE_TEST_MESSAGE:
-      return R.assoc('testMessage', action.payload, data)
-    default:
-      return data
-  }
-}
+export const DEFAULT_STATE = { testMessage: '' }
+export default handleActions({
+  [at.CHANGE_TEST_MESSAGE]: (state, {payload}) => R.assoc('testMessage', payload, state),
+}, DEFAULT_STATE)

@@ -1,3 +1,4 @@
+/* @flow */
 import R from 'ramda'
 
 const fakeDispatch = (results) => (action) => results.push(action)

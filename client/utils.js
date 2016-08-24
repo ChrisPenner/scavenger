@@ -1,3 +1,4 @@
+/* @flow */
 import R from 'ramda'
 
 const concatWithColon = (prev, next) => `${prev}:${next}`

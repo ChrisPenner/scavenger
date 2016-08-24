@@ -2,7 +2,9 @@
 import { handleActions } from 'redux-actions'
 import R from 'ramda'
 
+import at from '../action-types'
+
 export default handleActions({
-  START_DRAG: (ui, {payload}) => R.assoc('dragData', payload, ui),
-  STOP_DRAG: (ui, other) => R.assoc('dragData', null, ui),
+  [at.START_DRAG]: (ui, {payload}) => R.assoc('dragData', payload, ui),
+  [at.STOP_DRAG]: R.assoc('dragData', null),
 }, {dragData: null})

@@ -1,50 +1,43 @@
 /* @flow */
+import { handleActions } from 'redux-actions'
 import R from 'ramda'
 import transform from '../lib/transform'
 
 import at from '../action-types'
 import { splitUid } from '../utils'
 import { Clue, Answer } from '../resources'
-import { baseResourceReducer } from './common'
+import commonReducer from './common'
 import { phoneNumber } from '../lib/validators'
 
 const validate = R.map(R.evolve({
   sender: phoneNumber
 }))
 
-export default transform(
-  validate,
-  (clues: Object = {}, action: Object) => {
-  const baseResult = baseResourceReducer(Clue.type, clues, action)
-  if (baseResult !== undefined){
-    return baseResult
-  }
-  let clueUid, answerUid
-  switch (action.type) {
-    case at.SET_ANSWER:
-      clueUid = splitUid(action.payload.uid).clueUid
-      return R.evolve({
-        [clueUid]: {
-          answerUids: R.compose(R.uniq, R.append(action.payload.uid))
-        }
-      }, clues)
-    case at.DELETE_ANSWER:
-      clueUid = splitUid(action.payload.uid).clueUid
-      return R.evolve({
-        [clueUid]: {
-          answerUids: R.without(action.payload.uid)
-        }
-      }, clues)
-    case 'DROP_ANSWER':
-      clueUid = splitUid(action.payload.uid).clueUid
-      answerUid = action.payload.uid
-      const newIndex = action.payload.index
-      return R.evolve({
-        [clueUid]: {
-          answerUids: R.compose(R.insert(newIndex, answerUid), R.without(answerUid))
-        }
-      }, clues)
-    default:
-      return clues
-  }
+const transformAnswerUids = R.curry((fn, state, {payload}) => {
+  const {uid} = payload
+  const clueUid = splitUid(uid).clueUid
+  return R.evolve({
+    [clueUid]: {
+      answerUids: fn(payload)
+    }
+  }, state)
 })
+
+const DEFAULT_STATE = {}
+export default transform(validate,
+  commonReducer(Clue.type,
+    handleActions({
+      [at.SET_ANSWER]: (
+        transformAnswerUids(({uid}) => R.compose(R.uniq, R.append(uid)))
+      ),
+
+      [at.DELETE_ANSWER]: (
+        transformAnswerUids(({uid}) => R.without(uid))
+    ),
+
+      [at.DROP_ANSWER]: (
+        transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without(uid)))
+      ),
+    })
+  )
+)
