@@ -1,4 +1,5 @@
 /* @flow */
+import { handleActions } from 'redux-actions'
 import R from 'ramda'
 import transform from '../lib/transform'
 
@@ -14,13 +15,11 @@ const validate = R.map(R.evolve({
 const DEFAULT_STATE = {}
 export default transform(validate,
   commonReducer(Answer.type,
-    (answers: Object = DEFAULT_STATE, action: Object) => {
-      const {payload, type} = action
-        switch (type) {
-          case at.DELETE_CLUE:
-            const notEqualsClueUid = R.compose(R.not, R.equals(payload.uid), R.prop('clueUid'))
-            return R.pickBy(notEqualsClueUid, answers)
-          default:
-            return answers
-        }
-    }))
+    handleActions({
+      [at.DELETE_CLUE]: (state, {payload: {uid}}) => {
+        const notEqualsClueUid = R.compose(R.not, R.equals(uid), R.prop('clueUid'))
+        return R.pickBy(notEqualsClueUid, state)
+      },
+    })
+  )
+)
