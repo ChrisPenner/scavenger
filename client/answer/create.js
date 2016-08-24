@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import * as Routes from '../routes'
-import { createAnswer, successMessage } from '../actions'
+import { createAnswer } from '../actions'
 import type { FSA } from '../actions'
 
 import { getCluesByStory, getAnswers } from '../reducers'

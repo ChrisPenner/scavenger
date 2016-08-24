@@ -1,5 +1,5 @@
 /* @flow */
-import React from 'react'
+import React, {PropTypes} from 'react'
 import { connect } from 'react-redux'
 
 import { getExplorer } from '../reducers'
@@ -57,9 +57,7 @@ Texts.propTypes = {
   texts: React.PropTypes.arrayOf(React.PropTypes.object),
 }
 
-const stateToProps = (state) => {
-  return getExplorer(state)
-}
+const stateToProps = getExplorer
 const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) => {
   return (
     <div>
@@ -121,12 +119,12 @@ const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) 
   )
 }
 Explorer.propTypes = {
-  receiver: React.PropTypes.string.isRequired,
-  sender: React.PropTypes.string.isRequired,
-  text: React.PropTypes.string.isRequired,
-  texts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-  changeExplorer: React.PropTypes.func.isRequired,
-  sendMessage: React.PropTypes.func.isRequired,
+  receiver: PropTypes.string.isRequired,
+  sender: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  texts: PropTypes.arrayOf(PropTypes.object).isRequired,
+  changeExplorer: PropTypes.func.isRequired,
+  sendMessage: PropTypes.func.isRequired,
 }
 export default connect(stateToProps, {
   changeExplorer,

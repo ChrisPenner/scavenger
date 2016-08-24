@@ -74,13 +74,12 @@ export const {
   at.STOP_DRAG
 )
 
-// Thunks
+// Async
 export const dropAnswer = (index: number) => (dispatch: any, getState: Function) => {
   const uid = getDragData(getState())
   dispatch({ type: at.DROP_ANSWER, payload: {uid, index}})
 }
 
-// Async
 const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function) => {
   const currentState = getResourceState(getState(), uid)
   return put(resource, uid, currentState)
