@@ -27,14 +27,6 @@ const deleter = (resource:ResourceT) => (uid: string) => (dispatch: any) => {
     .then(successMessage('Deleted'))
 }
 
-const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function) => {
-  const currentState = getResourceState(getState(), uid)
-  return put(resource, uid, currentState)
-    .then((result) => dispatch(setResource(result)))
-    .then(successMessage('Saved'))
-}
-
-
 export const deleted = (resourceType: ActionKind, uid: string) => ({
   type: at.del(resourceType),
   payload: { uid },
@@ -148,17 +140,11 @@ export const creator = (resource: ResourceT, route: routeT, setter: Function) =>
 }
 
 export const {
-  saveStory,
-  saveClue,
-  saveAnswer,
 
   createStory,
   createClue,
   createAnswer,
 } = createActions({
-  SAVE_STORY: saveResource(Story, setStory, getStory),
-  SAVE_CLUE: saveResource(Clue, setClue, getClue),
-  SAVE_ANSWER: saveResource(Answer, setAnswer, getAnswer),
 
   CREATE_STORY: creator(Story, Routes.story, setStory),
   CREATE_CLUE: creator(Clue, Routes.clue, setClue),
@@ -172,3 +158,20 @@ export const dropAnswer = (index: number) => (dispatch: any, getState: Function)
 }
 
 // Async
+export const saveStory = (uid: string) => (dispatch: Function, getState: Function) => (
+  put(Story, uid, getStory(getState(), uid))
+    .then((result) => dispatch(setStory(result)))
+    .then(successMessage('Saved'))
+)
+
+export const saveClue = (uid: string) => (dispatch: Function, getState: Function) => (
+  put(Clue, uid, getClue(getState(), uid))
+    .then((result) => dispatch(setClue(result)))
+    .then(successMessage('Saved'))
+)
+
+export const saveAnswer = (uid: string) => (dispatch: Function, getState: Function) => (
+  put(Answer, uid, getAnswer(getState(), uid))
+    .then((result) => dispatch(setAnswer(result)))
+    .then(successMessage('Saved'))
+)
