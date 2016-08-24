@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import R from 'ramda'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import { startDrag, stopDrag } from '../actions'
 import reducer from './ui'
 
@@ -19,7 +19,7 @@ describe('UI Reducer', function() {
     });
   });
 
-  describe(startDrag.toString(), function() {
+  describe(at.START_DRAG, function() {
     it('should set dragData', function() {
       const action = startDrag('mypayload')
       const newState = reducer(defaultUi, action)
@@ -27,7 +27,7 @@ describe('UI Reducer', function() {
     });
   });
 
-  describe(stopDrag.toString(), function() {
+  describe(at.STOP_DRAG, function() {
     it('should unset dragData', function() {
       const action = stopDrag()
       const newState = reducer({ dragData: 'something' }, action)

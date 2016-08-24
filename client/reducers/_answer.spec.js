@@ -2,9 +2,9 @@
 import { expect } from 'chai'
 import R from 'ramda'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import reducer from './answer'
-import { changeAnswer, setAnswer, deleted } from '../actions'
+import { changeAnswer, setAnswer } from '../actions'
 import { Answer, Clue } from '../resources'
 
 describe('Answer Reducer', function() {
@@ -27,13 +27,13 @@ describe('Answer Reducer', function() {
     nextClue: 'STORY:NEW-NEXT-CLUE',
   })
 
-  describe(at.load(Answer.type), function() {
+  describe(at.LOAD_ANSWER, function() {
     it('should overwrite answers', function() {
       const payload = {
         [newAnswer.uid]: newAnswer,
       }
       const action = {
-        type: at.load(Answer.type),
+        type: at.LOAD_ANSWER,
         payload
       }
       const newState = reducer(startAnswers, action)
@@ -41,7 +41,7 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.change(Answer.type), function() {
+  describe(at.CHANGE_ANSWER, function() {
     it('should change fields on answer', function() {
       const action = changeAnswer([startAnswer.uid, 'pattern'], '42')
       const newState = reducer(startAnswers, action)
@@ -55,7 +55,7 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.set(Answer.type), function() {
+  describe(at.SET_ANSWER, function() {
     it('should overwrite the answer', function() {
       const newAnswer = R.assoc('pattern', 'new-pattern', startAnswer)
       const action = setAnswer(newAnswer)
@@ -64,17 +64,17 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.del(Answer.type), function() {
+  describe(at.DELETE_ANSWER, function() {
     it('should delete the answer', function() {
-      const action = deleted(Answer.type, startAnswer.uid)
+      const action = {type: at.DELETE_ANSWER, payload: {uid: startAnswer.uid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     });
   });
 
-  describe(at.del(Clue.type), function() {
+  describe(at.DELETE_CLUE, function() {
     it("should delete the answer if it's clue is deleted", function() {
-      const action = deleted(Clue.type, startAnswer.clueUid)
+      const action = {type: at.DELETE_CLUE, payload: {uid: startAnswer.clueUid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     });

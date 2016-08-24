@@ -2,7 +2,7 @@
 import R from 'ramda'
 import transform from '../lib/transform'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import { splitUid } from './'
 import { Clue, Answer } from '../resources'
 import { baseResourceReducer } from './common'
@@ -21,14 +21,14 @@ export default transform(
   }
   let clueUid, answerUid
   switch (action.type) {
-    case at.set(Answer.type):
+    case at.SET_ANSWER:
       clueUid = splitUid(action.payload.uid).clueUid
       return R.evolve({
         [clueUid]: {
           answerUids: R.compose(R.uniq, R.append(action.payload.uid))
         }
       }, clues)
-    case at.del(Answer.type):
+    case at.DELETE_ANSWER:
       clueUid = splitUid(action.payload.uid).clueUid
       return R.evolve({
         [clueUid]: {

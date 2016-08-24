@@ -3,9 +3,9 @@ import { expect } from 'chai'
 import R from 'ramda'
 import { applyThunk } from '../lib/redux-test'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import reducer from './clue'
-import { changeClue, setClue, setAnswer, deleted, dropAnswer } from '../actions'
+import { changeClue, setClue, setAnswer, dropAnswer } from '../actions'
 import { Clue, Answer } from '../resources'
 
 describe('Clue Reducer', function() {
@@ -35,13 +35,13 @@ describe('Clue Reducer', function() {
 
   const testThunk = applyThunk(reducer, startClues)
 
-  describe(at.load(Clue.type), function() {
+  describe(at.LOAD_CLUE, function() {
     it('should overwrite clues', function() {
       const payload = {
         [newClue.uid]: newClue,
       }
       const action = {
-        type: at.load(Clue.type),
+        type: at.LOAD_CLUE,
         payload
       }
       const newState = reducer(startClues, action)
@@ -49,7 +49,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.change(Clue.type), function() {
+  describe(at.CHANGE_CLUE, function() {
     it('should change fields on clue', function() {
       const action = changeClue([startClue.uid, 'hint'], '42')
       const newState = reducer(startClues, action)
@@ -63,7 +63,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.set(Clue.type), function() {
+  describe(at.SET_CLUE, function() {
     it('should overwrite the clue', function() {
       const newClue = R.assoc('hint', 'new-hint', startClue)
       const action = setClue(newClue)
@@ -72,7 +72,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.set(Answer.type), function() {
+  describe(at.CHANGE_ANSWER, function() {
     it('should add an answer to the clue', function() {
       const newAnswer = Answer.new({
         uid: 'STORY:CLUE:NEWANSWER',
@@ -100,23 +100,23 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.del(Clue.type), function() {
+  describe(at.DELETE_CLUE, function() {
     it('should delete the clue', function() {
-      const action = deleted(Clue.type, startClue.uid)
+      const action = {type: at.DELETE_CLUE, payload: {uid: startClue.uid}}
       const newState = reducer(startClues, action)
       expect(newState).to.eql({})
     });
   });
 
-  describe(at.del(Answer.type), function() {
+  describe(at.DELETE_ANSWER, function() {
     it('should delete the answer from answerUids', function() {
-      const action = deleted(Answer.type, answerUid)
+      const action = {type: at.DELETE_ANSWER, payload: {uid: answerUid}}
       const newState = reducer(startClues, action)
-      expect(newState[startClue.uid].answerUids).to.not.contain(startClue.uid)
+      expect(newState[startClue.uid].answerUids).to.not.contain(answerUid)
     });
   });
 
-  describe(dropAnswer.toString(), function() {
+  describe('DROP_ANSWER', function() {
     it("should move an answer earlier", function() {
       const newState = testThunk({ui: {dragData: answerUid}}, dropAnswer(2))
       expect(newState[startClue.uid].answerUids).to.eql([secondAnswerUid, thirdAnswerUid, answerUid])

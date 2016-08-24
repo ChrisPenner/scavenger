@@ -1,7 +1,7 @@
 /* @flow */
 import R from 'ramda'
 
-import * as at from '../action-types'
+import at from '../action-types'
 
 export const DEFAULT_STATE = {
   testMessage: ''

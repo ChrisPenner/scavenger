@@ -5,13 +5,12 @@ import R from 'ramda'
 import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
+import at from './action-types'
 import { Story, Clue, Answer, index, put, del } from './resources'
 import type { ResourceT } from './resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
 import * as Routes from './routes'
 import type { routeT } from './routes'
-import * as at from './action-types'
-import type { ActionKind } from './action-types'
 
 export type FSA = {
   type: string,
@@ -21,25 +20,95 @@ export type FSA = {
 }
 
 const changer = (path: Array<string>, value: any) => ({path, value})
-const deleter = (resource:ResourceT) => (uid: string) => (dispatch: any) => {
-  return del(resource, uid)
-    .then(() => dispatch(deleted(resource.type, uid)))
-    .then(successMessage('Deleted'))
-}
-
-export const deleted = (resourceType: ActionKind, uid: string) => ({
-  type: at.del(resourceType),
-  payload: { uid },
-})
-
 
 export const successMessage = (message:string) => () => toastr.success(message)
 
-const deleteResource = (resource) => (uid: string) => (dispatch: any) => {
-  return del(resource, uid)
-    .then(() => dispatch(deleted(resource.type, uid)))
-    .then(successMessage('Deleted'))
+export const changeTestMessage = (payload: any): FSA => ({
+  type: at.CHANGE_TEST_MESSAGE,
+  payload,
+})
+
+export const {
+  changeStory,
+  changeClue,
+  changeAnswer,
+  changeExplorer,
+
+  deleteStory,
+  deleteClue,
+  deleteAnswer,
+
+  setStory,
+  setClue,
+  setAnswer,
+
+  loadStory,
+  loadClue,
+  loadAnswer,
+
+  startDrag,
+  stopDrag,
+
+  receiveMessage,
+
+} = createActions({
+  [at.CHANGE_STORY]: changer,
+  [at.CHANGE_CLUE]: changer,
+  [at.CHANGE_ANSWER]: changer,
+  [at.CHANGE_EXPLORER]: changer,
+
+  [at.DELETE_STORY]: (uid) => del(Story, uid).then(R.tap(successMessage('Deleted'))),
+  [at.DELETE_CLUE]: (uid) => del(Clue, uid).then(R.tap(successMessage('Deleted'))),
+  [at.DELETE_ANSWER]: (uid) => del(Answer, uid).then(R.tap(successMessage('Deleted'))),
+
+  [at.LOAD_STORY]: () => index(Story),
+  [at.LOAD_CLUE]: () => index(Clue),
+  [at.LOAD_ANSWER]: () => index(Answer),
+
+  [at.RECEIVE_MESSAGE]: R.assoc('source', 'server'),
+},
+  at.SET_STORY,
+  at.SET_CLUE,
+  at.SET_ANSWER,
+  at.START_DRAG,
+  at.STOP_DRAG
+)
+
+// Thunks
+export const dropAnswer = (index: number) => (dispatch: any, getState: Function) => {
+  const uid = getDragData(getState())
+  dispatch({ type: at.DROP_ANSWER, payload: {uid, index}})
 }
+
+// Async
+export const saveStory = (uid: string) => (dispatch: Function, getState: Function) => (
+  put(Story, uid, getStory(getState(), uid))
+    .then((result) => dispatch(setStory(result)))
+    .then(successMessage('Saved'))
+)
+
+export const saveClue = (uid: string) => (dispatch: Function, getState: Function) => (
+  put(Clue, uid, getClue(getState(), uid))
+    .then((result) => dispatch(setClue(result)))
+    .then(successMessage('Saved'))
+)
+
+export const saveAnswer = (uid: string) => (dispatch: Function, getState: Function) => (
+  put(Answer, uid, getAnswer(getState(), uid))
+    .then((result) => dispatch(setAnswer(result)))
+    .then(successMessage('Saved'))
+)
+
+export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any) => {
+  return put(resource, payload.uid, payload)
+    .then((entity) => dispatch(setter(entity)))
+    .then(() => dispatch(push(route(payload.uid))))
+    .then(successMessage('Created'))
+}
+
+export const createStory = creator(Story, Routes.story, setStory)
+export const createClue = creator(Clue, Routes.clue, setClue)
+export const createAnswer = creator(Answer, Routes.answer, setAnswer)
 
 const parseTwiML = xml2js
 const focusMessages = R.lensPath(['Response', 'Message'])
@@ -80,98 +149,3 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
     .then(makeMessageObjects)
     .then(R.map(R.compose(dispatch, receiveMessage)))
 }
-
-export const changeTestMessage = (payload: any): FSA => ({
-  type: at.CHANGE_TEST_MESSAGE,
-  payload,
-})
-
-export const {
-  changeStory,
-  changeClue,
-  changeAnswer,
-  changeExplorer,
-
-  deleteStory,
-  deleteClue,
-  deleteAnswer,
-
-  setStory,
-  setClue,
-  setAnswer,
-
-  loadStory,
-  loadClue,
-  loadAnswer,
-
-  startDrag,
-  stopDrag,
-
-  receiveMessage,
-
-} = createActions({
-  CHANGE_STORY: changer,
-  CHANGE_CLUE: changer,
-  CHANGE_ANSWER: changer,
-  CHANGE_EXPLORER: changer,
-
-  DELETE_STORY: deleter(Story),
-  DELETE_CLUE: deleter(Clue),
-  DELETE_ANSWER: deleter(Answer),
-
-  LOAD_STORY: () => index(Story),
-  LOAD_CLUE: () => index(Clue),
-  LOAD_ANSWER: () => index(Answer),
-
-  RECEIVE_MESSAGE: R.assoc('source', 'server'),
-},
-  'SET_STORY',
-  'SET_CLUE',
-  'SET_ANSWER',
-  'START_DRAG',
-  'STOP_DRAG'
-)
-
-export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any) => {
-  return put(resource, payload.uid, payload)
-    .then((entity) => dispatch(setter(entity)))
-    .then(() => dispatch(push(route(payload.uid))))
-    .then(successMessage('Created'))
-}
-
-export const {
-
-  createStory,
-  createClue,
-  createAnswer,
-} = createActions({
-
-  CREATE_STORY: creator(Story, Routes.story, setStory),
-  CREATE_CLUE: creator(Clue, Routes.clue, setClue),
-  CREATE_ANSWER: creator(Answer, Routes.answer, setAnswer),
-})
-
-// Thunks
-export const dropAnswer = (index: number) => (dispatch: any, getState: Function) => {
-  const uid = getDragData(getState())
-  dispatch(createAction('DROP_ANSWER')({uid, index}))
-}
-
-// Async
-export const saveStory = (uid: string) => (dispatch: Function, getState: Function) => (
-  put(Story, uid, getStory(getState(), uid))
-    .then((result) => dispatch(setStory(result)))
-    .then(successMessage('Saved'))
-)
-
-export const saveClue = (uid: string) => (dispatch: Function, getState: Function) => (
-  put(Clue, uid, getClue(getState(), uid))
-    .then((result) => dispatch(setClue(result)))
-    .then(successMessage('Saved'))
-)
-
-export const saveAnswer = (uid: string) => (dispatch: Function, getState: Function) => (
-  put(Answer, uid, getAnswer(getState(), uid))
-    .then((result) => dispatch(setAnswer(result)))
-    .then(successMessage('Saved'))
-)

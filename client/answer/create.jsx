@@ -62,7 +62,6 @@ class Create extends React.Component {
       pattern: this.state.pattern,
       nextClue: this.state.nextClue,
     }).then(() => this.push(Routes.answer(uid)))
-      .then(successMessage('Created'))
   }
 
   render() {

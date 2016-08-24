@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import R from 'ramda'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import { startDrag, stopDrag, changeTestMessage } from '../actions'
 import reducer, { DEFAULT_STATE } from './tools'
 

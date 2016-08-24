@@ -2,7 +2,7 @@
 import R from 'ramda'
 import transform from '../lib/transform'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import { baseResourceReducer } from './common'
 import { Answer, Clue } from '../resources'
 import { phoneNumber } from '../lib/validators'
@@ -20,7 +20,7 @@ export default transform(
   }
   const {payload, type} = action
   switch (type) {
-      case at.del(Clue.type):
+      case at.DELETE_CLUE:
       const notEqualsClueUid = R.compose(R.not, R.equals(payload.uid), R.prop('clueUid'))
       return R.pickBy(notEqualsClueUid, answers)
     default:

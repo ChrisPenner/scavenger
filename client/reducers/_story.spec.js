@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import R from 'ramda'
 
-import * as at from '../action-types'
+import at from '../action-types'
 import reducer from './story'
 import { changeStory, setStory, setClue } from '../actions'
 import { Story, Clue } from '../resources'
@@ -23,13 +23,13 @@ describe('Story Reducer', function() {
     clues: ['NEWSTORY:NEWCLUE'],
   })
 
-  describe(at.load(Story.type), function() {
+  describe(at.LOAD_STORY, function() {
     it('should overwrite stories', function() {
       const payload = {
         [newStory.uid]: newStory,
       }
       const action = {
-        type: at.load(Story.type),
+        type: at.LOAD_STORY,
         payload
       }
       const newState = reducer(startStories, action)
@@ -37,7 +37,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.change(Story.type), function() {
+  describe(at.CHANGE_STORY, function() {
     it('should change fields on story', function() {
       const action = changeStory([startStory.uid, 'defaultHint'], '42')
       const newState = reducer(startStories, action)
@@ -51,7 +51,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.set(Story.type), function() {
+  describe(at.SET_STORY, function() {
     it('should overwrite the story', function() {
       const newStory = R.assoc('defaultHint', 'new-hint', startStory)
       const action = setStory(newStory)
@@ -60,7 +60,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.set(Clue.type), function() {
+  describe(at.SET_CLUE, function() {
     it('should add a clue to the story', function() {
       const newClue = Clue.new({
         uid: 'STORY:NEWCLUE',

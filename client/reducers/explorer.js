@@ -1,8 +1,8 @@
 /* @flow */
 import R from 'ramda'
 
-import * as at from '../action-types'
 import { changeExplorer } from '../actions'
+import at from '../action-types'
 
 export default (explorer:Object = {
     text: '',
@@ -12,7 +12,7 @@ export default (explorer:Object = {
   } , action: Object) => {
   const { payload } = action
   switch (action.type) {
-    case changeExplorer.toString():
+    case at.CHANGE_EXPLORER:
       return R.assocPath(payload.path, payload.value, explorer)
     case at.RECEIVE_MESSAGE:
     case at.SEND_MESSAGE:

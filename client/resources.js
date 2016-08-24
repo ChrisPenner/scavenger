@@ -37,7 +37,7 @@ export const index = (resource: Object) => apiRequest(resource.route(INDEX)).the
 export const get = (resource: Object, uid: string) => apiRequest(resource.route(uid)).then(camelizeKeys)
 export const put = (resource: Object, uid: string, payload: Object) => apiRequest(resource.route(uid), 'PUT', payload).then(camelizeKeys)
 export const post = (resource: Object, uid: string, payload: Object) => apiRequest(resource.route(uid), 'POST', payload).then(camelizeKeys)
-export const del = (resource: Object, uid: string) => apiRequest(resource.route(uid), 'DELETE')
+export const del = (resource: Object, uid: string) => apiRequest(resource.route(uid), 'DELETE').then(() => ({uid}))
 
 export type StoryType = {
   uid: string,
