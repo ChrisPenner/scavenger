@@ -8,10 +8,9 @@ import { browserHistory } from 'react-router'
 
 import reducer from './reducers'
 
-let window
 const middleware = compose(
   applyMiddleware(promiseMiddleware, routerMiddleware(browserHistory), thunk),
-  window && window.devToolsExtension ? window.devToolsExtension() : f => f)
+  window.devToolsExtension ? window.devToolsExtension() : f => f)
 const store = createStore(reducer, middleware)
 const mdispatch = store.dispatch
 store.dispatch = (...args) => {
