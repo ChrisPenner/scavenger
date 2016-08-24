@@ -1,5 +1,5 @@
 /* @flow */
-import { splitUid } from './reducers'
+import { splitUid } from './utils'
 
 export type routeT = Function
 

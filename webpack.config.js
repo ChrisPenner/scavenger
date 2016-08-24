@@ -1,6 +1,7 @@
 var webpack = require("webpack")
 var path = require("path")
 var HtmlWebpackPlugin = require('html-webpack-plugin')
+var CircularDependencyPlugin = require('circular-dependency-plugin')
 // var ExtractTextPlugin = require("extract-text-webpack-plugin")
 // var CopyWebpackPlugin = require('copy-webpack-plugin')
 
@@ -76,6 +77,9 @@ module.exports = {
     }),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['vendor', 'styles']
+    }),
+    new CircularDependencyPlugin({
+      exclude: /node_modules/
     }),
   // new CopyWebpackPlugin([
   //     { from: 'assets' },

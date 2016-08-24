@@ -4,7 +4,8 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
 
-import { getAnswersListByClue, splitUid } from '../reducers'
+import { splitUid } from '../utils'
+import { getAnswersListByClue } from '../reducers'
 import * as Routes from '../routes'
 import { startDrag, dropAnswer } from '../actions'
 

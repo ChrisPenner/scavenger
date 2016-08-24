@@ -6,7 +6,8 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import * as Routes from '../routes'
-import { getAnswer, getClueUidsByStory, splitUid, uidsFromParams } from '../reducers'
+import { splitUid, uidsFromParams } from '../utils'
+import { getAnswer, getClueUidsByStory } from '../reducers'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => {

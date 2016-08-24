@@ -8,7 +8,8 @@ import * as Routes from '../routes'
 import { Answers } from '../answer'
 import { getClue, getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
-import { uidsFromParams, splitUid, getToolData } from '../reducers'
+import { getToolData } from '../reducers'
+import { uidsFromParams, splitUid } from '../utils'
 import type { AnswerType } from '../resources'
 
 const findMatchingAnswer = (text: string, answers: Array<AnswerType>) => {

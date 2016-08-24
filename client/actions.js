@@ -81,23 +81,16 @@ export const dropAnswer = (index: number) => (dispatch: any, getState: Function)
 }
 
 // Async
-export const saveStory = (uid: string) => (dispatch: Function, getState: Function) => (
-  put(Story, uid, getStory(getState(), uid))
-    .then((result) => dispatch(setStory(result)))
+const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function) => {
+  const currentState = getResourceState(getState(), uid)
+  return put(resource, uid, currentState)
+    .then((result) => dispatch(setResource(result)))
     .then(successMessage('Saved'))
-)
+}
 
-export const saveClue = (uid: string) => (dispatch: Function, getState: Function) => (
-  put(Clue, uid, getClue(getState(), uid))
-    .then((result) => dispatch(setClue(result)))
-    .then(successMessage('Saved'))
-)
-
-export const saveAnswer = (uid: string) => (dispatch: Function, getState: Function) => (
-  put(Answer, uid, getAnswer(getState(), uid))
-    .then((result) => dispatch(setAnswer(result)))
-    .then(successMessage('Saved'))
-)
+export const saveStory = saveResource(Story, setStory, getStory)
+export const saveClue = saveResource(Clue, setClue, getClue)
+export const saveAnswer = saveResource(Answer, setAnswer, getAnswer)
 
 export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any) => {
   return put(resource, payload.uid, payload)

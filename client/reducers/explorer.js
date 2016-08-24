@@ -1,7 +1,6 @@
 /* @flow */
 import R from 'ramda'
 
-import { changeExplorer } from '../actions'
 import at from '../action-types'
 
 export default (explorer:Object = {

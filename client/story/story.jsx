@@ -2,7 +2,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { getStory, uidsFromParams } from '../reducers'
+import { uidsFromParams } from '../utils'
+import { getStory } from '../reducers'
 import { changeStory, saveStory } from '../actions'
 import { Clues } from '../clue'
 

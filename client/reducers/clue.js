@@ -3,7 +3,7 @@ import R from 'ramda'
 import transform from '../lib/transform'
 
 import at from '../action-types'
-import { splitUid } from './'
+import { splitUid } from '../utils'
 import { Clue, Answer } from '../resources'
 import { baseResourceReducer } from './common'
 import { phoneNumber } from '../lib/validators'

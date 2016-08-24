@@ -4,7 +4,7 @@ import R from 'ramda'
 import at from '../action-types'
 import { baseResourceReducer } from './common'
 import { Story, Clue } from '../resources'
-import { splitUid } from './'
+import { splitUid } from '../utils'
 
 export default (stories: Object = {}, action: Object) => {
   const baseResult = baseResourceReducer(Story.type, stories, action)
