@@ -20,6 +20,6 @@ export default transform(validate,
         const notEqualsClueUid = R.compose(R.not, R.equals(uid), R.prop('clueUid'))
         return R.pickBy(notEqualsClueUid, state)
       },
-    })
+    }, DEFAULT_STATE)
   )
 )

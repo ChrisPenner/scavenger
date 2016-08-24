@@ -21,7 +21,7 @@ const baseResourceReducer = (resourceType: ResourceType) => handleActions({
   ),
 })
 
-export default (resourceType: ResourceType, reducer: Function) => (state: Object, action: Object) => {
+export default (resourceType: ResourceType, reducer: Function) => (state: any, action: Object) => {
   const baseResult = baseResourceReducer(resourceType)(state, action)
   return reducer(baseResult, action)
 }

@@ -35,6 +35,10 @@ describe('Clue Reducer', function() {
 
   const testThunk = applyThunk(reducer, startClues)
 
+  it('should return a default state', function() {
+    expect(reducer(undefined, {})).to.not.equal(undefined)
+  })
+
   describe(at.LOAD_CLUE, function() {
     it('should overwrite clues', function() {
       const payload = {

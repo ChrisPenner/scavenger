@@ -13,6 +13,11 @@ describe('Explorer Reducer', function() {
     senderNumber: '555',
     texts: []
   }
+
+  it('should return a default state', function() {
+    expect(reducer(undefined, {})).to.not.equal(undefined)
+  })
+
   describe(at.CHANGE_EXPLORER, function() {
     it('should change fields on explorer', function() {
       const action = changeExplorer(['text'], '42')

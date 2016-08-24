@@ -23,6 +23,10 @@ describe('Story Reducer', function() {
     clues: ['NEWSTORY:NEWCLUE'],
   })
 
+  it('should return a default state', function() {
+    expect(reducer(undefined, {})).to.not.equal(undefined)
+  })
+
   describe(at.LOAD_STORY, function() {
     it('should overwrite stories', function() {
       const payload = {

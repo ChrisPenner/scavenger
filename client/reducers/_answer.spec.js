@@ -27,6 +27,10 @@ describe('Answer Reducer', function() {
     nextClue: 'STORY:NEW-NEXT-CLUE',
   })
 
+  it('should return a default state', function() {
+    expect(reducer(undefined, {})).to.not.equal(undefined)
+  })
+
   describe(at.LOAD_ANSWER, function() {
     it('should overwrite answers', function() {
       const payload = {

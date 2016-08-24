@@ -19,4 +19,4 @@ export default handleActions({
   ),
     [at.RECEIVE_MESSAGE]: addMessage,
     [at.SEND_MESSAGE]: addMessage,
-})
+}, DEFAULT_STATE)
