@@ -35,7 +35,7 @@ export default transform(
           answerUids: R.without(action.payload.uid)
         }
       }, clues)
-    case at.REORDER_ANSWER:
+    case 'DROP_ANSWER':
       clueUid = splitUid(action.payload.uid).clueUid
       answerUid = action.payload.uid
       const newIndex = action.payload.index

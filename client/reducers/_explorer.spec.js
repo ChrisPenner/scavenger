@@ -13,7 +13,7 @@ describe('Explorer Reducer', function() {
     senderNumber: '555',
     texts: []
   }
-  describe(at.CHANGE_EXPLORER, function() {
+  describe(changeExplorer.toString(), function() {
     it('should change fields on explorer', function() {
       const action = changeExplorer(['text'], '42')
       const newState = reducer(baseExplorer, action)

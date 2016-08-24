@@ -1,10 +1,11 @@
 /* @flow */
 import { expect } from 'chai'
 import R from 'ramda'
+import { applyThunk } from '../lib/redux-test'
 
 import * as at from '../action-types'
 import reducer from './clue'
-import { changeClue, setClue, setAnswer, deleted, reorderAnswer } from '../actions'
+import { changeClue, setClue, setAnswer, deleted, dropAnswer } from '../actions'
 import { Clue, Answer } from '../resources'
 
 describe('Clue Reducer', function() {
@@ -31,6 +32,8 @@ describe('Clue Reducer', function() {
     mediaUrl: 'newmedia.url',
     answerUids: ['STORY:CLUE:NEW'],
   })
+
+  const testThunk = applyThunk(reducer, startClues)
 
   describe(at.load(Clue.type), function() {
     it('should overwrite clues', function() {
@@ -113,22 +116,19 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.REORDER_ANSWER, function() {
+  describe(dropAnswer.toString(), function() {
     it("should move an answer earlier", function() {
-      const action = reorderAnswer(answerUid, 2)
-      const newState = reducer(startClues, action)
+      const newState = testThunk({ui: {dragData: answerUid}}, dropAnswer(2))
       expect(newState[startClue.uid].answerUids).to.eql([secondAnswerUid, thirdAnswerUid, answerUid])
     });
 
     it("should move an answer later", function() {
-      const action = reorderAnswer(thirdAnswerUid, 1)
-      const newState = reducer(startClues, action)
+      const newState = testThunk({ui: {dragData: thirdAnswerUid}}, dropAnswer(1))
       expect(newState[startClue.uid].answerUids).to.eql([answerUid, thirdAnswerUid, secondAnswerUid])
     });
 
     it("should not move an answer when same index", function() {
-      const action = reorderAnswer(secondAnswerUid, 1)
-      const newState = reducer(startClues, action)
+      const newState = testThunk({ui: {dragData: secondAnswerUid}}, dropAnswer(1))
       expect(newState[startClue.uid].answerUids).to.eql([answerUid, secondAnswerUid, thirdAnswerUid])
     });
   });

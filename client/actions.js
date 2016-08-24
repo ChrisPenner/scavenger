@@ -41,13 +41,6 @@ export const deleted = (resourceType: ActionKind, uid: string) => ({
 })
 
 
-// const fetchResource = (resource) => (dispatch) => {
-//   const actionFactory = createAction(at.load(resource.type))
-//   return index(resource)
-//     .then(actionFactory)
-//     .then(dispatch)
-// }
-
 export const successMessage = (message:string) => () => toastr.success(message)
 
 const deleteResource = (resource) => (uid: string) => (dispatch: any) => {
@@ -121,9 +114,6 @@ export const {
 
   startDrag,
   stopDrag,
-  dropAnswer,
-
-  reorderAnswer,
 
   receiveMessage,
 
@@ -140,14 +130,6 @@ export const {
   LOAD_STORY: () => index(Story),
   LOAD_CLUE: () => index(Clue),
   LOAD_ANSWER: () => index(Answer),
-
-  DROP_ANSWER: (index: number) => (dispatch: any, getState: Function) => {
-    const answerUid = getDragData(getState())
-    dispatch(reorderAnswer(answerUid, index))
-    dispatch(stopDrag)
-  },
-
-  REORDER_ANSWER: (uid: string, index: number):Object => ({uid, index}),
 
   RECEIVE_MESSAGE: R.assoc('source', 'server'),
 },
@@ -174,12 +156,19 @@ export const {
   createClue,
   createAnswer,
 } = createActions({
-  'SAVE_STORY': saveResource(Story, setStory, getStory),
-  'SAVE_CLUE': saveResource(Clue, setClue, getClue),
-  'SAVE_ANSWER': saveResource(Answer, setAnswer, getAnswer),
+  SAVE_STORY: saveResource(Story, setStory, getStory),
+  SAVE_CLUE: saveResource(Clue, setClue, getClue),
+  SAVE_ANSWER: saveResource(Answer, setAnswer, getAnswer),
 
-  'CREATE_STORY': creator(Story, Routes.story, setStory),
-  'CREATE_CLUE': creator(Clue, Routes.clue, setClue),
-  'CREATE_ANSWER': creator(Answer, Routes.answer, setAnswer),
+  CREATE_STORY: creator(Story, Routes.story, setStory),
+  CREATE_CLUE: creator(Clue, Routes.clue, setClue),
+  CREATE_ANSWER: creator(Answer, Routes.answer, setAnswer),
 })
 
+// Thunks
+export const dropAnswer = (index: number) => (dispatch: any, getState: Function) => {
+  const uid = getDragData(getState())
+  dispatch(createAction('DROP_ANSWER')({uid, index}))
+}
+
+// Async

@@ -19,7 +19,7 @@ const Answers = ({answers, storyId, clueId, startDrag, dropAnswer, highlightUid}
         className={classes}
         key={answer.uid}
         draggable="true"
-        onDrag={() => startDrag(answer.uid)}
+        onDragStart={() => startDrag(answer.uid)}
         onDrop={() => dropAnswer(index)}
         onDragOver={(e) => e.preventDefault()}>
       {answer.uid}
