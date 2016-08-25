@@ -108,9 +108,5 @@ const stateToProps = (state, {params}) => {
 export default connect(stateToProps, {
   changeAnswer,
   saveAnswer,
-  deleteAnswer: (uid) => (dispatch) => {
-    const { clueUid } = splitUid(uid)
-    dispatch(push(Routes.clue(clueUid)))
-    dispatch(deleteAnswer(uid))
-  },
+  deleteAnswer: (uid) => deleteAnswer(uid, Routes.clue(splitUid(uid).clueUid)),
 })(Answer)

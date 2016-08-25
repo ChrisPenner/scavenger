@@ -149,10 +149,6 @@ Clue.propTypes = {
 export default connect(stateToProps, {
   saveClue,
   changeClue,
-  deleteClue: (uid) => (dispatch) => {
-    const {storyUid} = splitUid(uid)
-    dispatch(push(Routes.story(storyUid)))
-    dispatch(deleteClue(uid))
-  },
+  deleteClue: (uid) => deleteClue(uid, Routes.story(splitUid(uid).storyUid)),
   changeTestMessage,
 })(Clue)

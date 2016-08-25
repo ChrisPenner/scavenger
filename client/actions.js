@@ -2,6 +2,7 @@
 import xml2js from 'xml2js-es6-promise'
 import toastr from 'toastr'
 import R from 'ramda'
+import swal from 'sweetalert'
 import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
@@ -21,7 +22,8 @@ export type FSA = {
 
 const changer = (path: Array<string>, value: any) => ({path, value})
 
-export const successMessage = (message:string) => () => toastr.success(message)
+// Allows adding messages inline in promises while still passing data through
+export const successMessage = (message:string) => R.tap(() => toastr.success(message))
 
 export const changeTestMessage = (payload: any): FSA => ({
   type: at.CHANGE_TEST_MESSAGE,
@@ -33,10 +35,6 @@ export const {
   changeClue,
   changeAnswer,
   changeExplorer,
-
-  deleteStory,
-  deleteClue,
-  deleteAnswer,
 
   setStory,
   setClue,
@@ -56,10 +54,6 @@ export const {
   [at.CHANGE_CLUE]: changer,
   [at.CHANGE_ANSWER]: changer,
   [at.CHANGE_EXPLORER]: changer,
-
-  [at.DELETE_STORY]: (uid) => del(Story, uid).then(R.tap(successMessage('Deleted'))),
-  [at.DELETE_CLUE]: (uid) => del(Clue, uid).then(R.tap(successMessage('Deleted'))),
-  [at.DELETE_ANSWER]: (uid) => del(Answer, uid).then(R.tap(successMessage('Deleted'))),
 
   [at.LOAD_STORY]: () => index(Story),
   [at.LOAD_CLUE]: () => index(Clue),
@@ -90,6 +84,35 @@ const saveResource = (resource, setResource, getResourceState) => (uid: string) 
 export const saveStory = saveResource(Story, setStory, getStory)
 export const saveClue = saveResource(Clue, setClue, getClue)
 export const saveAnswer = saveResource(Answer, setAnswer, getAnswer)
+
+const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function) => swal({
+  title: "Delete?",
+  type: "warning",
+  showCancelButton: true,
+  closeOnConfirm: false,
+  showLoaderOnConfirm: true,
+}, (confirmed) => {
+  if (confirmed) {
+    return del(resource, uid)
+      .then(() => dispatch(push(route)))
+      .then(() => dispatch({
+        type: `DELETE_${resource.type}`,
+        payload: {uid},
+      }))
+      .then(() => swal({
+        title: "Deleted",
+        type: "success",
+        showConfirmButton: false,
+        timer: 700,
+      }))
+      .catch((message) => swal("Error", message, "error"))
+  }
+})
+
+
+export const deleteStory = deleter(Story)
+export const deleteClue = deleter(Clue)
+export const deleteAnswer = deleter(Answer)
 
 export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any) => {
   return put(resource, payload.uid, payload)
