@@ -3,6 +3,7 @@ import xml2js from 'xml2js-es6-promise'
 import toastr from 'toastr'
 import R from 'ramda'
 import swal from 'sweetalert'
+import { successToast } from './lib/wisp'
 import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
@@ -79,6 +80,7 @@ const saveResource = (resource, setResource, getResourceState) => (uid: string) 
   return put(resource, uid, currentState)
     .then((result) => dispatch(setResource(result)))
     .then(successMessage('Saved'))
+    .then(R.tap(() => dispatch(successToast('Saved'))))
 }
 
 export const saveStory = saveResource(Story, setStory, getStory)

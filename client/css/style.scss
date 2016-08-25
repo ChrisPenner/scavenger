@@ -57,3 +57,11 @@
 .yellow {
   background: #fffbeb;
 }
+
+.toasts {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: auto;
+  z-index: 10;
+}

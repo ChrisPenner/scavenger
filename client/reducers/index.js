@@ -10,6 +10,7 @@ import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
 import { loadedReducer } from '../lib/loaded'
+import { wispReducer } from '../lib/wisp'
 
 export default combineReducers({
   routing: routerReducer,
@@ -20,6 +21,7 @@ export default combineReducers({
   tools,
   ui,
   loaded: loadedReducer,
+  toasts: wispReducer,
 })
 
 const listFromMapping = (mapping: Object) => Object.keys(mapping).map(key => mapping[key])

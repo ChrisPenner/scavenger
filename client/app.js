@@ -13,6 +13,7 @@ import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
 import { loadStory, loadClue, loadAnswer } from './actions'
 import { Explorer } from './explorer'
+import { Toasts } from './lib/wisp'
 
 type appArgs = {main: any, story: any, clue: any, answer: any}
 const App = connect(state => ({loaded: isLoaded(state)}))
@@ -39,6 +40,7 @@ const App = connect(state => ({loaded: isLoaded(state)}))
           </Link>
         </div>
       </nav>
+      <Toasts/>
       <section className="section is-fullwidth">
         {main ? main : (
           <div className="columns">
