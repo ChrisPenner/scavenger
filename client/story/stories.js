@@ -12,31 +12,25 @@ const stateToProps = (state) => ({
 
 const Stories = ({storiesList}) => {
   const stories = storiesList.map(story => (
-    <tr key={story.uid}>
-      <td>
-        <Link to={Routes.story(story.uid)}>
-        {story.uid}
-        </Link>
-      </td>
-    </tr>
+    <Link
+      key={story.uid}
+      to={Routes.story(story.uid)}
+      className="my-list-item">
+      {story.uid}
+    </Link>
   ))
 
   return (
     <div>
       <h1 className="title">Stories</h1>
-      <table className="table is-bordered">
-        <tbody>
+      <div className="my-list">
           {stories}
-          <tr>
-            <td>
-              <Link
-                to={Routes.createStory()}
-                className="button is-success"> + Add Story
-              </Link>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          <Link
+            key="add-story"
+            to={Routes.createStory()}
+            className="my-list-item"> + Add Story
+          </Link>
+        </div>
     </div>
   )
 }

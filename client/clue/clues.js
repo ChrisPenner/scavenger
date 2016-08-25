@@ -16,25 +16,24 @@ const stateToProps = (state, {storyUid}) => {
 
 const Clues = ({clues, storyUid}) => {
   const clueLinks = clues.map(clue => (
-    <tr key={clue.uid}>
-      <td>
-        <Link to={Routes.clue(clue.uid)}>
-        {clue.uid}
-        </Link>
-      </td>
-    </tr>))
+    <Link
+      key={clue.uid}
+      to={Routes.clue(clue.uid)}
+      className="my-list-item">
+      {clue.uid}
+    </Link>
+    ))
   return (
-    <table className="table is-bordered">
-      <tbody>
+      <div className="my-list">
         {clueLinks}
-        <tr key="addClue">
-          <td>
-            <Link to={{ pathname: Routes.createClue(storyUid) }}> + Add Clue
-            </Link>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <Link
+          key="add-clue"
+          to={{ pathname: Routes.createClue(storyUid) }}
+          className="my-list-item"
+        >
+          + Add Clue
+        </Link>
+      </div>
   )
 }
 Clues.propTypes = {
