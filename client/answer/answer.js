@@ -19,72 +19,71 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => {
   }
 
   return (
-    <div className="message is-danger">
-      <div className="message-header is-marginless level is-mobile">
-        <span className="level-item">
-          {answer.uid}
-        </span>
+    <section className="notification is-primary">
+      <h2 className="subtitle"> Answer </h2>
+      <h1 className="title">
+        {answer.uid}
+      </h1>
+      <div className="level">
         <button
-          className="button is-danger is-narrow level-item"
+          className="button is-danger level-item"
           onClick={() => deleteAnswer(answer.uid)}>
           Delete
         </button>
         <button
-          className="button is-success is-narrow level-item"
+          className="button is-success level-item"
           onClick={() => saveAnswer(answer.uid)}>
           Save
         </button>
       </div>
-      <div className="message-body">
-        <label
-          className="label"
-          htmlFor="pattern">
-          Pattern
-        </label>
-        <div className="control">
-          <input
-            id="pattern"
-            className={classnames('input', {
-              'is-danger': patternError,
-            })}
-            value={answer.pattern || ''}
-            onChange={(e) => changeAnswer([answer.uid, 'pattern'], e.target.value)} />
-        </div>
-        {patternError && <span className="help is-danger">{String(patternError)}</span>}
-
-        <label
-          className="label"
-          htmlFor="receiver">
-          Receiver <span className="faded"> (optional) </span>
-        </label>
-        <div className="control">
-          <input
-            id="receiver"
-            className="input"
-            value={answer.receiver || ''}
-            placeholder="Only messages to this number will match"
-            onChange={(e) => changeAnswer([answer.uid, 'receiver'], e.target.value)} />
-        </div>
-
-        <label
-          className="label"
-          htmlFor="next-clue">
-          Next Clue
-        </label>
-        <div className="control select">
-          <select
-            id="next-clue"
-            value={answer.nextClue}
-            onChange={(e) => changeAnswer([answer.uid, 'nextClue'], e.target.value)}>
-            {clueUids.map(clueUid => <option
-              key={clueUid}
-              value={clueUid}>
-              {clueUid}
-            </option>)}
-          </select>
-        </div>
+      <label
+        className="label"
+        htmlFor="pattern">
+        Pattern
+      </label>
+      <div className="control">
+        <input
+          id="pattern"
+          className={classnames('input', {
+            'is-danger': patternError,
+          })}
+          value={answer.pattern || ''}
+          onChange={(e) => changeAnswer([answer.uid, 'pattern'], e.target.value)} />
       </div>
-    </div>
+      {patternError && <span className="help is-danger">{String(patternError)}</span>}
+
+      <label
+        className="label"
+        htmlFor="receiver">
+        Receiver <span className="faded"> (optional) </span>
+      </label>
+      <div className="control">
+        <input
+          id="receiver"
+          className="input"
+          value={answer.receiver || ''}
+          placeholder="Only messages to this number will match"
+          onChange={(e) => changeAnswer([answer.uid, 'receiver'], e.target.value)} />
+      </div>
+
+      <label
+        className="label"
+        htmlFor="next-clue">
+        Next Clue
+      </label>
+      <div className="control select">
+        <select
+          id="next-clue"
+          value={answer.nextClue}
+          onChange={(e) => changeAnswer([answer.uid, 'nextClue'], e.target.value)}>
+          {clueUids.map(clueUid => <option
+            key={clueUid}
+            value={clueUid}>
+            {clueUid}
+          </option>)}
+        </select>
+      </div>
+    </section>
   )
 }
 

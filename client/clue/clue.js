@@ -40,99 +40,99 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
   }
   const highlightAnswerUid = matchingAnswer && matchingAnswer.uid
   return (
-    <div className="message is-warning">
-      <div className="message-header is-marginless level is-mobile">
-        <span className="level-item">
-          {clue.uid}
-        </span>
+    <section className="notification is-warning">
+      <h2 className="subtitle"> Clue </h2>
+      <h1 className="title">
+        {clue.uid}
+      </h1>
+      <div className="level">
         <button
-          className="button is-danger is-narrow level-item"
+          className="button is-danger level-item"
           onClick={() => deleteClue(clue.uid)}>
           Delete
         </button>
         <button
-          className="button is-success is-narrow level-item"
+          className="button is-success level-item"
           onClick={() => saveClue(clue.uid)}>
           Save
         </button>
       </div>
-      <div className="message-body">
-        <label
-          className="label"
-          htmlFor="text">
-          Text
-        </label>
-        <div className="control">
-          <textarea
-            id="text"
-            className="textarea"
-            value={clue.text || ''}
-            placeholder="The text of the message"
-            onChange={(e) => changeClue([clue.uid, 'text'], e.target.value)} />
-        </div>
 
-        <label
-          className="label"
-          htmlFor="hint">
-          Hint
-        </label>
-        <div className="control">
-          <input
-            id="hint"
-            className="input"
-            value={clue.hint || ''}
-            placeholder="A hint in case they get it wrong"
-            onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
-        </div>
-
-        <label
-          className="label"
-          htmlFor="mediaUrl">
-          Media Url <span className="faded"> (optional) </span>
-        </label>
-        <div className="control">
-          <input
-            id="mediaUrl"
-            className="input"
-            value={clue.mediaUrl || ''}
-            placeholder="e.g. https://placekitten.com/g/300/300"
-            onChange={(e) => changeClue([clue.uid, 'mediaUrl'], e.target.value)} />
-        </div>
-
-        <label
-          className="label"
-          htmlFor="sender">
-          Sender <span className="faded"> (optional) </span>
-        </label>
-        <div className="control">
-          <input
-            id="sender"
-            className="input"
-            value={clue.sender || ''}
-            placeholder="Which number to send the clue from"
-            onChange={(e) => changeClue([clue.uid, 'sender'], e.target.value)} />
-        </div>
-
-        <hr/>
-        <label
-          className="label"
-          htmlFor="test-message">
-          Test a Message:
-        </label>
-        <div className="control">
-          <input
-            id="test-message"
-            className="input"
-            value={testMessage}
-            placeholder="Enter a message (The matching answer will be highlighted)"
-            onChange={(e) => changeTestMessage(e.target.value)} />
-        </div>
-        <label className="label">
-          Answers
-        </label>
-        <Answers highlightUid={highlightAnswerUid} clueUid={clue.uid} />
+      <label
+        className="label"
+        htmlFor="text">
+        Text
+      </label>
+      <div className="control">
+        <textarea
+          id="text"
+          className="textarea"
+          value={clue.text || ''}
+          placeholder="The text of the message"
+          onChange={(e) => changeClue([clue.uid, 'text'], e.target.value)} />
       </div>
-    </div>
+
+      <label
+        className="label"
+        htmlFor="hint">
+        Hint
+      </label>
+      <div className="control">
+        <input
+          id="hint"
+          className="input"
+          value={clue.hint || ''}
+          placeholder="A hint in case they get it wrong"
+          onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
+      </div>
+
+      <label
+        className="label"
+        htmlFor="mediaUrl">
+        Media Url <span className="faded"> (optional) </span>
+      </label>
+      <div className="control">
+        <input
+          id="mediaUrl"
+          className="input"
+          value={clue.mediaUrl || ''}
+          placeholder="e.g. https://placekitten.com/g/300/300"
+          onChange={(e) => changeClue([clue.uid, 'mediaUrl'], e.target.value)} />
+      </div>
+
+      <label
+        className="label"
+        htmlFor="sender">
+        Sender <span className="faded"> (optional) </span>
+      </label>
+      <div className="control">
+        <input
+          id="sender"
+          className="input"
+          value={clue.sender || ''}
+          placeholder="Which number to send the clue from"
+          onChange={(e) => changeClue([clue.uid, 'sender'], e.target.value)} />
+      </div>
+
+      <hr/>
+      <label
+        className="label"
+        htmlFor="test-message">
+        Test a Message:
+      </label>
+      <div className="control">
+        <input
+          id="test-message"
+          className="input"
+          value={testMessage}
+          placeholder="The matching answer will be highlighted"
+          onChange={(e) => changeTestMessage(e.target.value)} />
+      </div>
+      <label className="label">
+        Answers
+      </label>
+      <Answers highlightUid={highlightAnswerUid} clueUid={clue.uid} />
+    </section>
   )
 }
 
