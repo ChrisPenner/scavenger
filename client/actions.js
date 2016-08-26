@@ -1,6 +1,5 @@
 /* @flow */
 import xml2js from 'xml2js-es6-promise'
-import toastr from 'toastr'
 import R from 'ramda'
 import swal from 'sweetalert'
 import { successToast } from './lib/wisp'
@@ -8,11 +7,12 @@ import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
 import at from './action-types'
-import { Story, Clue, Answer, index, put, del } from './resources'
+import { Story, Clue, Answer } from './resources'
 import type { ResourceT } from './resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
 import * as Routes from './routes'
 import type { routeT } from './routes'
+import type { apiT } from './api'
 
 export type FSA = {
   type: string,
@@ -38,10 +38,6 @@ export const {
   setClue,
   setAnswer,
 
-  loadStory,
-  loadClue,
-  loadAnswer,
-
   startDrag,
   stopDrag,
 
@@ -52,10 +48,6 @@ export const {
   [at.CHANGE_CLUE]: changer,
   [at.CHANGE_ANSWER]: changer,
   [at.CHANGE_EXPLORER]: changer,
-
-  [at.LOAD_STORY]: () => index(Story),
-  [at.LOAD_CLUE]: () => index(Clue),
-  [at.LOAD_ANSWER]: () => index(Answer),
 
   [at.RECEIVE_MESSAGE]: R.assoc('source', 'server'),
 },
@@ -72,9 +64,9 @@ export const dropAnswer = (index: number) => (dispatch: any, getState: Function)
   dispatch({ type: at.DROP_ANSWER, payload: {uid, index}})
 }
 
-const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function) => {
+const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function, { PUT }: apiT) => {
   const currentState = getResourceState(getState(), uid)
-  return put(resource, uid, currentState)
+  return PUT(resource, uid, currentState)
     .then((result) => dispatch(setResource(result)))
     .then(R.tap(() => dispatch(successToast('Saved'))))
 }
@@ -83,7 +75,7 @@ export const saveStory = saveResource(Story, setStory, getStory)
 export const saveClue = saveResource(Clue, setClue, getClue)
 export const saveAnswer = saveResource(Answer, setAnswer, getAnswer)
 
-const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function) => swal({
+const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function, getState: Function, { DELETE }: apiT) => swal({
   title: "Delete?",
   type: "warning",
   showCancelButton: true,
@@ -91,7 +83,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   showLoaderOnConfirm: true,
 }, (confirmed) => {
   if (confirmed) {
-    return del(resource, uid)
+    return DELETE(resource, uid)
       .then(() => dispatch(push(route)))
       .then(() => dispatch({
         type: `DELETE_${resource.type}`,
@@ -112,8 +104,19 @@ export const deleteStory = deleter(Story)
 export const deleteClue = deleter(Clue)
 export const deleteAnswer = deleter(Answer)
 
-export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any) => {
-  return put(resource, payload.uid, payload)
+const loader = (resource: ResourceT) => () => (dispatch: Function, getState: Function, { INDEX }: apiT) => {
+  dispatch({
+    type: `LOAD_${resource.type}`,
+    payload: INDEX(resource),
+  })
+}
+
+export const loadStory = loader(Story)
+export const loadClue = loader(Clue)
+export const loadAnswer = loader(Answer)
+
+export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any, getState: Function, { PUT }: apiT) => {
+  return PUT(resource, payload.uid, payload)
     .then((entity) => dispatch(setter(entity)))
     .then(() => dispatch(push(route(payload.uid))))
     .then(R.tap(() => dispatch(successToast('Created'))))

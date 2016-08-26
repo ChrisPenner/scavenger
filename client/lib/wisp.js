@@ -35,7 +35,6 @@ export const wispReducer = handleActions({
 }, DEFAULT_STATE)
 
 export const Toasts = connect(({toasts}) => ({toasts}))(({toasts}) => {
-  console.log(toasts)
   return (
     <Animate className="toasts" transitionName="toast" transitionEnterTimeout={200} transitionLeaveTimeout={400}>
     {R.map((({title, message, id}) => (
