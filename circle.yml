@@ -1,7 +1,7 @@
 machine:
   environment:
     # Add app engine sdk to pythonpath for local unit tests.
-    PYTHONPATH: ${PYTHONPATH}:${HOME}/google_appengine
+    PYTHONPATH: ${PYTHONPATH}:${HOME}/google_appengine:${HOME}/google_appengine/lib/yaml-3.10/:${HOME}/google_appengine/lib/webapp2-2.5.2:${HOME}/google_appengine/lib/webob-1.2.3
 
 dependencies:
   pre:
