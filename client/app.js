@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { Router, Route, IndexRedirect, Link, browserHistory } from 'react-router'
 import { Provider, connect } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
+import Animate from 'react-addons-css-transition-group'
 
 import store from './store'
 
@@ -43,23 +44,13 @@ const App = connect(state => ({loaded: isLoaded(state)}))
       <Toasts/>
       <section className="section is-fullwidth">
         {main ? main : (
-          <div className="columns">
-            {story ?
-              (<div className="column is-4">
-                {story}
-              </div>)
-              : null}
-              {clue ?
-                (<div className="column is-4">
-                  {clue}
-                </div>)
-                : null}
-                {answer ?
-                  (<div className="column is-4">
-                    {answer}
-                  </div>)
-                  : null}
-                </div>)}
+          <Animate className="columns" transitionName="card" transitionEnterTimeout={200} transitionLeaveTimeout={200}>
+            { story ?  (<div className="column is-4"> {story} </div>) : null }
+            { clue ?  (<div className="column is-4"> {clue} </div>) : null }
+            { answer ?  (<div className="column is-4"> {answer} </div>) : null }
+          </Animate>
+          )}
+
               </section>
             </div>
   )})

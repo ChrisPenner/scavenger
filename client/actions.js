@@ -23,9 +23,6 @@ export type FSA = {
 
 const changer = (path: Array<string>, value: any) => ({path, value})
 
-// Allows adding messages inline in promises while still passing data through
-export const successMessage = (message:string) => R.tap(() => toastr.success(message))
-
 export const changeTestMessage = (payload: any): FSA => ({
   type: at.CHANGE_TEST_MESSAGE,
   payload,
@@ -79,7 +76,6 @@ const saveResource = (resource, setResource, getResourceState) => (uid: string) 
   const currentState = getResourceState(getState(), uid)
   return put(resource, uid, currentState)
     .then((result) => dispatch(setResource(result)))
-    .then(successMessage('Saved'))
     .then(R.tap(() => dispatch(successToast('Saved'))))
 }
 
@@ -120,7 +116,7 @@ export const creator = (resource: ResourceT, route: routeT, setter: Function) =>
   return put(resource, payload.uid, payload)
     .then((entity) => dispatch(setter(entity)))
     .then(() => dispatch(push(route(payload.uid))))
-    .then(successMessage('Created'))
+    .then(R.tap(() => dispatch(successToast('Created'))))
 }
 
 export const createStory = creator(Story, Routes.story, setStory)

@@ -1,4 +1,5 @@
 /* @flow */
+import Animate from 'react-addons-css-transition-group'
 import { handleActions } from 'redux-actions'
 import { connect } from 'react-redux'
 import R from 'ramda'
@@ -36,11 +37,11 @@ export const wispReducer = handleActions({
 export const Toasts = connect(({toasts}) => ({toasts}))(({toasts}) => {
   console.log(toasts)
   return (
-  <div className="toasts">
+    <Animate className="toasts" transitionName="toast" transitionEnterTimeout={200} transitionLeaveTimeout={400}>
     {R.map((({title, message, id}) => (
       <div key={id} className="notification is-success">
         <h1 className="subtitle">{title}</h1>
       </div>
     )), R.values(toasts))}
-  </div>
+  </Animate>
 ) })
