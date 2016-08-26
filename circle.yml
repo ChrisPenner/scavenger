@@ -1,3 +1,14 @@
+machine:
+  environment:
+    # Add app engine sdk to pythonpath for local unit tests.
+    PYTHONPATH: ${PYTHONPATH}:${HOME}/google_appengine
+
+dependencies:
+  pre:
+    # Download App Engine SDK
+    - curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
+    - unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
+
 test:
   override:
     - npm test
