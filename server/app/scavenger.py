@@ -172,7 +172,7 @@ class TwilioHandler(RequestHandler):
     def post(self):
         if self.request.POST.get('Body') is None or self.request.POST.get('From') is None:
             logging.error('Body and From params required')
-            abort(400, 'Body and From params required')
+            return abort(400, 'Body and From params required')
 
         message = Message(
             text=self.request.POST.get('Body').strip(),
