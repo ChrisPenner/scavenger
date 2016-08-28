@@ -142,13 +142,14 @@ const intoMessage = R.applySpec({
 const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))
 
 export const sendMessage = () => (dispatch: any, getState: any) => {
-  const {sender, receiver, text} = getExplorer(getState())
+  const {sender, receiver, text, mediaUrl} = getExplorer(getState())
   dispatch({
     type: at.SEND_MESSAGE,
     payload: {
       receiver,
       sender,
       body: text,
+      mediaUrl: mediaUrl,
       source: 'user',
     }
   })
@@ -157,6 +158,10 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
   formData.append('From', sender)
   formData.append('To', receiver)
   formData.append('Body', text)
+  if(mediaUrl) {
+    formData.append('MediaUrl', mediaUrl)
+    formData.append('NumMedia', '1')
+  }
   return fetch(Routes.message(), {
     method: 'POST',
     body: formData,

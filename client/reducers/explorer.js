@@ -8,6 +8,7 @@ const DEFAULT_STATE = {
   text: '',
   receiver: 'server',
   sender: 'testing',
+  mediaUrl: '',
   texts: []
 }
 

@@ -177,6 +177,7 @@ class TwilioHandler(RequestHandler):
         message = Message(
             text=self.request.POST.get('Body').strip(),
             receiver=self.request.POST.get('To'),
+            media_url=self.request.POST.get('MediaUrl'),
         )
 
         from_phone = self.request.get('From')

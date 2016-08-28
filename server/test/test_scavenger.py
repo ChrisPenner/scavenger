@@ -25,7 +25,8 @@ USER_PHONE = '+5551234567'
 PRIMARY_SERVER_PHONE = '+9998765432'
 SECONDARY_SERVER_PHONE = '+7775554321'
 
-def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE):
+
+def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE, media_url=None):
     request = Request.blank('/api/message')
     request.method = 'POST'
     request.POST.update({
@@ -33,11 +34,16 @@ def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SER
         'Body': message,
         'To': receiver,
     })
+    if media_url:
+        request.POST.update({
+            'MediaUrl': media_url,
+            'NumMedia': 1,
+        })
     return request
 
 
-def send_message(message, sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE):
-    request = create_request(message=message, sender=sender, receiver=receiver)
+def send_message(message, sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE, media_url=None):
+    request = create_request(message=message, sender=sender, receiver=receiver, media_url=media_url)
     response = request.get_response(app)
     return response.status_int, response.body
 
@@ -95,6 +101,20 @@ class TestScavenger(TestCase):
         self.assertIn(self.start_clue.hint, response)
 
         status, response = send_message('my answer is 42', receiver=SECONDARY_SERVER_PHONE)
+        self.assertEqual(200, status)
+        self.assertIn(self.next_clue.text, response)
+
+    def test_answer_requires_media(self):
+        self.answer.require_media = True
+        self.answer.put()
+
+        send_message('start {}'.format(self.story.uid))
+
+        status, response = send_message('my answer is 42')
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.hint, response)
+
+        status, response = send_message('my answer is 42', media_url="http://www.example.com/caturday.png")
         self.assertEqual(200, status)
         self.assertIn(self.next_clue.text, response)
 

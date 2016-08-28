@@ -58,13 +58,14 @@ Texts.propTypes = {
 }
 
 const stateToProps = getExplorer
-const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) => {
+const Explorer = ({receiver, sender, text, mediaUrl, changeExplorer, sendMessage, texts}) => {
   return (
     <div>
       <h1 className="title">Explorer</h1>
       <div className="columns">
         <div className="column">
           <form action="javascript:void(0);">
+
             <div className="control">
               <label
                 className="label"
@@ -78,6 +79,7 @@ const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) 
                 placeholder="+555-123-4567"
                 onChange={(e) => changeExplorer(['receiver'], e.target.value)} />
             </div>
+
             <div className="control">
               <label
                 className="label"
@@ -91,6 +93,21 @@ const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) 
                 placeholder="+555-123-4567"
                 onChange={(e) => changeExplorer(['sender'], e.target.value)} />
             </div>
+
+            <div className="control">
+              <label
+                className="label"
+                htmlFor="media-url">
+                Media Url
+              </label>
+              <input
+                id="media-url"
+                className="input"
+                value={mediaUrl}
+                placeholder="https://placekitten.com/g/300/300"
+                onChange={(e) => changeExplorer(['mediaUrl'], e.target.value)} />
+            </div>
+
             <label
               className="label"
               htmlFor="text">
@@ -109,6 +126,7 @@ const Explorer = ({receiver, sender, text, changeExplorer, sendMessage, texts}) 
                 Send
               </button>
             </div>
+
           </form>
         </div>
         <div className="column is-8">

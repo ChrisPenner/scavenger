@@ -66,6 +66,18 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => {
             onChange={(e) => changeAnswer([answer.uid, 'receiver'], e.target.value)} />
         </div>
 
+        <p className="control">
+          <label
+            htmlFor="require-media">
+            <input
+              id="require-media"
+              type="checkbox"
+              checked={answer.requireMedia || false}
+              onChange={(e) => changeAnswer([answer.uid, 'requireMedia'], e.target.checked)} />
+            Require Media
+          </label>
+        </p>
+
         <label
           className="label"
           htmlFor="next-clue">
