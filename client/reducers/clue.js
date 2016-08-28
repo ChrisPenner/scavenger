@@ -27,11 +27,11 @@ const DEFAULT_STATE = {}
 export default transform(validate,
   commonReducer(Clue.type,
     handleActions({
-      [at.SET_ANSWER]: (
+      [at.set(Answer.type)]: (
         transformAnswerUids(({uid}) => R.compose(R.uniq, R.append(uid)))
       ),
 
-      [at.DELETE_ANSWER]: (
+      [at.del(Answer.type)]: (
         transformAnswerUids(({uid}) => R.without(uid))
     ),
 

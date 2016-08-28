@@ -10,14 +10,14 @@ import { splitUid } from '../utils'
 export const DEFAULT_STATE = {}
 export default commonReducer(Story.type,
   handleActions({
-    [at.SET_CLUE]: (stories, {payload}) => {
+    [at.set(Clue.type)]: (stories, {payload}) => {
       const storyUid = splitUid(payload.uid).storyUid
       return R.evolve({
         [storyUid]: {
           clues: R.compose(R.uniq, R.append(payload.uid))
         }
       }, stories)},
-    [at.DELETE_CLUE]: (stories, {payload}) => {
+    [at.del(Clue.type)]: (stories, {payload}) => {
       const storyUid = splitUid(payload.uid).storyUid
       return R.evolve({
         [storyUid]: {

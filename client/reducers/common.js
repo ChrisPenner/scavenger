@@ -2,21 +2,22 @@
 import { handleActions } from 'redux-actions'
 import R from 'ramda'
 import type { ResourceType } from '../resources'
+import at from '../action-types'
 
 const baseResourceReducer = (resourceType: ResourceType) => handleActions({
-  [`LOAD_${resourceType}`]: (
+  [at.load(resourceType)]: (
     (state, {payload}) => payload
   ),
 
-  [`CHANGE_${resourceType}`]: (
+  [at.change(resourceType)]: (
     (state, {payload: {path, value}}) => R.assocPath(path, value, state)
   ),
 
-  [`SET_${resourceType}`]: (
+  [at.set(resourceType)]: (
     (state, {payload}) => R.assoc(payload.uid, payload, state)
   ),
 
-  [`DELETE_${resourceType}`]: (
+  [at.del(resourceType)]: (
     (state, {payload:{uid}}) => R.dissoc(uid, state)
   ),
 })

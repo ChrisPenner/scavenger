@@ -31,13 +31,13 @@ describe('Answer Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.LOAD_ANSWER, function() {
+  describe(at.load(Answer.type), function() {
     it('should overwrite answers', function() {
       const payload = {
         [newAnswer.uid]: newAnswer,
       }
       const action = {
-        type: at.LOAD_ANSWER,
+        type: at.load(Answer.type),
         payload
       }
       const newState = reducer(startAnswers, action)
@@ -45,7 +45,7 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.CHANGE_ANSWER, function() {
+  describe(at.change(Answer.type), function() {
     it('should change fields on answer', function() {
       const action = changeAnswer([startAnswer.uid, 'pattern'], '42')
       const newState = reducer(startAnswers, action)
@@ -59,7 +59,7 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.SET_ANSWER, function() {
+  describe(at.set(Answer.type), function() {
     it('should overwrite the answer', function() {
       const newAnswer = R.assoc('pattern', 'new-pattern', startAnswer)
       const action = setAnswer(newAnswer)
@@ -68,17 +68,17 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.DELETE_ANSWER, function() {
+  describe(at.del(Answer.type), function() {
     it('should delete the answer', function() {
-      const action = {type: at.DELETE_ANSWER, payload: {uid: startAnswer.uid}}
+      const action = {type: at.del(Answer.type), payload: {uid: startAnswer.uid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     });
   });
 
-  describe(at.DELETE_CLUE, function() {
+  describe(at.del(Clue.type), function() {
     it("should delete the answer if it's clue is deleted", function() {
-      const action = {type: at.DELETE_CLUE, payload: {uid: startAnswer.clueUid}}
+      const action = {type: at.del(Clue.type), payload: {uid: startAnswer.clueUid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     });

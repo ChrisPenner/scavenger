@@ -16,7 +16,7 @@ const DEFAULT_STATE = {}
 export default transform(validate,
   commonReducer(Answer.type,
     handleActions({
-      [at.DELETE_CLUE]: (state, {payload: {uid}}) => {
+      [at.del(Clue.type)]: (state, {payload: {uid}}) => {
         const notEqualsClueUid = R.compose(R.not, R.equals(uid), R.prop('clueUid'))
         return R.pickBy(notEqualsClueUid, state)
       },

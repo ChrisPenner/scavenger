@@ -2,17 +2,17 @@
 import xml2js from 'xml2js-es6-promise'
 import R from 'ramda'
 import swal from 'sweetalert'
-import { successToast } from './lib/wisp'
+import { successToast } from '../lib/wisp'
 import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
-import at from './action-types'
-import { Story, Clue, Answer } from './resources'
-import type { ResourceT } from './resources'
-import { getStory, getClue, getAnswer, getExplorer, getDragData } from './reducers'
-import * as Routes from './routes'
-import type { routeT } from './routes'
-import type { apiT } from './api'
+import at from '../action-types'
+import { Story, Clue, Answer } from '../resources'
+import type { ResourceT } from '../resources'
+import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
+import * as Routes from '../routes'
+import type { routeT } from '../routes'
+import type { apiT } from '../api'
 
 export type FSA = {
   type: string,
@@ -44,16 +44,16 @@ export const {
   receiveMessage,
 
 } = createActions({
-  [at.CHANGE_STORY]: changer,
-  [at.CHANGE_CLUE]: changer,
-  [at.CHANGE_ANSWER]: changer,
+  [at.change(Story.type)]: changer,
+  [at.change(Clue.type)]: changer,
+  [at.change(Answer.type)]: changer,
   [at.CHANGE_EXPLORER]: changer,
 
   [at.RECEIVE_MESSAGE]: R.assoc('source', 'server'),
 },
-  at.SET_STORY,
-  at.SET_CLUE,
-  at.SET_ANSWER,
+  at.set(Story.type),
+  at.set(Clue.type),
+  at.set(Answer.type),
   at.START_DRAG,
   at.STOP_DRAG
 )
@@ -64,7 +64,7 @@ export const dropAnswer = (index: number) => (dispatch: any, getState: Function)
   dispatch({ type: at.DROP_ANSWER, payload: {uid, index}})
 }
 
-const saveResource = (resource, setResource, getResourceState) => (uid: string) => (dispatch: any, getState: Function, { PUT }: apiT) => {
+const saveResource = (resource: ResourceT, setResource: Function, getResourceState: Function) => (uid: string) => (dispatch: any, getState: Function, { PUT }: apiT) => {
   const currentState = getResourceState(getState(), uid)
   return PUT(resource, uid, currentState)
     .then((result) => dispatch(setResource(result)))
@@ -106,7 +106,7 @@ export const deleteAnswer = deleter(Answer)
 
 const loader = (resource: ResourceT) => () => (dispatch: Function, getState: Function, { INDEX }: apiT) => {
   dispatch({
-    type: `LOAD_${resource.type}`,
+    type: at.load(resource.type),
     payload: INDEX(resource),
   })
 }

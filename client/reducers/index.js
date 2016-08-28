@@ -5,6 +5,8 @@ import { routerReducer } from 'react-router-redux'
 
 import stories from './story'
 import answers from './answer'
+import at from '../action-types'
+import { Story, Answer, Clue } from '../resources'
 import clues from './clue'
 import explorer from './explorer'
 import ui from './ui'
@@ -50,4 +52,4 @@ export const getToolData = (state: Object) => state.tools
 
 export const getDragData = (state: Object) => state.ui.dragData
 
-export const isLoaded = ({loaded: { LOAD_STORY, LOAD_CLUE, LOAD_ANSWER }}: Object) => (LOAD_STORY && LOAD_CLUE && LOAD_ANSWER)
+export const isLoaded = ({loaded}: Object) => (loaded[at.load(Story.type)] && loaded[at.load(Clue.type)] && loaded[at.load(Answer.type)])

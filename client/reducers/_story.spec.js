@@ -27,13 +27,13 @@ describe('Story Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.LOAD_STORY, function() {
+  describe(at.load(Story.type), function() {
     it('should overwrite stories', function() {
       const payload = {
         [newStory.uid]: newStory,
       }
       const action = {
-        type: at.LOAD_STORY,
+        type: at.load(Story.type),
         payload
       }
       const newState = reducer(startStories, action)
@@ -41,7 +41,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.CHANGE_STORY, function() {
+  describe(at.change(Story.type), function() {
     it('should change fields on story', function() {
       const action = changeStory([startStory.uid, 'defaultHint'], '42')
       const newState = reducer(startStories, action)
@@ -55,7 +55,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.SET_STORY, function() {
+  describe(at.set(Story.type), function() {
     it('should overwrite the story', function() {
       const newStory = R.assoc('defaultHint', 'new-hint', startStory)
       const action = setStory(newStory)
@@ -64,7 +64,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.SET_CLUE, function() {
+  describe(at.set(Clue.type), function() {
     it('should add a clue to the story', function() {
       const newClue = Clue.new({
         uid: 'STORY:NEWCLUE',

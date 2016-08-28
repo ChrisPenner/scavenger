@@ -39,13 +39,13 @@ describe('Clue Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.LOAD_CLUE, function() {
+  describe(at.load(Clue.type), function() {
     it('should overwrite clues', function() {
       const payload = {
         [newClue.uid]: newClue,
       }
       const action = {
-        type: at.LOAD_CLUE,
+        type: at.load(Clue.type),
         payload
       }
       const newState = reducer(startClues, action)
@@ -53,7 +53,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.CHANGE_CLUE, function() {
+  describe(at.change(Clue.type), function() {
     it('should change fields on clue', function() {
       const action = changeClue([startClue.uid, 'hint'], '42')
       const newState = reducer(startClues, action)
@@ -67,7 +67,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.SET_CLUE, function() {
+  describe(at.set(Clue.type), function() {
     it('should overwrite the clue', function() {
       const newClue = R.assoc('hint', 'new-hint', startClue)
       const action = setClue(newClue)
@@ -76,7 +76,7 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.CHANGE_ANSWER, function() {
+  describe(at.change(Answer.type), function() {
     it('should add an answer to the clue', function() {
       const newAnswer = Answer.new({
         uid: 'STORY:CLUE:NEWANSWER',
@@ -104,17 +104,17 @@ describe('Clue Reducer', function() {
     });
   });
 
-  describe(at.DELETE_CLUE, function() {
+  describe(at.del(Clue.type), function() {
     it('should delete the clue', function() {
-      const action = {type: at.DELETE_CLUE, payload: {uid: startClue.uid}}
+      const action = {type: at.del(Clue.type), payload: {uid: startClue.uid}}
       const newState = reducer(startClues, action)
       expect(newState).to.eql({})
     });
   });
 
-  describe(at.DELETE_ANSWER, function() {
+  describe(at.del(Answer.type), function() {
     it('should delete the answer from answerUids', function() {
-      const action = {type: at.DELETE_ANSWER, payload: {uid: answerUid}}
+      const action = {type: at.del(Answer.type), payload: {uid: answerUid}}
       const newState = reducer(startClues, action)
       expect(newState[startClue.uid].answerUids).to.not.contain(answerUid)
     });
