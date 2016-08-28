@@ -1,5 +1,5 @@
 application: look-go
-version: 26
+version: use-deploy-script
 runtime: python27
 api_version: 1
 threadsafe: yes
