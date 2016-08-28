@@ -5,24 +5,34 @@ import { connect } from 'react-redux'
 import R from 'ramda'
 export const CREATE_TOAST = 'CREATE_TOAST'
 export const HIDE_TOAST = 'HIDE_TOAST'
+
 let id = 1
+
+type optionsT = {
+  id: string,
+  title?: string,
+  message?: string,
+}
+
+export const createToast = (payload: optionsT) => ({
+  type: CREATE_TOAST,
+  payload,
+})
+
+export const hideToast = (payload: optionsT) => ({
+  type: HIDE_TOAST,
+  payload,
+})
+
 export const toast = (options: Object) => (title: string, message: ?string) => (dispatch: Function) => {
   const key = String(id++)
-  dispatch({
-    type: CREATE_TOAST,
-    payload: {
-      id: key,
-      title,
-      message,
-      ...options
-    }
-  })
-  setTimeout(() => dispatch({
-    type: HIDE_TOAST,
-    payload: {
-      id: key,
-    }
-  }), 3000)
+  dispatch(createToast({
+    id: key,
+    title,
+    message,
+    ...options
+  }))
+  setTimeout(() => dispatch(hideToast({ id: key, })), 3000)
 }
 
 export const successToast = toast({type: 'success'})
