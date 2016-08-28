@@ -8,7 +8,6 @@ import promiseMiddleware from 'redux-promise';
 export const createMockStore = (thunkArgument: any) => (initialState: any) => {
   const middleware = [
     promiseMiddleware,
-    routerMiddleware(browserHistory),
     thunk.withExtraArgument(thunkArgument)
   ]
   return configureStore(middleware)(initialState)
