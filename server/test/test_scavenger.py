@@ -349,18 +349,48 @@ class TestAnswerClue(TestCase):
         user = MagicMock()
         message = Message('correct answer')
         group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
+
         result = answer(message, user, group_mock)
+
         self.assertEqual(CLUE, result.response_type)
         self.assertEqual('STORY:SECONDCLUE', result.group.clue_uid)
 
-    def test_does_match_with_proper_receiver(self):
+
+    def test_requires_matching_receiver(self):
         answers = [
             Answer(pattern=r'.*', next_clue='STORY:FIRSTCLUE', receiver=SECONDARY_SERVER_PHONE),
             Answer(pattern=r'.*', next_clue='STORY:SECONDCLUE')
         ]
         user = MagicMock()
-        message = Message('correct answer', receiver=SECONDARY_SERVER_PHONE)
+        message = Message('correct answer')
         group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
         result = answer(message, user, group_mock)
         self.assertEqual(CLUE, result.response_type)
-        self.assertEqual('STORY:FIRSTCLUE', result.group.clue_uid)
+        self.assertEqual('STORY:SECONDCLUE', result.group.clue_uid)
+
+
+    def test_matches_if_media_given(self):
+        answers = [
+            Answer(pattern=r'.*', next_clue='STORY:FIRSTCLUE', require_media=True),
+            Answer(pattern=r'.*', next_clue='STORY:SECONDCLUE')
+        ]
+        user = MagicMock()
+        message_with_media = Message('correct answer', media_url='www.example.com/caturday.png')
+        group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
+
+        result_with_media = answer(message_with_media, user, group_mock)
+
+        self.assertEqual('STORY:FIRSTCLUE', result_with_media.group.clue_uid)
+
+    def test_requires_media(self):
+        answers = [
+            Answer(pattern=r'.*', next_clue='STORY:FIRSTCLUE', require_media=True),
+            Answer(pattern=r'.*', next_clue='STORY:SECONDCLUE')
+        ]
+        user = MagicMock()
+        message_without_media = Message('correct answer')
+        group_mock = Mock(clue=Mock(is_endpoint=False, hint='My Hint', answers=answers))
+
+        result_without_media = answer(message_without_media, user, group_mock)
+
+        self.assertEqual('STORY:SECONDCLUE', result_without_media.group.clue_uid)

@@ -142,6 +142,7 @@ def get_next_clue(message, answers):
          for answer in answers
          if regex_match(answer.pattern, message.text)
          and (answer.receiver == message.receiver or not answer.receiver)
+         and (message.media_url or not answer.require_media)
          ),
         (None, None))
     return next_clue, answer_data
