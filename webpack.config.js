@@ -11,7 +11,8 @@ module.exports = {
     'styles': [
       './client/css/style',
       './client/css/bulma',
-      './client/css/toastr'
+      './client/css/toastr',
+      './client/css/sweetalert',
     ],
     'vendor': [
       'react',
@@ -34,7 +35,7 @@ module.exports = {
     filename: "[name].[hash].js",
     sourceMapFilename: "[name].[hash].map.js",
   },
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'sourceMap',
   devServer: {
     contentBase: path.resolve(__dirname, 'server', 'static'),
     publicPath: '/static/',
