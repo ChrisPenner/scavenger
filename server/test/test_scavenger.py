@@ -27,7 +27,7 @@ SECONDARY_SERVER_PHONE = '+7775554321'
 
 
 def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE, media_url=None):
-    request = Request.blank('/api/message')
+    request = Request.blank('/messages')
     request.method = 'POST'
     request.POST.update({
         'From': sender,

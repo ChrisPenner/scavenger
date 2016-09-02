@@ -6,8 +6,12 @@ threadsafe: yes
 
 handlers:
 
+- url: /messages.*
+  script: app.main.app
+
 - url: /api/.*
   script: app.main.app
+  login: admin
 
 - url: /backup.*
   script: app.main.app

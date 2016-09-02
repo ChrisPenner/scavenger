@@ -32,4 +32,4 @@ export const createClue: routeT = (storyId: ?string) => `/stories/${storyId || S
 export const createAnswer: routeT = (storyId: ?string, clueId: ?string) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-answer`
 
 export const explorer: routeT = () => `/explorer`
-export const message: routeT = () => `/api/message`
+export const message: routeT = () => `/messages`

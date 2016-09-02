@@ -165,6 +165,7 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
   return fetch(Routes.message(), {
     method: 'POST',
     body: formData,
+    credentials: 'same-origin',
   }).then(resp => resp.text())
     .then(parseTwiML)
     .then(makeMessageObjects)

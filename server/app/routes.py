@@ -14,7 +14,7 @@ ROUTES = [
         ResourceRoutes('stories', Story),
         ResourceRoutes('clues', Clue),
         ResourceRoutes('answers', Answer),
-        Route('/message', TwilioHandler)
         ]),
+    Route('/messages', TwilioHandler),
     Route('/backup', BackupHandler),
 ]

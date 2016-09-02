@@ -36,6 +36,7 @@ const processResponse = (respPromise) => {
 const apiRequest = (route, method: MethodType='GET', payload=undefined) => {
   const options: Object = {
     method,
+    credentials: 'same-origin',
   }
   if (payload !== undefined) {
     options.body = JSON.stringify(decamelizeKeys(payload))
