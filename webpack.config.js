@@ -45,7 +45,13 @@ module.exports = {
     proxy: {
       "/api/*": {
         target: 'http://localhost:8080',
-      }
+      },
+      "/admin/*": {
+        target: 'http://localhost:8080',
+      },
+      "/messages": {
+        target: 'http://localhost:8080',
+      },
     }
   },
   module: {
