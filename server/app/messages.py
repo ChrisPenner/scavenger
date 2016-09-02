@@ -7,6 +7,8 @@ ALREADY_IN_GROUP = Message("You're already in that group")
 JOINED_GROUP = Message("You've joined the group! Here's the last message:")
 RESTARTED = Message("Restarted")
 END_OF_STORY = Message("Looks like you've hit the end of the story, text 'restart' to try again!")
+CODE_ALREADY_USED = Message("Looks like this code has already been used! Try texting 'restart' "
+                            "if you already entered a code.")
 
 
 def start_new_story(code):

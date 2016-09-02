@@ -3,8 +3,9 @@ import re
 import logging
 from collections import namedtuple
 
-from webapp2 import RequestHandler, abort
+from webapp2 import RequestHandler
 
+from app.models.story_code import StoryCode
 from models.clue import Clue
 from twilio import twiml
 from models.user import User
@@ -12,7 +13,7 @@ from models.group import Group
 from models.story import Story
 from models.message import Message
 from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED
 
 # Message Types
 START_STORY = 'START_STORY'
@@ -29,6 +30,7 @@ HINT = 'HINT'
 Result = namedtuple('Result', ['response_type', 'messages', 'user', 'group'])
 
 regex_match = partial(re.search, flags=re.IGNORECASE | re.UNICODE)
+regex_dotall = partial(re.search, flags=re.IGNORECASE | re.UNICODE | re.DOTALL)
 
 
 def twiml_response(user, group, response_type, messages):
@@ -91,14 +93,19 @@ def perform_action(message_type, message, user, group):
 
 
 def start_story(message, user, group):
-    match = regex_match(r'^start (?P<code>.+)', message.text.lower())
-    story_uid = match.groupdict().get('code')
-    start_clue = Clue.get_by_id('{}:START'.format(story_uid)) if story_uid else None
-    if not start_clue:
-        logging.info("Couldn't find story for story_uid: %s", story_uid)
+    match = regex_dotall(r'^start (?P<code>.+)', message.text.lower())
+    code = match.groupdict().get('code')
+    story_code = StoryCode.build_key(code).get()
+    if not story_code:
+        logging.info("Couldn't find story for code: %s", code)
         return Result(response_type=INFO, messages=[STORY_NOT_FOUND], user=user, group=group)
+    if story_code.used:
+        logging.info("Story code already used: %s", code)
+        return Result(response_type=INFO, messages=[CODE_ALREADY_USED], user=user, group=group)
+    story_code.use()
+    start_clue = Clue.get_by_id('{}:START'.format(story_code.story_uid))
     group_code = Group.gen_uid()
-    group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_uid, user_keys=[user.key])
+    group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_code.story_uid, user_keys=[user.key])
     return Result(
         response_type=INFO,
         messages=[start_new_story(group_code),
@@ -172,7 +179,7 @@ class TwilioHandler(RequestHandler):
     def post(self):
         if self.request.POST.get('Body') is None or self.request.POST.get('From') is None:
             logging.error('Body and From params required')
-            return abort(400, 'Body and From params required')
+            return self.abort(400, 'Body and From params required')
 
         message = Message(
             text=self.request.POST.get('Body').strip(),

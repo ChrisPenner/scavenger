@@ -2,6 +2,7 @@ from unittest import TestCase
 from webapp2 import Request
 
 from app.models.message import Message
+from app.models.story_code import generate_codes, StoryCode
 from mock import Mock, patch, MagicMock
 
 from google.appengine.ext import testbed, ndb
@@ -12,7 +13,7 @@ from app.models.answer import Answer
 from app.models.group import Group
 
 from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER, JOINED, INFO
 
 from app.scavenger import twiml_response, format_message, determine_message_type, perform_action, \
@@ -22,6 +23,8 @@ from app.models.user import User
 
 
 USER_PHONE = '+5551234567'
+SECONDARY_USER_PHONE = '+3334442222'
+
 PRIMARY_SERVER_PHONE = '+9998765432'
 SECONDARY_SERVER_PHONE = '+7775554321'
 
@@ -48,16 +51,26 @@ def send_message(message, sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE, medi
     return response.status_int, response.body
 
 
-class TestScavenger(TestCase):
-    """ Integration tests """
+class GAETestCase(TestCase):
+    """ Mock out GAE architecture """
     def setUp(self):
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
         ndb.get_context().set_cache_policy(False)
+
+    def tearDown(self):
+        self.testbed.deactivate()
+
+class TestScavenger(GAETestCase):
+    """ Integration tests """
+    def setUp(self):
+        super(TestScavenger, self).setUp()
         self.story = Story.from_uid('STORY', default_hint='default hint')
         self.story.put()
+        self.story_code = StoryCode.from_words('salsa tacos', story_uid=self.story.uid)
+        self.story_code.put()
         self.start_clue = Clue.from_uid(Clue.build_uid(self.story.uid, 'START'), text='Start the story', hint='clue hint')
         self.start_clue.put()
         self.next_clue = Clue.from_uid(Clue.build_uid(self.story.uid, 'NEXT'), text='You made it!', sender="+555")
@@ -68,9 +81,6 @@ class TestScavenger(TestCase):
             next_clue=self.next_clue.uid,
             )
         self.answer.put()
-
-    def tearDown(self):
-        self.testbed.deactivate()
 
     def test_post_requires_body(self):
         status, _ = send_message(None)
@@ -86,7 +96,7 @@ class TestScavenger(TestCase):
         self.assertEqual(200, status)
 
     def test_start_new_story(self):
-        status, response = send_message('start {}'.format(self.story.uid))
+        status, response = send_message('start {}'.format(self.story_code.word_string))
         self.assertIn(self.start_clue.text, response)
         self.assertEqual(200, status)
 
@@ -94,7 +104,7 @@ class TestScavenger(TestCase):
         self.answer.receiver = SECONDARY_SERVER_PHONE
         self.answer.put()
 
-        send_message('start {}'.format(self.story.uid))
+        send_message('start {}'.format(self.story_code.word_string))
 
         status, response = send_message('my answer is 42')
         self.assertEqual(200, status)
@@ -108,7 +118,7 @@ class TestScavenger(TestCase):
         self.answer.require_media = True
         self.answer.put()
 
-        send_message('start {}'.format(self.story.uid))
+        send_message('start {}'.format(self.story_code.word_string))
 
         status, response = send_message('my answer is 42')
         self.assertEqual(200, status)
@@ -118,6 +128,26 @@ class TestScavenger(TestCase):
         self.assertEqual(200, status)
         self.assertIn(self.next_clue.text, response)
 
+    def test_cant_use_code_more_than_once_if_single_use(self):
+        self.story_code.single_use = True
+        self.story_code.put()
+        status, response = send_message('start {}'.format(self.story_code.word_string))
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.text, response)
+
+        status, response = send_message('start {}'.format(self.story_code.word_string), sender=SECONDARY_USER_PHONE)
+        self.assertEqual(200, status)
+        self.assertIn(CODE_ALREADY_USED.text, response)
+
+    def test_can_use_code_more_than_once_if_not_single_use(self):
+        status, response = send_message('start {}'.format(self.story_code.word_string))
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.text, response)
+
+        status, response = send_message('start {}'.format(self.story_code.word_string), sender=SECONDARY_USER_PHONE)
+        self.assertEqual(200, status)
+        self.assertIn(self.start_clue.text, response)
+
     def test_flow_through_story(self):
         # start non-existent story
         status, response = send_message('start asdf')
@@ -125,7 +155,7 @@ class TestScavenger(TestCase):
         self.assertIn(STORY_NOT_FOUND.text, response)
 
         # start story
-        status, response = send_message('start {}'.format(self.story.uid))
+        status, response = send_message('start {}'.format(self.story_code.word_string))
         self.assertEqual(200, status)
         self.assertIn(self.start_clue.text, response)
 
@@ -147,6 +177,14 @@ class TestScavenger(TestCase):
         self.assertIn(RESTARTED.text, response)
         self.assertEqual(200, status)
         self.assertIn(self.start_clue.text, response)
+
+
+class TestCodeGen(GAETestCase):
+    def test_generates_enough_codes(self):
+        generate_codes('MYUID', 5, True)
+        codes = StoryCode.query().fetch()
+        self.assertEqual(5, len(codes))
+        self.assertTrue(all(code.story_uid == 'MYUID' and code.single_use is True for code in codes))
 
 
 class TestSplitData(TestCase):
@@ -265,14 +303,18 @@ class TestPerformAction(TestCase):
         self.assertEqual([HOW_TO_START.text], [m.text for m in result.messages])
 
     @patch('app.scavenger.Clue.get_by_id', new=Mock(return_value=None))
-    def test_returns_expected_story_not_found(self):
+    @patch('app.scavenger.StoryCode')
+    def test_returns_expected_story_not_found(self, story_code_mock):
+        story_code_mock.build_key.return_value.get.return_value = None
         user = Mock()
         result = perform_action(START_STORY, Message('start blah'), user, None)
         self.assertEqual([STORY_NOT_FOUND], result.messages)
 
     @patch('app.scavenger.Group')
     @patch('app.scavenger.Clue')
-    def test_returns_expected_starting_new_story(self, clue_mock, group_mock):
+    @patch('app.scavenger.StoryCode')
+    def test_returns_expected_starting_new_story(self, story_code_mock, clue_mock, group_mock):
+        story_code_mock.build_key.return_value.get.return_value = StoryCode(story_uid="STORY")
         clue_mock.get_by_id.return_value = Clue(text='test')
         clue = Clue(text='test')
         group_mock.return_value.current_clue = clue
