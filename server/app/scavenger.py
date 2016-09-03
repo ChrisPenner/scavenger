@@ -188,7 +188,7 @@ class TwilioHandler(RequestHandler):
         )
 
         from_phone = self.request.get('From')
-        logging.info('Received text from %s with media: [%s] message:\n%s', from_phone, message.media_url, message.text)
+        logging.info('Received text from %s with media: %s message:\n%s', from_phone, message.media_url, message.text)
 
         user = User.get_by_id(from_phone)
         if user:

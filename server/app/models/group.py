@@ -3,7 +3,6 @@ from uuid import uuid4
 from google.appengine.ext import ndb
 
 from app.models.clue import Clue
-from app.models.clue import Story
 
 
 class Group(ndb.Model):
@@ -18,7 +17,7 @@ class Group(ndb.Model):
 
     @property
     def users(self):
-        pass
+        return [k.id() for k in self.user_keys]
 
     @property
     def clue(self):
