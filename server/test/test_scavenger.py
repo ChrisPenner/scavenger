@@ -39,7 +39,7 @@ def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SER
     })
     if media_url:
         request.POST.update({
-            'MediaUrl': media_url,
+            'MediaUrl0': media_url,
             'NumMedia': 1,
         })
     return request

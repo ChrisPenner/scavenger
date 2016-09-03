@@ -148,8 +148,8 @@ def get_next_clue(message, answers):
         ((answer.next_clue, regex_match(answer.pattern, message.text).groupdict())
          for answer in answers
          if regex_match(answer.pattern, message.text)
-         and (answer.receiver == message.receiver or not answer.receiver)
          and (message.media_url or not answer.require_media)
+         and (answer.receiver == message.receiver or not answer.receiver)
          ),
         (None, None))
     return next_clue, answer_data
@@ -184,11 +184,11 @@ class TwilioHandler(RequestHandler):
         message = Message(
             text=self.request.POST.get('Body').strip(),
             receiver=self.request.POST.get('To'),
-            media_url=self.request.POST.get('MediaUrl'),
+            media_url=self.request.POST.get('MediaUrl0'),
         )
 
         from_phone = self.request.get('From')
-        logging.info('Received text from %s with message:\n%s', from_phone, message.text)
+        logging.info('Received text from %s with media: [%s] message:\n%s', from_phone, message.media_url, message.text)
 
         user = User.get_by_id(from_phone)
         if user:
