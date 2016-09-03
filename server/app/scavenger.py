@@ -20,6 +20,7 @@ START_STORY = 'START_STORY'
 JOIN_GROUP = 'JOIN_GROUP'
 RESTART = 'RESTART'
 ANSWER = 'ANSWER'
+REPEAT_CLUE = 'REPEAT_CLUE'
 
 # Response Types
 INFO = 'INFO'
@@ -75,6 +76,8 @@ def determine_message_type(message):
         return JOIN_GROUP
     elif text.startswith('restart'):
         return RESTART
+    elif text.startswith('clue'):
+        return REPEAT_CLUE
     else:
         return ANSWER
 
@@ -84,12 +87,24 @@ def perform_action(message_type, message, user, group):
         return start_story(message, user, group)
     elif message_type == JOIN_GROUP:
         return join_group(message, user)
+    elif message_type == REPEAT_CLUE:
+        return repeat_clue(message, user, group)
     if not user.group_uid:
         return Result(response_type=INFO, messages=[HOW_TO_START], user=user, group=None)
     elif message_type == RESTART:
         return restart(user, group)
     else:  # ANSWER
         return answer(message, user, group)
+
+
+def repeat_clue(message, user, group):
+    logging.info("Repeating clue")
+    return Result(
+        response_type=INFO,
+        messages=[group.clue],
+        user=user,
+        group=group,
+    )
 
 
 def start_story(message, user, group):
