@@ -159,7 +159,7 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
   formData.append('To', receiver)
   formData.append('Body', text)
   if(mediaUrl) {
-    formData.append('MediaUrl', mediaUrl)
+    formData.append('MediaUrl0', mediaUrl)
     formData.append('NumMedia', '1')
   }
   return fetch(Routes.message(), {
