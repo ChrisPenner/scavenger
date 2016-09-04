@@ -12,7 +12,6 @@ CODE_ALREADY_USED = Message("Looks like this code has already been used! Try tex
 
 
 def start_new_story(code):
-    return Message("""Starting the adventure! Your friends can text 'join {}' to join you.
-                   Throughout the adventure please guess as much as you like! You can text 'hint' to get some help,
-                   or text 'clue' to repeat the last clue you received! Good luck!
-                   """.format(code))
+    return Message(("Starting the adventure! Your friends can text 'join {}' to join you. "
+                   "Throughout the adventure please guess as much as you like! You can text 'hint' to get some help, "
+                   "or text 'clue' to repeat the last clue you received! Good luck!").format(code))
