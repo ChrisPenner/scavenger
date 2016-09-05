@@ -78,11 +78,11 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
         Hint
       </label>
       <div className="control">
-        <input
+        <textarea
           id="hint"
-          className="input"
+          className="textarea"
           value={clue.hint || ''}
-          placeholder="A hint in case they get it wrong"
+          placeholder="The text of the hint"
           onChange={(e) => changeClue([clue.uid, 'hint'], e.target.value)} />
       </div>
 
