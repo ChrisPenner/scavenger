@@ -66,20 +66,6 @@ class Create extends React.Component {
           </div>
           <label
             className="label"
-            htmlFor="hint">
-            Hint
-          </label>
-          <div className="control">
-            <textarea
-              id="hint"
-              className="textarea"
-              onChange={(e) => this.update({
-                          hint: e.target.value
-                        })}
-              value={this.state.hint} />
-          </div>
-          <label
-            className="label"
             htmlFor="text">
             Text
           </label>
@@ -91,6 +77,20 @@ class Create extends React.Component {
                           text: e.target.value
                         })}
               value={this.state.text} />
+          </div>
+          <label
+            className="label"
+            htmlFor="hint">
+            Hint
+          </label>
+          <div className="control">
+            <textarea
+              id="hint"
+              className="textarea"
+              onChange={(e) => this.update({
+                          hint: e.target.value
+                        })}
+              value={this.state.hint} />
           </div>
           <button
             onClick={this.create}
