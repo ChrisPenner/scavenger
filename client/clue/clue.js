@@ -118,7 +118,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
       <label
         className="label"
         htmlFor="test-message">
-        Test a Message:
+        Test a Message
       </label>
       <div className="control">
         <input
