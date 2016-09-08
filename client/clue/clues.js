@@ -6,6 +6,7 @@ import { Link } from 'react-router'
 
 import { getCluesByStory } from '../reducers'
 import * as Routes from '../routes'
+import { startDrag, dropClue } from '../actions'
 
 const stateToProps = (state, {storyUid}) => {
   return {
@@ -15,11 +16,15 @@ const stateToProps = (state, {storyUid}) => {
 }
 
 const Clues = ({clues, storyUid}) => {
-  const clueLinks = clues.map(clue => (
+  const clueLinks = clues.map((clue, index) => (
     <Link
       key={clue.uid}
       to={Routes.clue(clue.uid)}
-      className="my-list-item">
+      className="my-list-item"
+      draggable="true"
+      onDragStart={() => startDrag(clue.uid)}
+      onDrop={() => dropClue(index)}
+      onDragOver={(e) => e.preventDefault()}>
       {clue.uid}
     </Link>
     ))

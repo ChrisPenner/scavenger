@@ -64,6 +64,12 @@ export const dropAnswer = (index: number) => (dispatch: any, getState: Function)
   dispatch({ type: at.DROP_ANSWER, payload: {uid, index}})
 }
 
+
+export const dropClue = (index: number) => (dispatch: any, getState: Function) => {
+  const uid = getDragData(getState())
+  dispatch({ type: at.DROP_CLUE, payload: {uid, index}})
+}
+
 const saveResource = (resource: ResourceT, setResource: Function, getResourceState: Function) => (uid: string) => (dispatch: any, getState: Function, { PUT }: apiT) => {
   const currentState = getResourceState(getState(), uid)
   return PUT(resource, uid, currentState)

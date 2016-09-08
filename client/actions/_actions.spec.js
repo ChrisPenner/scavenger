@@ -59,4 +59,13 @@ describe('Actions', function() {
     })
   });
 
+  describe('dropClue', function() {
+    it('should dispatch DROP_CLUE with uid from dropData', function() {
+      const store = initStore({ui: {dragData: 42}})
+      store.dispatch(dropClue(1))
+      const actions = store.getActions()
+      expect(actions).to.eql([{ type: at.DROP_CLUE, payload: {uid: 42, index: 1} }])
+    })
+  });
+
 })

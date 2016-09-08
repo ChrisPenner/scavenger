@@ -7,6 +7,7 @@ const actionsList = [
   'START_DRAG',
   'STOP_DRAG',
   'DROP_ANSWER',
+  'DROP_CLUE',
 
   'RECEIVE_MESSAGE',
   'SEND_MESSAGE',
