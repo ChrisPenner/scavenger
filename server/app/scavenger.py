@@ -136,14 +136,14 @@ def join_group(message, user):
     group_uid = match.groupdict().get('group_uid')
     if user.group_uid == group_uid:
         logging.info("Already in group for group_uid: %s", group_uid)
-        return [ALREADY_IN_GROUP]
+        return Result(response_type=INFO, messages=[ALREADY_IN_GROUP], user=user, group=user.group)
     if not group_uid:
         logging.info("Need to specify a group_uid")
-        return [NO_GROUP_FOUND]
+        return Result(response_type=INFO, messages=[NO_GROUP_FOUND], user=user, group=None)
     group = Group.get_by_id(group_uid)
     if not group:
         logging.info("Couldn't find group for group_uid: %s", group_uid)
-        return [NO_GROUP_FOUND]
+        return Result(response_type=INFO, messages=[NO_GROUP_FOUND], user=user, group=None)
     group.user_keys.append(user.key)
     user.group_uid = group.uid
     clue = group.clue
