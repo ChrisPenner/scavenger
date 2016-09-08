@@ -329,13 +329,13 @@ class TestPerformAction(TestCase):
         group_mock.get_by_id.return_value = None
         user = Mock()
         result = perform_action(JOIN_GROUP, Message('join blah'), user, None)
-        self.assertEqual([NO_GROUP_FOUND], result)
+        self.assertEqual([NO_GROUP_FOUND.text], [m.text for m in result.messages])
 
     @patch('app.scavenger.Group', new=Mock())
     def test_returns_expected_already_in_group(self):
         user = User(group_uid='code')
         result = perform_action(JOIN_GROUP, Message('join code'), user, Group())
-        self.assertEqual([ALREADY_IN_GROUP], result)
+        self.assertEqual([ALREADY_IN_GROUP.text], [m.text for m in result.messages])
 
     @patch('app.scavenger.Group')
     def test_returns_expected_joined_group(self, group_mock):
