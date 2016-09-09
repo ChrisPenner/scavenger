@@ -1,10 +1,12 @@
 from google.appengine.ext import ndb
+
+from app.models.message import Message
 from app.models.story import Story
 from app.models.utils import get_story_uid
 from .validators import phone_number
 
 
-class Clue(ndb.Model):
+class Clue(Message):
     DATA_FIELDS = ['text', 'hint', 'media_url', 'answer_uids', 'sender']
 
     uid = ndb.StringProperty(required=True)

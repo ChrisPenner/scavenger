@@ -6,6 +6,7 @@ from app.generate_codes import GenerateCodesHandler
 from webapp2_extensions import ResourceRoutes
 
 from scavenger import TwilioHandler
+from message_handlers import StoryMessagesHandler
 from app.models.story import Story
 from app.models.clue import Clue
 from app.models.answer import Answer
@@ -21,4 +22,6 @@ ROUTES = [
         Route('/gen-codes', GenerateCodesHandler),
     ]),
     Route('/messages', TwilioHandler),
+    Route('/messages/story/<story_uid:[^/]+>', StoryMessagesHandler),
+    # Route('/messages/group/<group_uid:[^/]+>', GroupMessagesHandler),
 ]
