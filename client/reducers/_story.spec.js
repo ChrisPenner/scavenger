@@ -1,17 +1,21 @@
 /* @flow */
 import { expect } from 'chai'
 import R from 'ramda'
+import { applyThunk } from '../lib/redux-test'
 
 import at from '../action-types'
 import reducer from './story'
-import { changeStory, setStory, setClue } from '../actions'
+import { changeStory, setStory, setClue, dropClue } from '../actions'
 import { Story, Clue } from '../resources'
 
 describe('Story Reducer', function() {
+  const clueUid = 'STORY:CLUE1'
+  const secondClueUid = 'STORY:CLUE2'
+  const thirdClueUid = 'STORY:CLUE3'
   const startStory = Story.new({
     uid: 'STORY',
     defaultHint: 'my hint',
-    clues: ['STORY:CLUE'],
+    clues: [clueUid, secondClueUid, thirdClueUid],
   })
   const startStories = {
     [startStory.uid]: startStory,
@@ -22,6 +26,8 @@ describe('Story Reducer', function() {
     defaultHint: 'my new hint',
     clues: ['NEWSTORY:NEWCLUE'],
   })
+
+  const testThunk = applyThunk(reducer, startStories)
 
   it('should return a default state', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
@@ -91,6 +97,23 @@ describe('Story Reducer', function() {
       const action = setClue(newClue)
       const newState = reducer(startStories, action)
       expect(R.allUniq(newState[startStory.uid].clues)).to.be.true
+    });
+  });
+
+  describe('DROP_CLUE', function() {
+    it("should move a clue earlier", function() {
+      const newState = testThunk({ui: {dragData: clueUid}}, dropClue(2))
+      expect(newState[startStory.uid].clues).to.eql([secondClueUid, thirdClueUid, clueUid])
+    });
+
+    it("should move a clue later", function() {
+      const newState = testThunk({ui: {dragData: thirdClueUid}}, dropClue(1))
+      expect(newState[startStory.uid].clues).to.eql([clueUid, thirdClueUid, secondClueUid])
+    });
+
+    it("should not move a clue when same index", function() {
+      const newState = testThunk({ui: {dragData: secondClueUid}}, dropClue(1))
+      expect(newState[startStory.uid].clues).to.eql([clueUid, secondClueUid, thirdClueUid])
     });
   });
 });

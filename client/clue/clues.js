@@ -15,7 +15,7 @@ const stateToProps = (state, {storyUid}) => {
   }
 }
 
-const Clues = ({clues, storyUid}) => {
+const Clues = ({clues, storyUid, startDrag, dropClue}) => {
   const clueLinks = clues.map((clue, index) => (
     <Link
       key={clue.uid}
@@ -45,7 +45,10 @@ Clues.propTypes = {
   clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
   storyUid: React.PropTypes.string.isRequired,
 }
-export default connect(stateToProps)(Clues)
+export default connect(stateToProps, {
+  startDrag,
+  dropClue
+})(Clues)
 
 
 

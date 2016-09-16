@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { createMockStore } from '../_store.spec.js'
 
 import at from '../action-types'
-import { saveStory, setStory, createStory, dropAnswer} from './'
+import { saveStory, setStory, createStory, dropAnswer, dropClue} from './'
 import reducer from '../reducers'
 import { Story } from '../resources'
 import { createToast, CREATE_TOAST } from '../lib/wisp'
