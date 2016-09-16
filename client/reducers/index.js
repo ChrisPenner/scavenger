@@ -33,9 +33,14 @@ export const getClues = (state: Object) => state.clues
 export const getClueUidsByStory = (state: Object, storyUid: string) => getStory(state, storyUid).clues
 export const getCluesList = (state: Object) => listFromMapping(state.clues)
 export const getCluesByStory = (state: Object, storyUid: string) => {
-  const equalsStoryUid = R.compose(R.equals(storyUid), R.prop('storyUid'))
-  return getCluesList(state).filter(equalsStoryUid)
+  return getClueUidsByStory(state, storyUid).map(clueUid => getClue(state, clueUid))
 }
+
+// export const getCluesByStory = (state: Object, storyUid: string) => {
+//   const equalsStoryUid = R.compose(R.equals(storyUid), R.prop('storyUid'))
+//   return getCluesList(state).filter(equalsStoryUid)
+// }
+
 export const getCluesListByStory = (state: Object, storyUid: string) => getCluesByStory(state, storyUid)
 
 export const getStory = (state: Object, storyUid: string) => state.stories[storyUid]
