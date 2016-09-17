@@ -27,7 +27,7 @@ export default commonReducer(Story.type,
       transformClueUids(({uid}) => R.without(uid))
     ),
     [at.DROP_CLUE]: (
-      transformClueUids(({index, uid}) => R.compose(R.insert(index, uid), R.without(uid)))
+      transformClueUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
     ),
   }, DEFAULT_STATE)
 )
