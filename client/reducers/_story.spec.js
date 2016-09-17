@@ -13,8 +13,20 @@ describe('Story Reducer', function() {
     defaultHint: 'my hint',
     clues: ['STORY:CLUE'],
   })
+  const startStory2 = Story.new({
+    uid: 'SECONDSTORY',
+    defaultHint: 'my hint',
+    clues: ['SECONDSTORY:CLUE'],
+  })
+  const startStory3 = Story.new({
+    uid: 'STORY2',
+    defaultHint: 'my hint',
+    clues: ['STORY2:CLUE'],
+  })
   const startStories = {
     [startStory.uid]: startStory,
+    [startStory2.uid]: startStory2,
+    [startStory3.uid]: startStory3
   }
 
   const newStory = Story.new({
@@ -49,6 +61,12 @@ describe('Story Reducer', function() {
         [startStory.uid]: {
           ...startStory,
           defaultHint: '42',
+        },
+        [startStory2.uid]: {
+          ...startStory2
+        },
+        [startStory3.uid]: {
+          ...startStory3
         }
       })
       expect(newState[startStory.uid]).not.to.equal(startStory)
@@ -61,6 +79,27 @@ describe('Story Reducer', function() {
       const action = setStory(newStory)
       const newState = reducer(startStories, action)
       expect(newState[startStory.uid]).to.eql(newStory)
+    });
+  });
+
+  describe(at.del(Story.type), function() {
+    it('should have the list minus the deleted item', function() {
+      const action = {type: at.del(Story.type), payload: {uid: startStory3.uid}}
+      const newState = reducer(startStories, action)
+      expect(newState).to.eql({
+        [startStory2.uid]: {
+          ...startStory2
+        },
+        [startStory.uid]: {
+          ...startStory
+        },
+      })
+    });
+
+    it('should delete the specific story deleted', function() {
+      const action = {type: at.del(Story.type), payload: {uid: startStory3.uid}}
+      const newState = reducer(startStories, action)
+      expect(newState).to.not.contain(startStory3)
     });
   });
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import { uidsFromParams } from '../utils'
 import { getStory } from '../reducers'
-import { changeStory, saveStory } from '../actions'
+import { changeStory, saveStory, deleteStory } from '../actions'
 import { Clues } from '../clue'
 
 const stateToProps = (state, {params}) => {
@@ -13,7 +13,7 @@ const stateToProps = (state, {params}) => {
     story: getStory(state, storyUid),
   }
 }
-const Story = ({story, changeStory, saveStory}) => {
+const Story = ({story, changeStory, saveStory, deleteStory}) => {
   return (
     <section className="notification is-info">
       <h2> Story </h2>
@@ -21,6 +21,11 @@ const Story = ({story, changeStory, saveStory}) => {
         {story.uid}
       </h1>
       <div className="level">
+        <button
+          className="button is-danger level-item"
+          onClick={() => deleteStory(story.uid)}>
+          Delete
+        </button>
         <button
           className="button is-success level-item"
           onClick={() => saveStory(story.uid)}>
@@ -49,8 +54,10 @@ Story.propTypes = {
   story: React.PropTypes.object.isRequired,
   changeStory: React.PropTypes.func.isRequired,
   saveStory: React.PropTypes.func.isRequired,
+  deleteStory: React.PropTypes.func.isRequired,
 }
 export default connect(stateToProps, {
   changeStory,
-  saveStory
+  saveStory,
+  deleteStory
 })(Story)
