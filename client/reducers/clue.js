@@ -32,7 +32,7 @@ export default transform(validate,
       ),
 
       [at.del(Answer.type)]: (
-        transformAnswerUids(({uid}) => R.without(uid))
+        transformAnswerUids(({uid}) => R.without([uid]))
     ),
 
       [at.DROP_ANSWER]: (
