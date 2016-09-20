@@ -48,6 +48,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --inline --hot --progress --colors --port 3000",
+    "backend": "dev_appserver.py server/app.yaml --require_indexes",
     "test": "mocha --opts ./mocha.opts \"client/**/*.spec.js\"",
     "test:watch": "mocha --opts ./mocha.opts --watch \"client/**/*.spec.js\"",
     "test:all": "npm test && npm run test:server",
