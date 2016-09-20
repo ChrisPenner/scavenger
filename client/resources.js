@@ -14,6 +14,15 @@ const storyFactory = (args: Object): StoryType => ({
   ...args,
 })
 
+export type GroupType = {
+  uid: string,
+}
+
+const groupFactory = (args: Object): GroupType => ({
+  uid: null,
+  ...args,
+})
+
 export type ClueType = {
   uid: string,
   storyUid: string,
@@ -61,6 +70,12 @@ export const Story = {
   type: 'STORY',
 }
 
+export const Group = {
+  route: Routes.group,
+  new: groupFactory,
+  type: 'GROUP',
+}
+
 export const Clue = {
   route: Routes.clue,
   new: clueFactory,
@@ -73,4 +88,4 @@ export const Answer = {
   type: 'ANSWER',
 }
 
-export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER'
+export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP'

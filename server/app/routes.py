@@ -9,12 +9,14 @@ from scavenger import TwilioHandler
 from app.models.story import Story
 from app.models.clue import Clue
 from app.models.answer import Answer
+from app.models.group import Group
 
 ROUTES = [
     PathPrefixRoute('/api', [
         ResourceRoutes('stories', Story),
         ResourceRoutes('clues', Clue),
         ResourceRoutes('answers', Answer),
+        ResourceRoutes('groups', Group),
         ]),
     PathPrefixRoute('/admin', [
         Route('/backup', BackupHandler),

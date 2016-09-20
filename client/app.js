@@ -9,6 +9,7 @@ import store from './store'
 
 import { isLoaded } from './reducers'
 import { Stories, Story, CreateStory } from './story'
+import { Groups, Group } from './group'
 import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
@@ -38,6 +39,11 @@ const App = connect(state => ({loaded: isLoaded(state)}))
             to={Routes.stories()}
             activeClassName="is-active"
             className="nav-item is-tab"> Stories
+          </Link>
+          <Link
+            to={Routes.groups()}
+            activeClassName="is-active"
+            className="nav-item is-tab"> Groups
           </Link>
         </div>
       </nav>
@@ -78,6 +84,9 @@ ReactDOM.render(
         <Route
           path={Routes.stories()}
           components={{ story: Stories }} />
+        <Route
+          path={Routes.groups()}
+          components={{ group: Groups }} />
         <Route
           path={Routes.explorer()}
           components={{ main: Explorer }} />

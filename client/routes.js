@@ -12,6 +12,8 @@ export const INDEX = ''
 export const story: routeT = (uid: ?string) => `/stories/${uid || STORY_ID_PARAM}`
 export const stories: routeT = () => `/stories/`
 
+export const groups: routeT = () => `/groups/`
+
 export const clue: routeT = (uid: ?string) => {
   if (uid) {
     const {clueId, storyId} = splitUid(uid)
