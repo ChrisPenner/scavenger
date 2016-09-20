@@ -7,7 +7,7 @@ from .validators import phone_number
 
 
 class Clue(Message):
-    DATA_FIELDS = ['text', 'hint', 'media_url', 'answer_uids', 'sender']
+    EDITABLE_FIELDS = ['text', 'hint', 'media_url', 'answer_uids', 'sender']
 
     uid = ndb.StringProperty(required=True)
     story_uid = ndb.ComputedProperty(lambda s: get_story_uid(s.uid))

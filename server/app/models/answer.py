@@ -6,7 +6,7 @@ from .validators import not_empty, phone_number
 
 
 class Answer(ndb.Model):
-    DATA_FIELDS = ['pattern', 'next_clue', 'receiver', 'require_media']
+    EDITABLE_FIELDS = ['pattern', 'next_clue', 'receiver', 'require_media']
 
     uid = ndb.StringProperty(required=True)
     clue_uid = ndb.ComputedProperty(lambda s: get_clue_uid(s.uid))

@@ -32,11 +32,11 @@ export default transform(validate,
       ),
 
       [at.del(Answer.type)]: (
-        transformAnswerUids(({uid}) => R.without(uid))
+        transformAnswerUids(({uid}) => R.without([uid]))
     ),
 
       [at.DROP_ANSWER]: (
-        transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without(uid)))
+        transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
       ),
     }, DEFAULT_STATE)
   )

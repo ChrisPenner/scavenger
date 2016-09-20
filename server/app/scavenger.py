@@ -120,6 +120,8 @@ def start_story(message, user, group):
         return Result(response_type=INFO, messages=[CODE_ALREADY_USED], user=user, group=group)
     story_code.use()
     start_clue = Clue.get_by_id('{}:START'.format(story_code.story_uid))
+    if not start_clue:
+        raise ValueError('Story {} has no clue named "START"'.format(story_code.story_uid))
     group_code = Group.gen_uid()
     group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_code.story_uid, user_keys=[user.key])
     return Result(

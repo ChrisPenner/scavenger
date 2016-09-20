@@ -44,7 +44,7 @@ def serialize_json(obj, serializers=None):
     raise TypeError("Failed to serialize {}".format(repr(obj)))
 
 
-def serialize_date_time(dt):
+def serialize_datetime(dt):
     if hasattr(dt, 'isoformat'):
         return dt.isoformat()
     raise TypeError('Received non-date object')
