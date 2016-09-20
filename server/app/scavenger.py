@@ -13,7 +13,8 @@ from models.group import Group
 from models.story import Story
 from models.message import Message
 from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED, START_INSTRUCTIONS, \
+    JOIN_GROUP_INSTRUCTIONS
 
 # Message Types
 START_STORY = 'START_STORY'
@@ -109,6 +110,9 @@ def repeat_clue(message, user, group):
 
 def start_story(message, user, group):
     match = regex_dotall(r'^start (?P<code>.+)', message.text.lower())
+    if not match:
+        logging.info("No start code provided")
+        return Result(response_type=INFO, messages=[START_INSTRUCTIONS], user=user, group=group)
     code = match.groupdict().get('code')
     story_code = StoryCode.build_key(code).get()
     if not story_code:
@@ -133,6 +137,9 @@ def start_story(message, user, group):
 def join_group(message, user, group):
     """ Join group by code """
     match = regex_match(r'^join (?P<group_uid>.+)', message.text.lower())
+    if not match:
+        logging.info("No group code provided")
+        return Result(response_type=INFO, messages=[JOIN_GROUP_INSTRUCTIONS], user=user, group=group)
     group_uid = match.groupdict().get('group_uid')
     if user.group_uid == group_uid:
         logging.info("Already in group for group_uid: %s", group_uid)

@@ -13,7 +13,8 @@ from app.models.answer import Answer
 from app.models.group import Group
 
 from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED, START_INSTRUCTIONS, \
+    JOIN_GROUP_INSTRUCTIONS
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER, JOINED, INFO
 
 from app.scavenger import twiml_response, format_message, determine_message_type, perform_action, \
@@ -322,6 +323,16 @@ class TestPerformAction(TestCase):
         user = User()
         result = perform_action(START_STORY, Message('start blah'), user, None)
         expected_message_text = [start_new_story('abcd').text, clue.text]
+        self.assertEqual(expected_message_text, [m.text for m in result.messages])
+
+    def test_gives_instructions_if_start_code_not_provided(self):
+        result = perform_action(START_STORY, Message('start'), User(), None)
+        expected_message_text = [START_INSTRUCTIONS.text]
+        self.assertEqual(expected_message_text, [m.text for m in result.messages])
+
+    def test_gives_instructions_if_group_code_not_provided(self):
+        result = perform_action(JOIN_GROUP, Message('join'), User(), None)
+        expected_message_text = [JOIN_GROUP_INSTRUCTIONS.text]
         self.assertEqual(expected_message_text, [m.text for m in result.messages])
 
     @patch('app.scavenger.Group')
