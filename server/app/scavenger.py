@@ -86,7 +86,7 @@ def perform_action(message_type, message, user, group):
     if message_type == START_STORY:
         return start_story(message, user, group)
     elif message_type == JOIN_GROUP:
-        return join_group(message, user)
+        return join_group(message, user, group)
     elif message_type == REPEAT_CLUE:
         return repeat_clue(message, user, group)
     if not user.group_uid:
@@ -130,20 +130,20 @@ def start_story(message, user, group):
     )
 
 
-def join_group(message, user):
+def join_group(message, user, group):
     """ Join group by code """
     match = regex_match(r'^join (?P<group_uid>.+)', message.text.lower())
     group_uid = match.groupdict().get('group_uid')
     if user.group_uid == group_uid:
         logging.info("Already in group for group_uid: %s", group_uid)
-        return [ALREADY_IN_GROUP]
+        return Result(response_type=INFO, messages=[ALREADY_IN_GROUP], user=user, group=group)
     if not group_uid:
         logging.info("Need to specify a group_uid")
-        return [NO_GROUP_FOUND]
+        return Result(response_type=INFO, messages=[NO_GROUP_FOUND], user=user, group=None)
     group = Group.get_by_id(group_uid)
     if not group:
         logging.info("Couldn't find group for group_uid: %s", group_uid)
-        return [NO_GROUP_FOUND]
+        return Result(response_type=INFO, messages=[NO_GROUP_FOUND], user=user, group=None)
     group.user_keys.append(user.key)
     user.group_uid = group.uid
     clue = group.clue
