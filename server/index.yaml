@@ -1,0 +1,13 @@
+indexes:
+
+- kind: Message
+  properties:
+  - name: story_uid
+  - name: sent
+    direction: desc
+
+- kind: Message
+  properties:
+  - name: group_uid
+  - name: sent
+    direction: desc

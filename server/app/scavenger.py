@@ -3,6 +3,7 @@ import re
 import logging
 from collections import namedtuple
 
+from google.appengine.ext import ndb
 from webapp2 import RequestHandler
 
 from app.models.story_code import StoryCode
@@ -123,6 +124,8 @@ def start_story(message, user, group):
         return Result(response_type=INFO, messages=[CODE_ALREADY_USED], user=user, group=group)
     story_code.use()
     start_clue = Clue.get_by_id('{}:START'.format(story_code.story_uid))
+    if not start_clue:
+        raise ValueError('Story {} has no clue named "START"'.format(story_code.story_uid))
     group_code = Group.gen_uid()
     group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_code.story_uid, user_keys=[user.key])
     return Result(
@@ -192,9 +195,9 @@ def answer(message, user, group):
     # They got the answer wrong - send them a hint
     logging.info('Sending hint')
     if clue.hint:
-        return Result(response_type=HINT, messages=[Message(clue.hint)], user=user, group=group)
+        return Result(response_type=HINT, messages=[Message(text=clue.hint)], user=user, group=group)
     story = Story.get_by_id(group.story_uid)
-    return Result(response_type=HINT, messages=[Message(story.default_hint)], user=user, group=group)
+    return Result(response_type=HINT, messages=[Message(text=story.default_hint)], user=user, group=group)
 
 
 class TwilioHandler(RequestHandler):
@@ -203,14 +206,15 @@ class TwilioHandler(RequestHandler):
             logging.error('Body and From params required')
             return self.abort(400, 'Body and From params required')
 
-        message = Message(
+        user_message = Message(
             text=self.request.POST.get('Body').strip(),
             receiver=self.request.POST.get('To'),
+            sender=self.request.POST.get('From'),
             media_url=self.request.POST.get('MediaUrl0'),
         )
 
         from_phone = self.request.get('From')
-        logging.info('Received text from %s with media: %s message:\n%s', from_phone, message.media_url, message.text)
+        logging.info('Received text from %s with media: %s message:\n%s', from_phone, user_message.media_url, user_message.text)
 
         user = User.get_by_id(from_phone)
         if user:
@@ -219,15 +223,27 @@ class TwilioHandler(RequestHandler):
             logging.info('Creating new user for %s', from_phone)
             user = User(id=from_phone)
 
-        message_type = determine_message_type(message.text)
+        message_type = determine_message_type(user_message.text)
         logging.info('Message of type: %s', message_type)
         group = user.group
-        response_type, messages, user, group = perform_action(message_type, message, user, group)
+        response_type, messages, user, group = perform_action(message_type, user_message, user, group)
         responses = [format_message(m, user, group) for m in messages]
         logging.info('Responding with: %s', responses)
         self.response.body = twiml_response(user, group, response_type, responses)
         self.response.headers['Content-Type'] = 'text/xml'
         logging.info('Responding: %s', self.response.body)
+
+        user_message.story_uid = group.story_uid if group else None
+        user_message.group_uid = group.uid if group else None
+        user_message.put()
+
+        ndb.put_multi([Message(receiver=from_phone,
+                               sender=m.sender or None,
+                               text=m.text,
+                               media_url=m.media_url,
+                               group_uid= group.uid if group else None,
+                               story_uid=group.story_uid if group else None)
+                       for m in responses])
 
         if group:
             group.put()

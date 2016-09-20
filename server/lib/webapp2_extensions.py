@@ -44,7 +44,7 @@ def serialize_json(obj, serializers=None):
     raise TypeError("Failed to serialize {}".format(repr(obj)))
 
 
-def serialize_date_time(dt):
+def serialize_datetime(dt):
     if hasattr(dt, 'isoformat'):
         return dt.isoformat()
     raise TypeError('Received non-date object')
@@ -89,12 +89,39 @@ class restful_api(object):
         return cls
 
 
-def create_resource_handler(Model, id_key='uid'):
-    custom_serializers = getattr(Model, 'SERIALIZERS', [])
-    custom_serializers.insert(0, serialize_date_time)
+def create_resource_handler(Model, method=None, id_key='uid'):
+    custom_serializers = getattr(Model, 'SERIALIZERS', None)
     serializer_func = partial(serialize_json, serializers=custom_serializers)
 
-    @restful_api('/application/json', custom_serializer=serializer_func)
+    def default_index(_):
+        visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
+        items = (entity.to_dict(include=visible_fields) for entity in Model.query().fetch())
+        return {item[id_key]: item for item in items}
+
+    def default_get(_, uid):
+        item = Model.get_by_id(uid)
+        if item is None:
+            abort(400, 'No Resource for that id')
+        visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
+        return item.to_dict(include=visible_fields)
+
+    @ndb.transactional(xg=True)
+    def default_put(_, uid, data):
+        logging.info('PUT: %s, %s', uid, data)
+        item = Model.get_by_id(uid) or Model.from_uid(uid)
+        if hasattr(Model, 'EDITABLE_FIELDS'):
+            data = { k:v for k,v in data.iteritems() if k in Model.EDITABLE_FIELDS }
+        item.populate(**data)
+        item.put()
+
+        visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
+        return item.to_dict(include=visible_fields)
+
+    def default_delete(_, uid):
+        logging.info('PUT: %s', uid)
+        Model.build_key(uid=uid).delete()
+        return {}
+
     class ResourceHandler(RequestHandler):
         def handle_exception(self, exception, debug):
             logging.exception('%s: %s', Model.__name__, exception)
@@ -108,38 +135,29 @@ def create_resource_handler(Model, id_key='uid'):
                 'error': exception.message
             })
 
-        def index(self):
+    if method:
+        def wrapper(_, *args, **kwargs):
+            result = getattr(Model, method)(*args, **kwargs)
             visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
-            items = [item.to_dict(include=visible_fields) for item in Model.query().fetch()]
-            return {item[id_key]: item for item in items}
+            if hasattr(result, '__iter__'):
+                items = (entity.to_dict(include=visible_fields) for entity in result)
+                return {item[id_key]: item for item in items}
+            else:
+                return result.to_dict(include=visible_fields)
 
-        def get(self, uid):
-            item = Model.get_by_id(uid)
-            if item is None:
-                abort(400, 'No Resource for that id')
-            visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
-            return item.to_dict(include=visible_fields)
+        ResourceHandler.index = wrapper
+    else:
+        ResourceHandler.index = default_index
+        ResourceHandler.get = default_get
+        ResourceHandler.put = default_put
+        ResourceHandler.delete = default_delete
 
-        @ndb.transactional(xg=True)
-        def put(self, uid, data):
-            logging.info('PUT: %s, %s', uid, data)
-            item = Model.get_by_id(uid) or Model.from_uid(uid)
-            if hasattr(Model, 'EDITABLE_FIELDS'):
-                data = { k:v for k,v in data.iteritems() if k in Model.EDITABLE_FIELDS }
-            item.populate(**data)
-            item.put()
-            return item.to_dict()
-
-        def delete(self, uid):
-            logging.info('PUT: %s', uid)
-            Model.build_key(uid=uid).delete()
-            return {}
-
-    return ResourceHandler
+    restful_wrapper = restful_api('/application/json', custom_serializer=serializer_func)
+    return restful_wrapper(ResourceHandler)
 
 
-def ResourceRoutes(route_prefix, Model, id_key='uid'):
-    handler = create_resource_handler(Model, id_key=id_key)
+def ResourceRoutes(route_prefix, Model, **kwargs):
+    handler = create_resource_handler(Model, **kwargs)
     return PathPrefixRoute('/{}'.format(route_prefix), [
             Route('/', handler=handler, handler_method='index', methods=['GET']),
             Route('/<uid:[^/]+>', handler=handler, methods=['GET', 'PUT', 'DELETE']),
