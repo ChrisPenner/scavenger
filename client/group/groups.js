@@ -17,13 +17,9 @@ const Groups = ({groupList}) => {
                 <td>{group.uid}</td>
                 <td>{group.storyUid}</td>
                 <td>{group.clueUid}</td>
-                <td>{group.dateStarted}</td>
-                <td>{group.dateCompleted}</td>
+                <td>{group.createdAt}</td>
+                <td>{group.completedAt}</td>
                 <td>{group.hintsUsed}</td>
-                <td>{group.smsSent}</td>
-                <td>{group.mmsSent}</td>
-                <td>{group.smsReceived}</td>
-                <td>{group.mmsReceived}</td>
                 <td>
                   <a className="button is-small is-primary">View Transcript</a>
                   <a className="button is-small is-success">Restart Group</a>
@@ -46,10 +42,6 @@ const Groups = ({groupList}) => {
               <th>Date Started</th>
               <th>Date Completed</th>
               <th>Hints Used</th>
-              <th>SMS Sent</th>
-              <th>MMS Sent</th>
-              <th>SMS Received</th>
-              <th>MMS Received</th>
               <th>Actions</th>
             </tr>
           </thead>

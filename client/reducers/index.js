@@ -46,7 +46,7 @@ export const getStoriesList = (state: Object) => listFromMapping(state.stories)
 
 export const getGroup = (state: Object, groupUid: string) => state.groups(groupUid)
 export const getGroups = (state: Object) => state.groups
-export const getGroupsList = (state: Object) => listFromMapping(state.groups)
+export const getGroupsList = (state: Object) => R.sortBy(R.prop("createdAt"), listFromMapping(state.groups))
 
 export const getAnswer = (state: Object, answerUid: string) => state.answers[answerUid]
 export const getAnswers = (state: Object) => state.answers
