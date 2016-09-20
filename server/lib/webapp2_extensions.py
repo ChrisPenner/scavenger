@@ -1,5 +1,6 @@
 import json
 import logging
+from functools import partial
 
 from webapp2 import abort, Route, RequestHandler
 from webapp2_extras.routes import PathPrefixRoute
@@ -33,10 +34,32 @@ def parse_form_data(params, args):
     return results
 
 
+def serialize_json(obj, serializers=None):
+    serializers = serializers or []
+    for serializer in serializers:
+        try:
+            return serializer(obj)
+        except TypeError:
+            continue
+    raise TypeError("Failed to serialize {}".format(repr(obj)))
+
+
+def serialize_date_time(dt):
+    if hasattr(dt, 'isoformat'):
+        return dt.isoformat()
+    raise TypeError('Received non-date object')
+
+
+def serialize_key(key):
+    if hasattr(key, 'id'):
+        return key.id()
+    raise TypeError('Received non-key object')
+
 data_methods = ['put', 'patch', 'post']
 class restful_api(object):
-    def __init__(self, content_type):
+    def __init__(self, content_type, custom_serializer=None):
         self.content_type = content_type
+        self.custom_serializer = custom_serializer
 
     def __call__(self, cls):
         def format_response(f, method):
@@ -56,7 +79,7 @@ class restful_api(object):
                     'data': return_value
                 }
                 logging.info("Handler response for %s.%s is: %s", cls.__name__, method, response)
-                handler.response.body = json.dumps(response)
+                handler.response.body = json.dumps(response, default=self.custom_serializer)
             return wrapped
 
         for method in ['index', 'get', 'post', 'put', 'patch', 'delete']:
@@ -67,7 +90,11 @@ class restful_api(object):
 
 
 def create_resource_handler(Model, id_key='uid'):
-    @restful_api('/application/json')
+    custom_serializers = getattr(Model, 'SERIALIZERS', [])
+    custom_serializers.insert(0, serialize_date_time)
+    serializer_func = partial(serialize_json, serializers=custom_serializers)
+
+    @restful_api('/application/json', custom_serializer=serializer_func)
     class ResourceHandler(RequestHandler):
         def handle_exception(self, exception, debug):
             logging.exception('%s: %s', Model.__name__, exception)
