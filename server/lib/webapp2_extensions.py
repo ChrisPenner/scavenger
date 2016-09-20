@@ -82,21 +82,23 @@ def create_resource_handler(Model, id_key='uid'):
             })
 
         def index(self):
-            items = [item.to_dict() for item in Model.query().fetch()]
-            return {item['uid']: item for item in items}
+            visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
+            items = [item.to_dict(include=visible_fields) for item in Model.query().fetch()]
+            return {item[id_key]: item for item in items}
 
         def get(self, uid):
             item = Model.get_by_id(uid)
             if item is None:
                 abort(400, 'No Resource for that id')
-            return item.to_dict()
+            visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
+            return item.to_dict(include=visible_fields)
 
         @ndb.transactional(xg=True)
         def put(self, uid, data):
             logging.info('PUT: %s, %s', uid, data)
             item = Model.get_by_id(uid) or Model.from_uid(uid)
-            if hasattr(Model, 'DATA_FIELDS'):
-                data = { k:v for k,v in data.iteritems() if k in Model.DATA_FIELDS }
+            if hasattr(Model, 'EDITABLE_FIELDS'):
+                data = { k:v for k,v in data.iteritems() if k in Model.EDITABLE_FIELDS }
             item.populate(**data)
             item.put()
             return item.to_dict()
@@ -105,7 +107,6 @@ def create_resource_handler(Model, id_key='uid'):
             logging.info('PUT: %s', uid)
             Model.build_key(uid=uid).delete()
             return {}
-
 
     return ResourceHandler
 
