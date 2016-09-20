@@ -13,7 +13,7 @@ import { Groups, Group } from './group'
 import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
-import { loadStory, loadClue, loadAnswer } from './actions'
+import { loadStory, loadClue, loadAnswer, loadGroup } from './actions'
 import { Explorer } from './explorer'
 import { Toasts } from './lib/wisp'
 
@@ -71,6 +71,7 @@ const load = () => {
   store.dispatch(loadStory())
   store.dispatch(loadClue())
   store.dispatch(loadAnswer())
+  store.dispatch(loadGroup())
 }
 
 ReactDOM.render(
@@ -86,7 +87,7 @@ ReactDOM.render(
           components={{ story: Stories }} />
         <Route
           path={Routes.groups()}
-          components={{ group: Groups }} />
+          components={{ main: Groups }} />
         <Route
           path={Routes.explorer()}
           components={{ main: Explorer }} />

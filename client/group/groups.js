@@ -4,10 +4,10 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 import * as Routes from '../routes'
-import { getGroupList } from '../reducers'
+import { getGroupsList } from '../reducers'
 
 const stateToProps = (state) => ({
-  groupList: getGroupList(state),
+  groupList: getGroupsList(state),
 })
 
 const Groups = ({groupList}) => {
@@ -23,7 +23,7 @@ const Groups = ({groupList}) => {
     <div>
       <h1 className="title">Groups</h1>
       <div className="my-list">
-          {groups}
+          aaa{groups}aaa
         </div>
     </div>
   )

@@ -18,6 +18,7 @@ import { wispReducer } from '../lib/wisp'
 export default combineReducers({
   routing: routerReducer,
   stories,
+  groups,
   clues,
   answers,
   explorer,
