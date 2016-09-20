@@ -2,10 +2,13 @@ from uuid import uuid4
 
 from google.appengine.ext import ndb
 
+from webapp2_extensions import serialize_key
+
 from app.models.clue import Clue
 
-
 class Group(ndb.Model):
+    SERIALIZERS=[serialize_key]
+
     uid = ndb.StringProperty(required=True)
     data = ndb.JsonProperty(default={})
     story_uid = ndb.StringProperty(required=True)
