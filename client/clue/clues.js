@@ -44,6 +44,8 @@ const Clues = ({clues, storyUid, startDrag, dropClue}) => {
 Clues.propTypes = {
   clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
   storyUid: React.PropTypes.string.isRequired,
+  startDrag: React.PropTypes.func.isRequired,
+  dropClue: React.PropTypes.func.isRequired,
 }
 export default connect(stateToProps, {
   startDrag,
