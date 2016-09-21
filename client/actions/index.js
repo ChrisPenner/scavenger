@@ -59,10 +59,13 @@ export const {
 )
 
 // Async
-export const dropAnswer = (index: number) => (dispatch: any, getState: Function) => {
-  const uid = getDragData(getState())
-  dispatch({ type: at.DROP_ANSWER, payload: {uid, index}})
-}
+const dropper = (actionType: string) => (index: number) => (dispatch: any, getState: Function) => {
+   const uid = getDragData(getState())
+   dispatch({ type: actionType, payload: {uid, index}})
+ }
+
+export const dropClue = dropper(at.DROP_CLUE)
+export const dropAnswer = dropper(at.DROP_ANSWER)
 
 const saveResource = (resource: ResourceT, setResource: Function, getResourceState: Function) => (uid: string) => (dispatch: any, getState: Function, { PUT }: apiT) => {
   const currentState = getResourceState(getState(), uid)

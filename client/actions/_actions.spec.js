@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { createMockStore } from '../_store.spec.js'
 
 import at from '../action-types'
-import { saveStory, setStory, createStory, dropAnswer} from './'
+import { saveStory, setStory, createStory, dropAnswer, dropClue} from './'
 import reducer from '../reducers'
 import { Story } from '../resources'
 import { createToast, CREATE_TOAST } from '../lib/wisp'
@@ -56,6 +56,15 @@ describe('Actions', function() {
       store.dispatch(dropAnswer(1))
       const actions = store.getActions()
       expect(actions).to.eql([{ type: at.DROP_ANSWER, payload: {uid: 42, index: 1} }])
+    })
+  });
+
+  describe('dropClue', function() {
+    it('should dispatch DROP_CLUE with uid from dropData', function() {
+      const store = initStore({ui: {dragData: 42}})
+      store.dispatch(dropClue(1))
+      const actions = store.getActions()
+      expect(actions).to.eql([{ type: at.DROP_CLUE, payload: {uid: 42, index: 1} }])
     })
   });
 
