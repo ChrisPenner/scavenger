@@ -19,11 +19,10 @@ const Groups = ({groupList}) => {
                 <td>{group.clueUid}</td>
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
-                <td>{group.hintsUsed}</td>
                 <td>
-                  <a className="button is-small is-primary">View Transcript</a>
-                  <a className="button is-small is-success">Restart Group</a>
-                  <a className="button is-small is-danger">End Group</a>
+                  <a className="button is-primary">View Transcript</a>
+                  <a className="button is-success">Restart Group</a>
+                  <a className="button is-danger">End Group</a>
                 </td>
             </tr>
           )
@@ -41,7 +40,6 @@ const Groups = ({groupList}) => {
               <th>Current Clue</th>
               <th>Date Started</th>
               <th>Date Completed</th>
-              <th>Hints Used</th>
               <th>Actions</th>
             </tr>
           </thead>
