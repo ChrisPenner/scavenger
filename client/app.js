@@ -9,10 +9,11 @@ import store from './store'
 
 import { isLoaded } from './reducers'
 import { Stories, Story, CreateStory } from './story'
+import { Groups, Group } from './group'
 import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
-import { loadStory, loadClue, loadAnswer } from './actions'
+import { loadStory, loadClue, loadAnswer, loadGroup } from './actions'
 import { Explorer } from './explorer'
 import { Toasts } from './lib/wisp'
 
@@ -38,6 +39,11 @@ const App = connect(state => ({loaded: isLoaded(state)}))
             to={Routes.stories()}
             activeClassName="is-active"
             className="nav-item is-tab"> Stories
+          </Link>
+          <Link
+            to={Routes.groups()}
+            activeClassName="is-active"
+            className="nav-item is-tab"> Groups
           </Link>
         </div>
       </nav>
@@ -65,6 +71,7 @@ const load = () => {
   store.dispatch(loadStory())
   store.dispatch(loadClue())
   store.dispatch(loadAnswer())
+  store.dispatch(loadGroup())
 }
 
 ReactDOM.render(
@@ -78,6 +85,9 @@ ReactDOM.render(
         <Route
           path={Routes.stories()}
           components={{ story: Stories }} />
+        <Route
+          path={Routes.groups()}
+          components={{ main: Groups }} />
         <Route
           path={Routes.explorer()}
           components={{ main: Explorer }} />

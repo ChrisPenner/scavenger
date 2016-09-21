@@ -10,12 +10,14 @@ from app.models.story import Story
 from app.models.clue import Clue
 from app.models.answer import Answer
 from app.models.message import Message
+from app.models.group import Group
 
 ROUTES = [
     PathPrefixRoute('/api', [
         ResourceRoutes('stories', Story),
         ResourceRoutes('clues', Clue),
         ResourceRoutes('answers', Answer),
+        ResourceRoutes('groups', Group),
         ResourceRoutes('messages', Message),
         ResourceRoutes('messages/story/<story_uid:[^/]+>', Message, method='for_story'),
         ResourceRoutes('messages/group/<group_uid:[^/]+>', Message, method='for_group'),
