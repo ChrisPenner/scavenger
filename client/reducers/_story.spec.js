@@ -95,12 +95,6 @@ describe('Story Reducer', function() {
         },
       })
     });
-
-    it('should delete the specific story deleted', function() {
-      const action = {type: at.del(Story.type), payload: {uid: startStory3.uid}}
-      const newState = reducer(startStories, action)
-      expect(newState).to.not.contain(startStory3)
-    });
   });
 
   describe(at.set(Clue.type), function() {
