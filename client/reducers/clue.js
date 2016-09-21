@@ -5,7 +5,7 @@ import transform from '../lib/transform'
 
 import at from '../action-types'
 import { splitUid } from '../utils'
-import { Clue, Answer } from '../resources'
+import { Clue, Answer, Story } from '../resources'
 import commonReducer from './common'
 import { phoneNumber } from '../lib/validators'
 
@@ -38,6 +38,11 @@ export default transform(validate,
       [at.DROP_ANSWER]: (
         transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
       ),
+
+      [at.del(Story.type)]: (state, {payload: {uid}}) => {
+        const notEqualsStoryUid = R.compose(R.not, R.equals(uid), R.prop('storyUid'))
+        return R.pickBy(notEqualsStoryUid, state)
+      },
     }, DEFAULT_STATE)
   )
 )

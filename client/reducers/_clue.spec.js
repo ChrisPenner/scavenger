@@ -6,7 +6,7 @@ import { applyThunk } from '../lib/redux-test'
 import at from '../action-types'
 import reducer from './clue'
 import { changeClue, setClue, setAnswer, dropAnswer } from '../actions'
-import { Clue, Answer } from '../resources'
+import { Clue, Answer, Story } from '../resources'
 
 describe('Clue Reducer', function() {
   const answerUid = 'STORY:CLUE:ANSWER'
@@ -107,6 +107,14 @@ describe('Clue Reducer', function() {
   describe(at.del(Clue.type), function() {
     it('should delete the clue', function() {
       const action = {type: at.del(Clue.type), payload: {uid: startClue.uid}}
+      const newState = reducer(startClues, action)
+      expect(newState).to.eql({})
+    });
+  });
+
+  describe(at.del(Story.type), function() {
+    it("should delete the clue if its story is deleted", function() {
+      const action = {type: at.del(Story.type), payload: {uid: startClue.storyUid}}
       const newState = reducer(startClues, action)
       expect(newState).to.eql({})
     });
