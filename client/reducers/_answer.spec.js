@@ -5,7 +5,7 @@ import R from 'ramda'
 import at from '../action-types'
 import reducer from './answer'
 import { changeAnswer, setAnswer } from '../actions'
-import { Answer, Clue } from '../resources'
+import { Answer, Clue, Story } from '../resources'
 
 describe('Answer Reducer', function() {
   const startAnswer = Answer.new({
@@ -77,8 +77,16 @@ describe('Answer Reducer', function() {
   });
 
   describe(at.del(Clue.type), function() {
-    it("should delete the answer if it's clue is deleted", function() {
+    it("should delete the answer if its clue is deleted", function() {
       const action = {type: at.del(Clue.type), payload: {uid: startAnswer.clueUid}}
+      const newState = reducer(startAnswers, action)
+      expect(newState).to.eql({})
+    });
+  });
+
+  describe(at.del(Story.type), function() {
+    it("should delete the answer if its story is deleted", function() {
+      const action = {type: at.del(Story.type), payload: {uid: startAnswer.storyUid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     });

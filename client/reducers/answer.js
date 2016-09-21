@@ -5,7 +5,7 @@ import transform from '../lib/transform'
 
 import at from '../action-types'
 import commonReducer from './common'
-import { Answer, Clue } from '../resources'
+import { Answer, Clue, Story } from '../resources'
 import { phoneNumber } from '../lib/validators'
 
 const validate = R.map(R.evolve({
@@ -19,6 +19,10 @@ export default transform(validate,
       [at.del(Clue.type)]: (state, {payload: {uid}}) => {
         const notEqualsClueUid = R.compose(R.not, R.equals(uid), R.prop('clueUid'))
         return R.pickBy(notEqualsClueUid, state)
+      },
+      [at.del(Story.type)]: (state, {payload: {uid}}) => {
+        const notEqualsStoryUid = R.compose(R.not, R.equals(uid), R.prop('storyUid'))
+        return R.pickBy(notEqualsStoryUid, state)
       },
     }, DEFAULT_STATE)
   )
