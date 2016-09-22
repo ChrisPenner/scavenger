@@ -20,9 +20,9 @@ const Groups = ({groupList}) => {
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
                 <td>
-                  <button className="button is-primary">View Transcript</button>
-                  <button className="button is-success">Restart Group</button>
-                  <button className="button is-danger">End Group</button>
+                  <a className="button has-margin-5 is-primary">View Transcript</a>
+                  <a className="button has-margin-5 is-success">Restart Group</a>
+                  <a className="button has-margin-5 is-danger">End Group</a>
                 </td>
             </tr>
           )

@@ -9,7 +9,7 @@ import store from './store'
 
 import { isLoaded } from './reducers'
 import { Stories, Story, CreateStory } from './story'
-import { Groups, Group } from './group'
+import { Groups } from './group'
 import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'

@@ -18,11 +18,6 @@ export type GroupType = {
   uid: string,
 }
 
-const groupFactory = (args: Object): GroupType => ({
-  uid: null,
-  ...args,
-})
-
 export type ClueType = {
   uid: string,
   storyUid: string,
@@ -72,7 +67,6 @@ export const Story = {
 
 export const Group = {
   route: Routes.group,
-  new: groupFactory,
   type: 'GROUP',
 }
 
