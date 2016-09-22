@@ -20,9 +20,9 @@ const Groups = ({groupList}) => {
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
                 <td>
-                  <a className="button is-primary">View Transcript</a>
-                  <a className="button is-success">Restart Group</a>
-                  <a className="button is-danger">End Group</a>
+                  <a className="button has-margin-5 is-primary">View Transcript</a>
+                  <a className="button has-margin-5 is-success">Restart Group</a>
+                  <a className="button has-margin-5 is-danger">End Group</a>
                 </td>
             </tr>
           )
@@ -53,7 +53,6 @@ const Groups = ({groupList}) => {
 }
 
 Groups.propTypes = {
-  group: React.PropTypes.object,
   groupList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 

@@ -44,7 +44,6 @@ export const getStory = (state: Object, storyUid: string) => state.stories[story
 export const getStories = (state: Object) => state.stories
 export const getStoriesList = (state: Object) => listFromMapping(state.stories)
 
-export const getGroup = (state: Object, groupUid: string) => state.groups(groupUid)
 export const getGroups = (state: Object) => state.groups
 export const getGroupsList = (state: Object) => R.sortBy(R.prop("createdAt"), listFromMapping(state.groups))
 
