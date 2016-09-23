@@ -6,6 +6,8 @@ export type routeT = Function
 const STORY_ID_PARAM = ':storyId'
 const CLUE_ID_PARAM = ':clueId'
 const ANSWER_ID_PARAM = ':answerId'
+const GROUP_UID_PARAM = ':groupUid'
+const STORY_UID_PARAM = ':storyUid'
 
 export const INDEX = ''
 
@@ -34,4 +36,7 @@ export const createClue: routeT = (storyId: ?string) => `/stories/${storyId || S
 export const createAnswer: routeT = (storyId: ?string, clueId: ?string) => `/stories/${storyId || STORY_ID_PARAM}/clues/${clueId || CLUE_ID_PARAM}/create-answer`
 
 export const explorer: routeT = () => `/explorer`
-export const message: routeT = () => `/messages`
+export const groupMessages: routeT = (groupUid) => groupUid ? `/messages/group/${groupUid}` : `/messages/group/${GROUP_UID_PARAM}`
+export const storyMessages: routeT = (storyUid) => storyUid ? `/messages/story/${storyUid}` : `/messages/story/${STORY_UID_PARAM}`
+export const messagesIndex: routeT = () => `/messages/index`
+export const messages: routeT = () => `/messages`

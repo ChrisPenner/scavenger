@@ -1,5 +1,5 @@
 /* @flow */
-import Routes from './api'
+import APIRoutes from './api'
 
 export type StoryType = {
   uid: string,
@@ -16,7 +16,41 @@ const storyFactory = (args: Object): StoryType => ({
 
 export type GroupType = {
   uid: string,
+  storyUid: string,
+  clueUid: string,
+  createdAt: string,
+  completedAt: string,
 }
+
+const groupFactory = (args: Object): GroupType => ({
+  uid: null,
+  storyUid: '',
+  clueUid: '',
+  createdAt: '',
+  completedAt: '',
+  ...args,
+})
+
+export type MessageType = {
+  uid: string,
+  storyUid: string,
+  groupUid: string,
+  text: string,
+  sender?: string,
+  receiver?: string,
+  mediaUrl?: string,
+}
+
+const messageFactory = (args: Object): MessageType => ({
+  uid: null,
+  storyUid: '',
+  groupUid: '',
+  text: '',
+  sender: '',
+  receiver: '',
+  mediaUrl: undefined,
+  ...args,
+})
 
 export type ClueType = {
   uid: string,
@@ -60,26 +94,33 @@ export type ResourceT = {
 }
 
 export const Story = {
-  route: Routes.story,
+  route: APIRoutes.story,
   new: storyFactory,
   type: 'STORY',
 }
 
-export const Group = {
-  route: Routes.group,
-  type: 'GROUP',
-}
-
 export const Clue = {
-  route: Routes.clue,
+  route: APIRoutes.clue,
   new: clueFactory,
   type: 'CLUE',
 }
 
 export const Answer = {
-  route: Routes.answer,
+  route: APIRoutes.answer,
   new: answerFactory,
   type: 'ANSWER',
 }
 
-export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP'
+export const Group = {
+  route: APIRoutes.group,
+  new: groupFactory,
+  type: 'GROUP',
+}
+
+export const Message = {
+  route: APIRoutes.messages,
+  new: messageFactory,
+  type: 'MESSAGE',
+}
+
+export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP' | 'MESSAGE'

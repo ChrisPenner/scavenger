@@ -7,7 +7,7 @@ import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
 import at from '../action-types'
-import { Story, Clue, Answer, Group } from '../resources'
+import { Story, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
 import * as Routes from '../routes'
@@ -115,9 +115,10 @@ const loader = (resource: ResourceT) => () => (dispatch: Function, getState: Fun
 }
 
 export const loadStory = loader(Story)
-export const loadGroup = loader(Group)
 export const loadClue = loader(Clue)
 export const loadAnswer = loader(Answer)
+export const loadGroup = loader(Group)
+export const loadMessage = loader(Message)
 
 export const creator = (resource: ResourceT, route: routeT, setter: Function) => (payload: any) => (dispatch: any, getState: Function, { PUT }: apiT) => {
   return PUT(resource, payload.uid, payload)
@@ -166,7 +167,7 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
     formData.append('MediaUrl0', mediaUrl)
     formData.append('NumMedia', '1')
   }
-  return fetch(Routes.message(), {
+  return fetch(Routes.messages(), {
     method: 'POST',
     body: formData,
     credentials: 'same-origin',

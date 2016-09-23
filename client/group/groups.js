@@ -14,8 +14,8 @@ const Groups = ({groupList}) => {
   const groups = groupList.map(group => {
       return (
             <tr key={group.uid}>
-                <td>{group.uid}</td>
-                <td>{group.storyUid}</td>
+              <td><Link to={Routes.groupMessages(group.uid)}>{group.uid}</Link></td>
+                <td><Link to={Routes.storyMessages(group.storyUid)}>{group.storyUid}</Link></td>
                 <td>{group.clueUid}</td>
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
