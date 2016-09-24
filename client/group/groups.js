@@ -20,7 +20,11 @@ const Groups = ({groupList}) => {
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
                 <td>
-                  <a className="button has-margin-5 is-primary">View Transcript</a>
+                  <Link
+                    to={Routes.groupMessages(group.uid)}
+                    className="button has-margin-5 is-primary"> 
+                    View Transcript
+                  </Link>
                   <a className="button has-margin-5 is-success">Restart Group</a>
                   <a className="button has-margin-5 is-danger">End Group</a>
                 </td>
