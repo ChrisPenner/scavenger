@@ -15,28 +15,49 @@ export const MessageChoices = connect(stateToProps)(({groupList, storyUids}) => 
   const groups = groupList.map(group => {
       return (
             <tr key={group.uid}>
-              <td><Link to={Routes.groupMessages(group.uid)}>{group.uid}</Link></td>
-                <td><Link to={Routes.storyMessages(group.storyUid)}>{group.storyUid}</Link></td>
+              <td>{group.uid}</td>
                 <td>{group.clueUid}</td>
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
+                <td>
+                  <Link
+                    to={Routes.groupMessages(group.uid)}
+                    className="button has-margin-5 is-primary"> 
+                    View Transcript
+                  </Link>
+                </td>
             </tr>
           )
   })
   const storyList = storyUids.map(storyUid => (
-        <div className="my-list-item" key={storyUid}>
+            <tr key={storyUid}>
+              <td>{storyUid}</td>
+          <td>
           <Link
-            to={Routes.storyMessages(storyUid)}> 
-            {storyUid}
+            to={Routes.storyMessages(storyUid)}
+            className="button has-margin-5 is-primary"> 
+            View Transcript
           </Link>
-        </div>
+          </td>
+          </tr>
     ))
   return (
     <section className="section">
       <section className="columns">
         <div className="column my-list">
           <h1 className="title"> Stories </h1>
-          {storyList}
+
+          <table className="table is-bordered is-striped group__table">
+            <thead>
+              <tr>
+                <th>Story Code</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {storyList}
+            </tbody>
+          </table>
         </div>
         <div className="column is-three-quarters my-list">
           <h1 className="title"> Groups </h1>
@@ -45,10 +66,10 @@ export const MessageChoices = connect(stateToProps)(({groupList, storyUids}) => 
             <thead>
               <tr>
                 <th>Group Code</th>
-                <th>Story Code</th>
                 <th>Current Clue</th>
                 <th>Date Started</th>
                 <th>Date Completed</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
