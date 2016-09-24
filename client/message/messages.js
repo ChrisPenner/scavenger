@@ -1,9 +1,7 @@
 /* @flow */
 import React from 'react'
-import R from 'ramda'
-
 import { connect } from 'react-redux'
-import { getMessagesByGroup, getMessagesByStory } from '../reducers'
+import { getGroupMessages, getStoryMessages } from '../reducers'
 
 const Messages = ({messages}: Object) => {
   const messageRows = messages.map(({uid, text, mediaUrl, sender, receiver, groupUid, storyUid, sent}) => (
@@ -66,22 +64,6 @@ const Messages = ({messages}: Object) => {
 }
 Messages.propTypes = {
   messages: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-}
-
-const byDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
-
-const getGroupMessages = (state, {params}) => {
-  const groupUid = params.groupUid;
-  return {
-    messages: R.sort(byDateDescending, R.values(getMessagesByGroup(state, groupUid))),
-  }
-}
-
-const getStoryMessages = (state, {params}) => {
-  const storyUid = params.storyUid;
-  return {
-    messages: R.sort(byDateDescending, R.values(getMessagesByStory(state, storyUid))),
-  }
 }
 
 export const GroupMessages = connect(getGroupMessages)(Messages)

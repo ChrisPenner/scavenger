@@ -1,9 +1,10 @@
 /* @flow */
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import R from 'ramda'
 
 import * as Routes from '../routes'
-import { getGroupUids, getStoryUids, getGroupsList } from '../reducers'
+import { getGroupUids, getStoryUids, getGroupsList, getGroupMessages } from '../reducers'
 export {GroupMessages, StoryMessages} from './messages.js'
 
 const stateToProps = state => ({
@@ -11,7 +12,7 @@ const stateToProps = state => ({
   groupList: getGroupsList(state)
 })
 
-export const MessageChoices = connect(stateToProps)(({groupList, storyUids}) => {
+export const MessageChoices = connect(stateToProps)(({groupList, storyUids }) => {
   const groups = groupList.map(group => {
       return (
             <tr key={group.uid}>
@@ -20,9 +21,12 @@ export const MessageChoices = connect(stateToProps)(({groupList, storyUids}) => 
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
                 <td>
+
+                </td>
+                <td>
                   <Link
                     to={Routes.groupMessages(group.uid)}
-                    className="button has-margin-5 is-primary"> 
+                    className="button is-primary"> 
                     View Transcript
                   </Link>
                 </td>
@@ -35,7 +39,7 @@ export const MessageChoices = connect(stateToProps)(({groupList, storyUids}) => 
           <td>
           <Link
             to={Routes.storyMessages(storyUid)}
-            className="button has-margin-5 is-primary"> 
+            className="button is-primary"> 
             View Transcript
           </Link>
           </td>
@@ -69,6 +73,7 @@ export const MessageChoices = connect(stateToProps)(({groupList, storyUids}) => 
                 <th>Current Clue</th>
                 <th>Date Started</th>
                 <th>Date Completed</th>
+                <th>Message Count</th>
                 <th>Actions</th>
               </tr>
             </thead>
