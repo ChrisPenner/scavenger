@@ -19,7 +19,7 @@ const stateToProps = state => ({
   messageCount: getNumMessagesByGroup(state)
 })
 
-export const MessageChoices = connect(stateToProps)(({groupList, storyUids, messageByGroup }) => {``
+export const MessageChoices = connect(stateToProps)(({groupList, storyUids, messageCount }) => {
   const groups = groupList.map(group => {
       return (
             <tr key={group.uid}>
