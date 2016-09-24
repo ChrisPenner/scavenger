@@ -4,15 +4,22 @@ import { Link } from 'react-router'
 import R from 'ramda'
 
 import * as Routes from '../routes'
-import { getGroupUids, getStoryUids, getGroupsList, getGroupMessages } from '../reducers'
+import { getGroupUids, getStoryUids, getGroupsList, getMessages } from '../reducers'
 export {GroupMessages, StoryMessages} from './messages.js'
+
+const getNumMessagesByGroup = R.curry((state, groupUid) => {
+  const messages = getMessages(state)
+  const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
+  return R.pickBy(isFromGroup, messages)
+})
 
 const stateToProps = state => ({
   storyUids: getStoryUids(state),
-  groupList: getGroupsList(state)
+  groupList: getGroupsList(state),
+  messageCount: getNumMessagesByGroup(state)
 })
 
-export const MessageChoices = connect(stateToProps)(({groupList, storyUids }) => {
+export const MessageChoices = connect(stateToProps)(({groupList, storyUids, messageByGroup }) => {``
   const groups = groupList.map(group => {
       return (
             <tr key={group.uid}>
@@ -21,7 +28,7 @@ export const MessageChoices = connect(stateToProps)(({groupList, storyUids }) =>
                 <td>{group.createdAt}</td>
                 <td>{group.completedAt}</td>
                 <td>
-
+                  {R.length(R.keys(messageCount(group.uid)))}
                 </td>
                 <td>
                   <Link
