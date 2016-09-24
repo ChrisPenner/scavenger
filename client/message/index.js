@@ -13,7 +13,7 @@ const stateToProps = state => ({
 
 export const MessageChoices = connect(stateToProps)(({groupUids, storyUids}) => {
   const groupList = groupUids.map(groupUid => (
-        <div className="my-list-item">
+        <div className="my-list-item" key={groupUid}>
           <Link
             to={Routes.groupMessages(groupUid)}> 
             {groupUid}
@@ -21,7 +21,7 @@ export const MessageChoices = connect(stateToProps)(({groupUids, storyUids}) => 
         </div>
     ))
   const storyList = storyUids.map(storyUid => (
-        <div className="my-list-item">
+        <div className="my-list-item" key={storyUid}>
           <Link
             to={Routes.storyMessages(storyUid)}> 
             {storyUid}
