@@ -8,12 +8,12 @@ import Animate from 'react-addons-css-transition-group'
 import store from './store'
 
 import { isLoaded } from './reducers'
-import { Stories, Story, CreateStory } from './story'
+import { Stories, Story, CreateStory, StoryCode } from './story'
 import { Groups } from './group'
 import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
-import { loadStory, loadClue, loadAnswer, loadGroup, loadMessage } from './actions'
+import { loadStory, loadStoryCodes, loadClue, loadAnswer, loadGroup, loadMessage } from './actions'
 import { Explorer } from './explorer'
 import { GroupMessages, StoryMessages, MessageChoices } from './message'
 import { Toasts } from './lib/wisp'
@@ -47,6 +47,11 @@ const App = connect(state => ({loaded: isLoaded(state)}))
             className="nav-item is-tab"> Stories
           </Link>
           <Link
+            to={Routes.storycode()}
+            activeClassName="is-active"
+            className="nav-item is-tab"> Stories
+          </Link>
+          <Link
             to={Routes.groups()}
             activeClassName="is-active"
             className="nav-item is-tab"> Groups
@@ -75,6 +80,7 @@ const My404 = () => (
 
 const load = () => {
   store.dispatch(loadStory())
+  store.dispatch(loadStoryCodes())
   store.dispatch(loadClue())
   store.dispatch(loadAnswer())
   store.dispatch(loadGroup())
