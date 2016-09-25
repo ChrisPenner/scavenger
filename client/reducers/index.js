@@ -66,17 +66,17 @@ export const getMessagesByStory = (state:Object, storyUid:string) => {
   return R.pickBy(isFromStory, getMessages(state))
 }
 
-export const byDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
+const messagesByDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
 export const getGroupMessages = (state, {params}) => {
   const groupUid = params.groupUid;
   return {
-    messages: R.sort(byDateDescending, R.values(getMessagesByGroup(state, groupUid))),
+    messages: R.sort(messagesByDateDescending, R.values(getMessagesByGroup(state, groupUid))),
   }
 }
 export const getStoryMessages = (state, {params}) => {
   const storyUid = params.storyUid;
   return {
-    messages: R.sort(byDateDescending, R.values(getMessagesByStory(state, storyUid))),
+    messages: R.sort(messagesByDateDescending, R.values(getMessagesByStory(state, storyUid))),
   }
 }
 
