@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import R from 'ramda'
 
 import * as Routes from '../routes'
-import { getGroupUids, getStoryUids, getGroupsList, getMessages } from '../reducers'
+import { getStoryUids, getGroupsList, getMessages } from '../reducers'
 export {GroupMessages, StoryMessages} from './messages.js'
 
 const getNumMessagesByGroup = R.curry((state, groupUid) => {
