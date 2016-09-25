@@ -70,7 +70,7 @@ export const byDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
 export const getGroupMessages = (state: Object, groupUid: string) => {
     R.sort(byDateDescending, R.values(getMessagesByGroup(state, groupUid)))
 }
-export const getGroupMessages = (state: Object, storyUid: string) => {
+export const getStoryMessages = (state: Object, storyUid: string) => {
     R.sort(byDateDescending, R.values(getMessagesByStory(state, storyUid)))
 }
 
