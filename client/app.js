@@ -47,9 +47,9 @@ const App = connect(state => ({loaded: isLoaded(state)}))
             className="nav-item is-tab"> Stories
           </Link>
           <Link
-            to={Routes.groups()}
+            to={Routes.storycode()}
             activeClassName="is-active"
-            className="nav-item is-tab"> Groups
+            className="nav-item is-tab"> Codes
           </Link>
         </div>
       </nav>
