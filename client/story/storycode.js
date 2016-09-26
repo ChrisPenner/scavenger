@@ -9,10 +9,10 @@ const stateToProps = (state) => ({
 })
 
 const StoryCode = () => {
-  const storycode = null
-
   return (
-    aaa
+     <section className="notification is-info">
+     	<h1>Story Codes</h1>
+     </section>
   )
 }
 

@@ -47,11 +47,6 @@ const App = connect(state => ({loaded: isLoaded(state)}))
             className="nav-item is-tab"> Stories
           </Link>
           <Link
-            to={Routes.storycode()}
-            activeClassName="is-active"
-            className="nav-item is-tab"> Stories
-          </Link>
-          <Link
             to={Routes.groups()}
             activeClassName="is-active"
             className="nav-item is-tab"> Groups
@@ -116,6 +111,9 @@ ReactDOM.render(
         <Route
           path={Routes.story()}
           components={{ story: Story }} />
+        <Route
+          path={Routes.storycode()}
+          components={{ storycode: StoryCode }} />
         <Route
           path={Routes.clue()}
           components={{ story: Story, clue: Clue }} />
