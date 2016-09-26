@@ -4,6 +4,7 @@ import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
 import stories from './story'
+import storycode from './storycode'
 import clues from './clue'
 import answers from './answer'
 import groups from './group'
@@ -19,6 +20,7 @@ import { wispReducer } from '../lib/wisp'
 export default combineReducers({
   routing: routerReducer,
   stories,
+  storycode,
   clues,
   answers,
   explorer,
