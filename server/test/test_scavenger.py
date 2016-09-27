@@ -22,6 +22,7 @@ from app.scavenger import twiml_response, format_message, determine_message_type
 from app.models.story import Story
 from app.models.user import User
 
+TWILIO_ROUTE = '/twilio'
 
 USER_PHONE = '+5551234567'
 SECONDARY_USER_PHONE = '+3334442222'
@@ -31,7 +32,7 @@ SECONDARY_SERVER_PHONE = '+7775554321'
 
 
 def create_request(message="texty text", sender=USER_PHONE, receiver=PRIMARY_SERVER_PHONE, media_url=None):
-    request = Request.blank('/messages')
+    request = Request.blank(TWILIO_ROUTE)
     request.method = 'POST'
     request.POST.update({
         'From': sender,
