@@ -168,7 +168,7 @@ export const sendMessage = () => (dispatch: any, getState: any) => {
     formData.append('MediaUrl0', mediaUrl)
     formData.append('NumMedia', '1')
   }
-  return fetch(Routes.messages(), {
+  return fetch(Routes.twilio(), {
     method: 'POST',
     body: formData,
     credentials: 'same-origin',

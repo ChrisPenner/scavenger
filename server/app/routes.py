@@ -28,8 +28,5 @@ ROUTES = [
         Route('/backup', BackupHandler),
         Route('/gen-codes', GenerateCodesHandler),
     ]),
-    Route('/messages', TwilioHandler),
     Route('/twilio', TwilioHandler),
-    # Route('/messages/story/<story_uid:[^/]+>', StoryMessagesHandler),
-    # Route('/messages/group/<group_uid:[^/]+>', GroupMessagesHandler),
 ]

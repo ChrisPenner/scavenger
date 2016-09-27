@@ -39,5 +39,5 @@ export const createAnswer: routeT = (storyId: ?string, clueId: ?string) => `/sto
 export const explorer: routeT = () => `/explorer`
 export const groupMessages: routeT = (groupUid) => groupUid ? `/messages/group/${groupUid}` : `/messages/group/${GROUP_UID_PARAM}`
 export const storyMessages: routeT = (storyUid) => storyUid ? `/messages/story/${storyUid}` : `/messages/story/${STORY_UID_PARAM}`
-export const messagesIndex: routeT = () => `/messages/index`
 export const messages: routeT = () => `/messages`
+export const twilio: routeT = () => `/twilio`

@@ -33,7 +33,7 @@ const App = connect(state => ({loaded: isLoaded(state)}))
         </div>
         <div className="nav-right">
           <Link
-            to={Routes.messagesIndex()}
+            to={Routes.messages()}
             activeClassName="is-active"
             className="nav-item is-tab"> Messages
           </Link>
@@ -98,7 +98,7 @@ ReactDOM.render(
           path={Routes.groups()}
           components={{ main: Groups }} />
         <Route
-          path={Routes.messagesIndex()}
+          path={Routes.messages()}
           components={{ main: MessageChoices }} />
         <Route
           path={Routes.groupMessages()}

@@ -49,7 +49,7 @@ module.exports = {
       "/admin/*": {
         target: 'http://localhost:8080',
       },
-      "/messages": {
+      "/twilio": {
         target: 'http://localhost:8080',
       },
     }

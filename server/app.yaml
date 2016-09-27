@@ -6,13 +6,7 @@ threadsafe: yes
 
 handlers:
 
-- url: /messages.*
-  script: app.main.app
-
 - url: /twilio
-  script: app.main.app
-
-- url: /twilio.*
   script: app.main.app
 
 - url: /api/.*
