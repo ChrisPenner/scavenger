@@ -13,6 +13,7 @@ export const INDEX = ''
 
 export const story: routeT = (uid: ?string) => `/stories/${uid || STORY_ID_PARAM}`
 export const stories: routeT = () => `/stories/`
+export const storycode: routeT = () => `/storycode/`
 
 export const groups: routeT = () => `/groups/`
 

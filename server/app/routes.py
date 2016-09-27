@@ -7,6 +7,7 @@ from webapp2_extensions import ResourceRoutes
 
 from scavenger import TwilioHandler
 from app.models.story import Story
+from app.models.story_code import StoryCode
 from app.models.clue import Clue
 from app.models.answer import Answer
 from app.models.message import Message
@@ -15,6 +16,7 @@ from app.models.group import Group
 ROUTES = [
     PathPrefixRoute('/api', [
         ResourceRoutes('stories', Story),
+        ResourceRoutes('storycode', StoryCode),
         ResourceRoutes('clues', Clue),
         ResourceRoutes('answers', Answer),
         ResourceRoutes('groups', Group),

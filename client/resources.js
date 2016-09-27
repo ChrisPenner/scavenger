@@ -14,6 +14,21 @@ const storyFactory = (args: Object): StoryType => ({
   ...args,
 })
 
+export type StoryCodeType = {
+  storyUid: string,
+  wordString: string,
+  used: boolean,
+  singleUse: boolean,
+}
+
+const storyCodeFactory = (args: Object): StoryType => ({
+  storyUid: string,
+  wordString: string,
+  used: bool,
+  singleUse: bool,
+  ...args,
+})
+
 export type GroupType = {
   uid: string,
   storyUid: string,
@@ -97,6 +112,12 @@ export const Story = {
   route: APIRoutes.story,
   new: storyFactory,
   type: 'STORY',
+}
+
+export const StoryCode = {
+  route: APIRoutes.storycode,
+  new: storyCodeFactory,
+  type: 'STORYCODE',
 }
 
 export const Clue = {

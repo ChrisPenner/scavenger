@@ -9,12 +9,17 @@ NON_ALPHA = r'[^a-z]'
 class StoryCode(ndb.Model):
     story_uid = ndb.StringProperty(required=True)
     word_string = ndb.StringProperty(required=True)
+    uid = ndb.ComputedProperty(lambda s: StoryCode.gen_key(s.word_string))
     used = ndb.BooleanProperty(default=False)
     single_use = ndb.BooleanProperty(default=False)
 
+    @staticmethod
+    def gen_key(words):
+        return re.sub(NON_ALPHA, '', ''.join(words).lower())
+
     @classmethod
     def build_key(cls, words):
-        code = re.sub(NON_ALPHA, '', ''.join(words).lower())
+        code = StoryCode.gen_key(words)
         return ndb.Key(cls, code)
 
     @classmethod
