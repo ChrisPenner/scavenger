@@ -7,9 +7,9 @@ import { push } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
 import at from '../action-types'
-import { Story, StoryCode, Clue, Answer, Group, Message } from '../resources'
+import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
-import { getStory, getStoryCodes, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
+import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
 import * as Routes from '../routes'
 import type { routeT } from '../routes'
 import type { apiT } from '../api'
@@ -115,7 +115,7 @@ const loader = (resource: ResourceT) => () => (dispatch: Function, getState: Fun
 }
 
 export const loadStory = loader(Story)
-export const loadStoryCodes = loader(StoryCode)
+export const loadCodes = loader(Code)
 export const loadClue = loader(Clue)
 export const loadAnswer = loader(Answer)
 export const loadGroup = loader(Group)

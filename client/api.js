@@ -4,14 +4,14 @@ import { camelizeKeys, decamelizeKeys } from 'humps'
 import R from 'ramda'
 
 const story = (uid: string) => `/api/stories/${uid}`
-const storycode = (uid: string) => `/api/storycode/${uid}`
+const code = (uid: string) => `/api/codes/${uid}`
 const group = (uid: string) => `/api/groups/${uid}`
 const clue = (uid: string) => `/api/clues/${uid}`
 const answer = (uid: string) => `/api/answers/${uid}`
 const messages = (uid: string) => `/api/messages/${uid}`
 
 const Routes = {
-    story, storycode, clue, answer, group, messages
+    story, code, clue, answer, group, messages
 }
 
 export default Routes

@@ -4,7 +4,7 @@ import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
 import stories from './story'
-import storycode from './storycode'
+import codes from './code'
 import clues from './clue'
 import answers from './answer'
 import groups from './group'
@@ -20,7 +20,7 @@ import { wispReducer } from '../lib/wisp'
 export default combineReducers({
   routing: routerReducer,
   stories,
-  storycode,
+  codes,
   clues,
   answers,
   explorer,
@@ -49,7 +49,7 @@ export const getStories = (state: Object) => state.stories
 export const getStoriesList = (state: Object) => listFromMapping(state.stories)
 export const getStoryUids = (state: Object) => R.keys(getStories(state))
 
-export const getStoryCodeList = (state: Object) => listFromMapping(state.storycode)
+export const getCodesList = (state: Object) => listFromMapping(state.codes)
 
 export const getGroups = (state: Object) => state.groups
 export const getGroupsList = (state: Object) => R.sortBy(R.prop("createdAt"), listFromMapping(state.groups))

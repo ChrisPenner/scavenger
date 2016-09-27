@@ -22,10 +22,10 @@ export type StoryCodeType = {
 }
 
 const storyCodeFactory = (args: Object): StoryType => ({
-  storyUid: string,
-  wordString: string,
-  used: bool,
-  singleUse: bool,
+  storyUid: '',
+  wordString: '',
+  used: false,
+  singleUse: true,
   ...args,
 })
 
@@ -114,10 +114,10 @@ export const Story = {
   type: 'STORY',
 }
 
-export const StoryCode = {
-  route: APIRoutes.storycode,
+export const Code = {
+  route: APIRoutes.code,
   new: storyCodeFactory,
-  type: 'STORYCODE',
+  type: 'CODE',
 }
 
 export const Clue = {
@@ -144,4 +144,4 @@ export const Message = {
   type: 'MESSAGE',
 }
 
-export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP' | 'MESSAGE'
+export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP' | 'MESSAGE' | 'CODE'
