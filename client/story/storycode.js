@@ -27,8 +27,8 @@ const StoryCode = ({storyCodes}) => {
      	<table className="table is-bordered is-striped group__table">
           <thead>
             <tr>
-              <th>Word String</th>
               <th>Story Code</th>
+              <th>Word String</th>
               <th>Used</th>
               <th>Single Use</th>
             </tr>
