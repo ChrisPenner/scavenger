@@ -22,11 +22,14 @@ const Story = ({story, changeStory, saveStory, deleteStory}) => {
         {story.uid}
       </h1>
       <div className="level">
+        {/*
+        This is too dangerous :P
         <button
           className="button is-danger level-item"
           onClick={() => deleteStory(story.uid)}>
           Delete
         </button>
+        */}
         <button
           className="button is-success level-item"
           onClick={() => saveStory(story.uid)}>
