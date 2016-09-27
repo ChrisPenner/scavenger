@@ -67,12 +67,14 @@ export const getMessagesByStory = (state:Object, storyUid:string) => {
 }
 
 export const byDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
+
 export const getGroupMessages = (state: Object, groupUid: string) => {
-    R.sort(byDateDescending, R.values(getMessagesByGroup(state, groupUid)))
+    return R.sort(byDateDescending, R.values(getMessagesByGroup(state, groupUid)))
 }
 export const getStoryMessages = (state: Object, storyUid: string) => {
-    R.sort(byDateDescending, R.values(getMessagesByStory(state, storyUid)))
+  return R.sort(byDateDescending, R.values(getMessagesByStory(state, storyUid)))
 }
+
 
 export const getExplorer = (state: Object) => state.explorer
 export const getToolData = (state: Object) => state.tools

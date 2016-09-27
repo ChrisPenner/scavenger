@@ -66,5 +66,17 @@ Messages.propTypes = {
   messages: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
-export const GroupMessages = connect(state=> ({messages: getGroupMessages})(Messages))
-export const StoryMessages = connect(state=> ({messages: getStoryMessages})(Messages))
+const stateToPropsGroup = (state, {params:{groupUid}}) => {
+  return {
+    messages: getGroupMessages(state, groupUid)
+  }
+}
+
+const stateToPropsStory = (state, {params:{storyUid}}) => {
+  return {
+    messages: getStoryMessages(state, storyUid)
+  }
+}
+
+export const GroupMessages = connect(stateToPropsGroup)(Messages)
+export const StoryMessages = connect(stateToPropsStory)(Messages)
