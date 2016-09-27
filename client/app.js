@@ -113,7 +113,7 @@ ReactDOM.render(
           components={{ story: Story }} />
         <Route
           path={Routes.storycode()}
-          components={{ storycode: StoryCode }} />
+          components={{ main: StoryCode }} />
         <Route
           path={Routes.clue()}
           components={{ story: Story, clue: Clue }} />
