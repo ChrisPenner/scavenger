@@ -1,5 +1,6 @@
 /* @flow */
 import React from 'react'
+import R from 'ramda'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
@@ -10,13 +11,15 @@ const stateToProps = (state) => ({
   codes: getCodesList(state),
 })
 
+const countUsed = R.compose(R.length, R.filter(R.prop('used')))
+
 const Code = ({codes}) => {
   const codeRows = codes.map(code => {
       return (
             <tr key={code.uid}>
                 <td>{code.storyUid}</td>
                 <td>{code.wordString}</td>
-                <td>{code.used ? 'Used' : ''}</td>
+                <td>{code.used ? 'USED' : ''}</td>
                 <td>{code.singleUse ? 'Single Use' : 'Multi Use'}</td>
             </tr>
           )
@@ -29,7 +32,7 @@ const Code = ({codes}) => {
             <tr>
               <th>Story</th>
               <th>Words</th>
-              <th>Used</th>
+              <th>Used ({countUsed(codes)}/{codes.length})</th>
               <th>Single Use</th>
             </tr>
           </thead>
