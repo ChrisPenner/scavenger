@@ -69,7 +69,7 @@ export type ClueType = {
   uid: string,
   storyUid: string,
   hint: string,
-  mediaUrl: string,
+  mediaUrl?: string,
   answerUids: Array<string>,
 }
 

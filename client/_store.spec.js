@@ -1,14 +1,14 @@
 /* @flow */
 import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
-import { routerMiddleware } from 'react-router-redux'
-import { browserHistory } from 'react-router'
 import promiseMiddleware from 'redux-promise';
+import { testMiddleman } from './lib/middleman'
 
-export const createMockStore = (thunkArgument: any) => (initialState: any) => {
+export const createMockStore = (initialState: any, serverResponse: any) => {
   const middleware = [
+    testMiddleman(serverResponse),
     promiseMiddleware,
-    thunk.withExtraArgument(thunkArgument)
+    thunk,
   ]
   return configureStore(middleware)(initialState)
 }

@@ -35,6 +35,10 @@ export const {
   changeAnswer,
   changeExplorer,
 
+  setStory,
+  setClue,
+  setAnswer,
+
   startDrag,
   stopDrag,
 
@@ -48,6 +52,9 @@ export const {
 
   [at.RECEIVE_MESSAGE]: R.assoc('source', 'server'),
 },
+  at.set(Story.type),
+  at.set(Clue.type),
+  at.set(Answer.type),
   at.START_DRAG,
   at.STOP_DRAG
 )
@@ -62,7 +69,7 @@ export const dropClue = dropper(at.DROP_CLUE)
 export const dropAnswer = dropper(at.DROP_ANSWER)
 
 const saveResource = (resource: ResourceT, getResourceState: Function) => (uid: string) => (dispatch: any, getState: Function) => {
-  dispatch({
+  return dispatch({
     type: at.set(resource.type),
     [API]: {
       route: resource.route(uid),

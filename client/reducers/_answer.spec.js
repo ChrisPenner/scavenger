@@ -6,9 +6,10 @@ import at from '../action-types'
 import reducer from './answer'
 import { changeAnswer, setAnswer } from '../actions'
 import { Answer, Clue, Story } from '../resources'
+import type {AnswerType} from '../resources'
 
 describe('Answer Reducer', function() {
-  const startAnswer = Answer.new({
+  const startAnswer: Object = Answer.new({
     uid: 'STORY:CLUE:ANSWER',
     storyUid: 'STORY',
     clueUid: 'STORY:CLUE',

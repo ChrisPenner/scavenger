@@ -7,12 +7,13 @@ import at from '../action-types'
 import reducer from './clue'
 import { changeClue, setClue, setAnswer, dropAnswer } from '../actions'
 import { Clue, Answer, Story } from '../resources'
+import type { ClueType } from '../resources'
 
 describe('Clue Reducer', function() {
   const answerUid = 'STORY:CLUE:ANSWER'
   const secondAnswerUid = 'STORY:CLUE:SECONDANSWER'
   const thirdAnswerUid = 'STORY:CLUE:THIRDANSWER'
-  const startClue = Clue.new({
+  const startClue: Object = Clue.new({
     uid: 'STORY:CLUE',
     storyUid: 'STORY',
     text: 'text',

@@ -37,10 +37,11 @@ const apiRequest = (route, method: MethodType='GET', payload=undefined) => {
   if (payload !== undefined) {
     options.body = JSON.stringify(decamelizeKeys(payload))
   }
-  return fetch(route, options)
+  return processResponse(fetch(route, options))
 }
 
-export default (store: Object) => (next: Function) => (action: Object) => {
+
+const middleman = (makeRequest) => (store: Object) => (next: Function) => (action: Object) => {
   if(!R.has(API, action)){
     return next(action)
   }
@@ -50,7 +51,7 @@ export default (store: Object) => (next: Function) => (action: Object) => {
     method = GET
     camelizer = R.map(camelizeKeys)
   }
-  return R.compose(processResponse, apiRequest)(route, method, dataPayload)
+  return makeRequest(route, method, dataPayload)
     .then(camelizer).then(
       data => next({
         type: action.type,
@@ -68,3 +69,6 @@ export default (store: Object) => (next: Function) => (action: Object) => {
       }
     )
 }
+
+export const testMiddleman = (returnData:any) => middleman(()=>Promise.resolve(returnData))
+export default middleman(apiRequest)
