@@ -11,6 +11,11 @@ export const GET = 'GET'
 export const DELETE = 'DELETE'
 export const PUT = 'PUT'
 
+// export const apiCall = ({type, route, method, payload}) => ({
+//   type,
+//   [API]:
+// })
+
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
     return resp.json().catch(() => {
@@ -39,7 +44,7 @@ export default (store: Object) => (next: Function) => (action: Object) => {
   if(!R.has(API, action)){
     return next(action)
   }
-  let {route, method, payload:dataPayload} = action[API]
+  let {route, method, payload:dataPayload, context} = action[API]
   let camelizer = camelizeKeys
   if (method === INDEX) {
     method = GET
@@ -50,9 +55,9 @@ export default (store: Object) => (next: Function) => (action: Object) => {
       data => next({
         type: action.type,
         payload: {
-          data,
-          ...action.payload
-        }
+          ...data,
+          ...context,
+        },
       }),
       error => {
         next({
