@@ -128,10 +128,14 @@ def start_story(message, user, group):
         raise ValueError('Story {} has no clue named "START"'.format(story_code.story_uid))
     group_code = Group.gen_uid()
     group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_code.story_uid, user_keys=[user.key])
+
+    start_messages = [start_new_story(group_code), start_clue]
+    if not group.story.allows_groups:
+        start_messages = [start_clue]
+
     return Result(
         response_type=INFO,
-        messages=[start_new_story(group_code),
-                  start_clue],
+        messages=start_messages,
         user=user,
         group=group,
     )
@@ -183,7 +187,7 @@ def get_next_clue(message, answers):
 def answer(message, user, group):
     clue = group.clue
     if clue.is_endpoint:
-        return Result(response_type=CLUE, messages=[END_OF_STORY], user=user, group=group)
+        return Result(response_type=CLUE, messages=[group.story.default_end], user=user, group=group)
     answers = group.clue.answers
     next_clue, answer_data = get_next_clue(message, answers)
     if next_clue:

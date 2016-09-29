@@ -4,12 +4,16 @@ import APIRoutes from './api'
 export type StoryType = {
   uid: string,
   defaultHint: string,
+  defaultEnd: string,
+  allowsGroups: boolean,
   clues: Array<string>,
 }
 
 const storyFactory = (args: Object): StoryType => ({
   uid: null,
   defaultHint: '',
+  defaultEnd: '',
+  allowsGroups: '',
   clues: [],
   ...args,
 })

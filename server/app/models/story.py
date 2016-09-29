@@ -2,10 +2,12 @@ from google.appengine.ext import ndb
 
 
 class Story(ndb.Model):
-    EDITABLE_FIELDS = ['clues', 'default_hint']
+    EDITABLE_FIELDS = ['clues', 'default_hint', 'default_end', 'allows_groups']
 
     clues = ndb.StringProperty(repeated=True)
     default_hint = ndb.StringProperty(required=True)
+    default_end = ndb.StringProperty(required=True)
+    allows_groups = ndb.BooleanProperty(default=False)
     uid = ndb.StringProperty(required=True)
 
     @classmethod

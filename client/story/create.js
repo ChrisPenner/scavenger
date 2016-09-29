@@ -16,6 +16,7 @@ class Create extends React.Component {
     this.state = {
       uid: '',
       defaultHint: '',
+      defaultEnd: '',
     }
     this.create = this.create.bind(this)
     this.createStory = createStory
@@ -35,7 +36,8 @@ class Create extends React.Component {
   create() {
     this.createStory({
       uid: this.state.uid,
-      defaultHint: this.state.defaultHint
+      defaultHint: this.state.defaultHint,
+      defaultEnd: this.state.defaultEnd
     })
   }
 
@@ -71,6 +73,33 @@ class Create extends React.Component {
                         })}
               value={this.state.defaultHint} />
           </div>
+          <label
+            className="label"
+            htmlFor="end">
+            Default End
+          </label>
+          <div className="control">
+            <textarea
+              id="end"
+              className="textarea"
+              onChange={(e) => this.update({
+                          defaultEnd: e.target.value
+                        })}
+              value={this.state.defaultEnd} />
+          </div>
+
+          <p className="control">
+            <label
+              htmlFor="allows-groups">
+              <input
+                id="allows-groups"
+                type="checkbox"
+                checked={story.allowsGroups || false}
+                onChange={(e) => changeStory([story.uid, 'allowsGroups'], e.target.checked)} />
+              Send group join code at start
+            </label>
+          </p>
+
           <button
             onClick={this.create}
             className="button is-success">
