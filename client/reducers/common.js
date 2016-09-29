@@ -6,7 +6,7 @@ import at from '../action-types'
 
 const baseResourceReducer = (resourceType: ResourceType) => handleActions({
   [at.load(resourceType)]: (
-    (state, {payload}) => payload
+    (state, {payload}) => payload.data
   ),
 
   [at.change(resourceType)]: (

@@ -3,7 +3,7 @@ import xml2js from 'xml2js-es6-promise'
 import R from 'ramda'
 import swal from 'sweetalert'
 import { successToast } from '../lib/wisp'
-import { push } from 'react-router-redux'
+import { push, goBack } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
 import at from '../action-types'
@@ -13,6 +13,7 @@ import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reduc
 import * as Routes from '../routes'
 import type { routeT } from '../routes'
 import type { apiT } from '../api'
+import { API, INDEX, DELETE } from '../lib/middleman'
 
 export type FSA = {
   type: string,
@@ -78,7 +79,7 @@ export const saveStory = saveResource(Story, setStory, getStory)
 export const saveClue = saveResource(Clue, setClue, getClue)
 export const saveAnswer = saveResource(Answer, setAnswer, getAnswer)
 
-const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function, getState: Function, { DELETE }: apiT) => swal({
+const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function, getState: Function) => swal({
   title: "Delete?",
   type: "warning",
   showCancelButton: true,
@@ -86,19 +87,27 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   showLoaderOnConfirm: true,
 }, (confirmed) => {
   if (confirmed) {
-    return DELETE(resource, uid)
-      .then(() => dispatch(push(route)))
-      .then(() => dispatch({
-        type: `DELETE_${resource.type}`,
-        payload: {uid},
-      }))
+    dispatch(push(route))
+    return dispatch({
+      type: at.del(resource.type),
+      payload: {
+        uid,
+      },
+      [API]: {
+        route: resource.route(uid),
+        method: DELETE,
+      }
+    })
       .then(() => swal({
         title: "Deleted",
         type: "success",
         showConfirmButton: false,
         timer: 700,
       }))
-      .catch((message) => swal("Error", message, "error"))
+      .catch((message) => {
+        dispatch(goBack())
+        swal("Error", message, "error")
+      })
   }
 })
 
@@ -107,12 +116,13 @@ export const deleteStory = deleter(Story)
 export const deleteClue = deleter(Clue)
 export const deleteAnswer = deleter(Answer)
 
-const loader = (resource: ResourceT) => () => (dispatch: Function, getState: Function, { INDEX }: apiT) => {
-  dispatch({
-    type: at.load(resource.type),
-    payload: INDEX(resource),
-  })
-}
+const loader = (resource: ResourceT) => () => ({
+  type: at.load(resource.type),
+  [API]: {
+    route: resource.index(),
+    method: INDEX,
+  }
+})
 
 export const loadStory = loader(Story)
 export const loadCodes = loader(Code)

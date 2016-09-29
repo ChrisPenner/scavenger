@@ -1,6 +1,4 @@
 /* @flow */
-import APIRoutes from './api'
-
 export type StoryType = {
   uid: string,
   defaultHint: string,
@@ -104,44 +102,51 @@ const answerFactory = (args: Object): AnswerType => ({
 
 export type ResourceT = {
   route: Function,
+  index: Function,
   new: (o:Object) => Object,
   type: string,
 }
 
-export const Story = {
-  route: APIRoutes.story,
-  new: storyFactory,
+const addRoutes = ({baseRoute, ...resource}) => ({
+  ...resource,
+  index: () => baseRoute,
+  route: (uid: string) => `${baseRoute}${uid}`,
+})
+
+export const Story = addRoutes({
   type: 'STORY',
-}
+  baseRoute: '/api/stories/',
+  new: storyFactory,
+})
 
-export const Code = {
-  route: APIRoutes.code,
-  new: storyCodeFactory,
+export const Code = addRoutes({
   type: 'CODE',
-}
+  baseRoute: '/api/codes/',
+  new: storyCodeFactory,
+})
 
-export const Clue = {
-  route: APIRoutes.clue,
-  new: clueFactory,
+export const Clue = addRoutes({
   type: 'CLUE',
-}
+  baseRoute: '/api/clues/',
+  new: clueFactory,
+})
 
-export const Answer = {
-  route: APIRoutes.answer,
-  new: answerFactory,
+export const Answer = addRoutes({
   type: 'ANSWER',
-}
+  baseRoute: '/api/answers/',
+  new: answerFactory,
+})
 
-export const Group = {
-  route: APIRoutes.group,
-  new: groupFactory,
+export const Group = addRoutes({
   type: 'GROUP',
-}
+  baseRoute: '/api/groups/',
+  new: groupFactory,
+})
 
-export const Message = {
-  route: APIRoutes.messages,
-  new: messageFactory,
+export const Message = addRoutes({
   type: 'MESSAGE',
-}
+  baseRoute: '/api/messages/',
+  new: messageFactory,
+})
 
 export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP' | 'MESSAGE' | 'CODE'
