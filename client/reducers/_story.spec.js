@@ -15,19 +15,16 @@ describe('Story Reducer', function() {
   const startStory = Story.new({
     uid: 'STORY',
     defaultHint: 'my hint',
-    defaultEnd: 'my end',
     clues: [clueUid, secondClueUid, thirdClueUid],
   })
   const startStory2 = Story.new({
     uid: 'SECONDSTORY',
     defaultHint: 'my hint',
-    defaultEnd: 'my end',
     clues: ['SECONDSTORY:CLUE'],
   })
   const startStory3 = Story.new({
     uid: 'STORY2',
     defaultHint: 'my hint',
-    defaultEnd: 'my end',
     clues: ['STORY2:CLUE'],
   })
   const startStories = {
@@ -39,7 +36,6 @@ describe('Story Reducer', function() {
   const newStory = Story.new({
     uid: 'NEWSTORY',
     defaultHint: 'my new hint',
-    defaultEnd: 'my end',
     clues: ['NEWSTORY:NEWCLUE'],
   })
 

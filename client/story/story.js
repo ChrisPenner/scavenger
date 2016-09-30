@@ -47,27 +47,15 @@ const Story = ({story, changeStory, saveStory, deleteStory}) => {
           onChange={(e) => changeStory([story.uid, 'defaultHint'], e.target.value)} />
       </div>
       <label className="label">
-        Default Ending
+        Ending Message
       </label>
       <div className="control">
         <textarea
-          id="default-end"
+          id="end-message"
           className="textarea"
-          value={story.defaultEnd || ''}
-          onChange={(e) => changeStory([story.uid, 'defaultEnd'], e.target.value)} />
+          value={story.endMessage || ''}
+          onChange={(e) => changeStory([story.uid, 'endMessage'], e.target.value)} />
       </div>
-
-      <p className="control">
-        <label
-          htmlFor="allows-groups">
-          <input
-            id="allows-groups"
-            type="checkbox"
-            checked={story.allowsGroups || false}
-            onChange={(e) => changeStory([story.uid, 'allowsGroups'], e.target.checked)} />
-          Send group join code at start
-        </label>
-      </p>
 
       <label className="label">
         Clues
