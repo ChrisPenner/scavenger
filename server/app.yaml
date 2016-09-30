@@ -18,6 +18,7 @@ handlers:
   login: admin
 
 - url: /static
+  login: admin
   expiration: 364d
   static_dir: static
 
