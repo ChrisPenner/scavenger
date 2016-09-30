@@ -11,11 +11,10 @@ from models.clue import Clue
 from twilio import twiml
 from models.user import User
 from models.group import Group
-from models.story import Story
 from models.message import Message
 from messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED, START_INSTRUCTIONS, \
-    JOIN_GROUP_INSTRUCTIONS
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, CODE_ALREADY_USED, START_INSTRUCTIONS, \
+    JOIN_GROUP_INSTRUCTIONS, INTRO_INSTRUCTIONS
 
 # Message Types
 START_STORY = 'START_STORY'
@@ -129,13 +128,9 @@ def start_story(message, user, group):
     group_code = Group.gen_uid()
     group = Group.from_uid(group_code, clue_uid=start_clue.uid, story_uid=story_code.story_uid, user_keys=[user.key])
 
-    start_messages = [start_new_story(group_code), start_clue]
-    if not group.story.allows_groups:
-        start_messages = [start_clue]
-
     return Result(
         response_type=INFO,
-        messages=start_messages,
+        messages=[INTRO_INSTRUCTIONS, start_clue],
         user=user,
         group=group,
     )
@@ -187,7 +182,7 @@ def get_next_clue(message, answers):
 def answer(message, user, group):
     clue = group.clue
     if clue.is_endpoint:
-        return Result(response_type=CLUE, messages=[group.story.default_end], user=user, group=group)
+        return Result(response_type=CLUE, messages=[Message(text=group.story.end_message)], user=user, group=group)
     answers = group.clue.answers
     next_clue, answer_data = get_next_clue(message, answers)
     if next_clue:
@@ -200,8 +195,7 @@ def answer(message, user, group):
     logging.info('Sending hint')
     if clue.hint:
         return Result(response_type=HINT, messages=[Message(text=clue.hint)], user=user, group=group)
-    story = Story.get_by_id(group.story_uid)
-    return Result(response_type=HINT, messages=[Message(text=story.default_hint)], user=user, group=group)
+    return Result(response_type=HINT, messages=[Message(text=group.story.default_hint)], user=user, group=group)
 
 
 class TwilioHandler(RequestHandler):

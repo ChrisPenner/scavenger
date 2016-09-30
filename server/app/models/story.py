@@ -2,12 +2,13 @@ from google.appengine.ext import ndb
 
 
 class Story(ndb.Model):
-    EDITABLE_FIELDS = ['clues', 'default_hint', 'default_end', 'allows_groups']
+    EDITABLE_FIELDS = ['clues', 'default_hint', 'default_end']
 
     clues = ndb.StringProperty(repeated=True)
     default_hint = ndb.StringProperty(required=True)
-    default_end = ndb.StringProperty(required=True)
-    allows_groups = ndb.BooleanProperty(default=False)
+    end_message = ndb.StringProperty(required=True,
+                                     default="Looks like you've hit the end of the story, "
+                                             "text 'restart' to try again!")
     uid = ndb.StringProperty(required=True)
 
     @classmethod

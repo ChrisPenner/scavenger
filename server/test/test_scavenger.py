@@ -13,7 +13,7 @@ from app.models.answer import Answer
 from app.models.group import Group
 
 from app.messages import HOW_TO_START, STORY_NOT_FOUND, NO_GROUP_FOUND, \
-    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, END_OF_STORY, start_new_story, CODE_ALREADY_USED, START_INSTRUCTIONS, \
+    ALREADY_IN_GROUP, JOINED_GROUP, RESTARTED, INTRO_INSTRUCTIONS, CODE_ALREADY_USED, START_INSTRUCTIONS, \
     JOIN_GROUP_INSTRUCTIONS
 from app.scavenger import CLUE, HINT, START_STORY, JOIN_GROUP, RESTART, ANSWER, JOINED, INFO
 
@@ -154,14 +154,14 @@ class TestScavenger(GAETestCase):
         start_message = 'start {}'.format(self.story_code.word_string)
         send_message(start_message)
         group = Group.query().get()
-        join_text = start_new_story(group.uid).text
 
         answer_text = 'my answer is 42'
         status, response = send_message(answer_text)
         self.assertEqual(200, status)
         self.maxDiff = None
         self.assertIn(self.next_clue.text, response)
-        expected_messages = [start_message, join_text, self.start_clue.text, answer_text, self.next_clue.text]
+        expected_messages = [start_message, INTRO_INSTRUCTIONS.text, self.start_clue.text,
+                             answer_text, self.next_clue.text]
         self.assertItemsEqual(expected_messages, [m.text for m in Message.for_story(self.story.uid)])
         self.assertItemsEqual(expected_messages, [m.text for m in Message.for_group(group.uid)])
 
@@ -338,7 +338,7 @@ class TestPerformAction(TestCase):
         group_mock.gen_uid.return_value = 'abcd'
         user = User()
         result = perform_action(START_STORY, Message(text='start blah'), user, None)
-        expected_message_text = [start_new_story('abcd').text, clue.text]
+        expected_message_text = [INTRO_INSTRUCTIONS.text, clue.text]
         self.assertEqual(expected_message_text, [m.text for m in result.messages])
 
     def test_gives_instructions_if_start_code_not_provided(self):
@@ -384,9 +384,10 @@ class TestPerformAction(TestCase):
     def test_returns_expected_end_of_story(self):
         clue = Clue(text='blah', answer_uids=[])
         group_mock = Mock(clue=clue)
+        group_mock.story.end_message = "END"
         user = Mock()
         result = perform_action(ANSWER, Message(text='asdf'), user, group_mock)
-        self.assertEqual([END_OF_STORY.text], [m.text for m in result.messages])
+        self.assertEqual([group_mock.story.end_message], [m.text for m in result.messages])
 
 
 class TestGetNextClue(TestCase):

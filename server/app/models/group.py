@@ -5,6 +5,7 @@ from google.appengine.ext import ndb
 from webapp2_extensions import serialize_key, serialize_datetime
 
 from app.models.clue import Clue
+from app.models.story import Story
 
 
 class Group(ndb.Model):
@@ -28,6 +29,13 @@ class Group(ndb.Model):
         if not self.clue_uid:
             return None
         return Clue.get_by_id(self.clue_uid)
+
+    @property
+    def story(self):
+        if not self.story_uid:
+            return None
+        return Story.get_by_id(self.story_uid)
+
 
     def restart(self):
         self.data = {}
