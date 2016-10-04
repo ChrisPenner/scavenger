@@ -72,7 +72,7 @@ const saveResource = (resource: ResourceT, getResourceState: Function) => (uid: 
   return dispatch({
     type: at.set(resource.type),
     [API]: {
-      route: resource.route(uid),
+      route: resource.api.route(uid),
       method: PUT,
       payload: getResourceState(getState(), uid),
     }
@@ -98,7 +98,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
         uid,
       },
       [API]: {
-        route: resource.route(uid),
+        route: resource.api.route(uid),
         method: DELETE,
         context: {
           uid
@@ -126,7 +126,7 @@ export const deleteAnswer = deleter(Answer)
 const loader = (resource: ResourceT) => () => ({
   type: at.load(resource.type),
   [API]: {
-    route: resource.index(),
+    route: resource.api.route(),
     method: INDEX,
   }
 })
@@ -143,7 +143,7 @@ export const creator = (resource: ResourceT) => (payload: any) => (dispatch: any
     type: at.set(resource.type),
     payload,
     [API]: {
-      route: resource.route(payload.uid),
+      route: resource.api.route(payload.uid),
       method: PUT,
       payload,
     }

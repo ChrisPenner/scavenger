@@ -1,4 +1,6 @@
 /* @flow */
+import R from 'ramda'
+
 export type StoryType = {
   uid: string,
   defaultHint: string,
@@ -12,14 +14,14 @@ const storyFactory = (args: Object): StoryType => ({
   ...args,
 })
 
-export type StoryCodeType = {
+export type CodeType = {
   storyUid: string,
   wordString: string,
   used: boolean,
   singleUse: boolean,
 }
 
-const storyCodeFactory = (args: Object): StoryType => ({
+const codeFactory = (args: Object): CodeType => ({
   storyUid: '',
   wordString: '',
   used: false,
@@ -102,50 +104,57 @@ const answerFactory = (args: Object): AnswerType => ({
 
 export type ResourceT = {
   route: Function,
-  index: Function,
+  api: {
+    route: Function,
+  },
   new: (o:Object) => Object,
   type: string,
 }
 
-const addRoutes = ({baseRoute, ...resource}) => ({
-  ...resource,
-  index: () => baseRoute,
-  route: (uid: string) => `${baseRoute}${uid}`,
-})
+const addRoutes = ({route, ...resource}) => {
+  const baseRoute = (uid: string) => `${route}${uid ? uid : ""}`
+  return {
+    ...resource,
+    route: baseRoute,
+    api: {
+      route: R.compose(R.concat('/api'), baseRoute),
+    }
+  }
+}
 
 export const Story = addRoutes({
   type: 'STORY',
-  baseRoute: '/api/stories/',
+  route: '/stories/',
   new: storyFactory,
 })
 
 export const Code = addRoutes({
   type: 'CODE',
-  baseRoute: '/api/codes/',
-  new: storyCodeFactory,
+  route: '/codes/',
+  new: codeFactory,
 })
 
 export const Clue = addRoutes({
   type: 'CLUE',
-  baseRoute: '/api/clues/',
+  route: '/clues/',
   new: clueFactory,
 })
 
 export const Answer = addRoutes({
   type: 'ANSWER',
-  baseRoute: '/api/answers/',
+  route: '/answers/',
   new: answerFactory,
 })
 
 export const Group = addRoutes({
   type: 'GROUP',
-  baseRoute: '/api/groups/',
+  route: '/groups/',
   new: groupFactory,
 })
 
 export const Message = addRoutes({
   type: 'MESSAGE',
-  baseRoute: '/api/messages/',
+  route: '/messages/',
   new: messageFactory,
 })
 
