@@ -10,6 +10,7 @@ import { getClue, getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
 import { getToolData } from '../reducers'
 import { uidsFromParams, splitUid } from '../utils'
+import { Story } from '../resources'
 import type { AnswerType } from '../resources'
 
 const findMatchingAnswer = (text: string, answers: Array<AnswerType>) => {
@@ -149,6 +150,6 @@ Clue.propTypes = {
 export default connect(stateToProps, {
   saveClue,
   changeClue,
-  deleteClue: (uid) => deleteClue(uid, Routes.story(splitUid(uid).storyUid)),
+  deleteClue: (uid) => deleteClue(uid, Story.route(splitUid(uid).storyUid)),
   changeTestMessage,
 })(Clue)

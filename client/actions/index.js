@@ -10,10 +10,9 @@ import at from '../action-types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
-import * as Routes from '../routes'
-import type { routeT } from '../routes'
 import type { apiT } from '../api'
 import { API, INDEX, DELETE, PUT } from '../lib/middleman'
+import * as Routes from '../routes'
 
 export type FSA = {
   type: string,

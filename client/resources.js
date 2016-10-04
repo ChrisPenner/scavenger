@@ -107,12 +107,12 @@ export type ResourceT = {
   api: {
     route: Function,
   },
-  new: (o:Object) => Object,
+  new: Function,
   type: string,
 }
 
-const addRoutes = ({route, ...resource}) => {
-  const baseRoute = (uid: string) => `${route}${uid ? uid : ""}`
+const addRoutes = ({route, ...resource}): any => {
+  const baseRoute = (uid?: string) => `${route}${uid ? uid : ""}`
   return {
     ...resource,
     route: baseRoute,

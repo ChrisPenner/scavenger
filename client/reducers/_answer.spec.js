@@ -20,7 +20,7 @@ describe('Answer Reducer', function() {
     [startAnswer.uid]: startAnswer,
   }
 
-  const newAnswer = Answer.new({
+  const newAnswer: any = Answer.new({
     uid: 'STORY:NEWCLUE:NEWANSWER',
     storyUid: 'NEWSTORY',
     clueUid: 'STORY:NEWCLUE',

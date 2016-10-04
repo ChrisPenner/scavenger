@@ -8,34 +8,35 @@ import { createAnswer } from '../actions'
 import type { FSA } from '../actions'
 
 import { getCluesByStory, getAnswers } from '../reducers'
+import { Answer } from '../resources'
+import { uidsFromParams } from '../utils'
 
-const stateToProps = (state, {params: {storyId, clueId}}) => {
+const stateToProps = (state, {params}) => {
+  const {storyUid, clueUid} = uidsFromParams(params)
   return {
     answers: getAnswers(state),
-    clues: getCluesByStory(state, storyId),
-    stories: getCluesByStory(state, storyId),
-    storyId,
-    clueId,
+    clues: getCluesByStory(state, storyUid),
+    stories: getCluesByStory(state, storyUid),
+    storyUid,
+    clueUid,
   }
 }
 class Create extends React.Component {
   create: () => void
   createAnswer: (a: Object) => Promise<FSA>
   state: Object
-  storyId: string
-  clueId: string
+  clueUid: string
   push: (path: string) => FSA
-  constructor({createAnswer, clues, storyId, clueId, push}) {
+  constructor({createAnswer, clues, clueUid, push}) {
     super()
     this.state = {
-      answerId: '',
+      answerUid: '',
       pattern: '',
       nextClue: clues[0].uid,
     }
     this.create = this.create.bind(this)
     this.createAnswer = createAnswer
-    this.storyId = storyId
-    this.clueId = clueId
+    this.clueUid = clueUid
     this.push = push
   }
 
@@ -44,24 +45,25 @@ class Create extends React.Component {
   }
 
   getUid() {
-    const {answerId} = this.state
-    return [this.storyId, this.clueId, answerId].join(':')
+    const {answerUid} = this.state
+    return [this.clueUid, answerUid].join(':')
   }
 
   updateAnswerId(newAnswerId) {
     newAnswerId = newAnswerId.replace(/[^a-zA-Z0-9-]/g, '').trim().toUpperCase()
     this.setState({
-      answerId: newAnswerId
+      answerUid: newAnswerId
     })
   }
 
   create() {
     const uid = this.getUid()
+    debugger
     return this.createAnswer({
       uid,
       pattern: this.state.pattern,
       nextClue: this.state.nextClue,
-    }).then(() => this.push(Routes.answer(uid)))
+    }).then(() => this.push(Answer.route(uid)))
   }
 
   render() {
@@ -80,7 +82,7 @@ class Create extends React.Component {
               className="input"
               type="text"
               onChange={(e) => this.updateAnswerId(e.target.value)}
-              value={this.state.answerId} />
+              value={this.state.answerUid} />
           </div>
           <label
             className="label"

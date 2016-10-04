@@ -6,17 +6,18 @@ import classnames from 'classnames'
 
 import { splitUid } from '../utils'
 import { getAnswersListByClue } from '../reducers'
-import * as Routes from '../routes'
 import { startDrag, dropAnswer } from '../actions'
+import { Answer } from '../resources'
+import * as Routes from '../routes'
 
-const Answers = ({answers, storyId, clueId, startDrag, dropAnswer, highlightUid}) => {
+const Answers = ({answers, storyUid, clueUid, startDrag, dropAnswer, highlightUid}) => {
   const answerLinks = answers.map((answer, index) => {
     const classes = classnames('my-list-item', {
       'highlighted': highlightUid === answer.uid,
     })
     return (
       <Link
-        to={Routes.answer(answer.uid)}
+        to={Answer.route(answer.uid)}
         className={classes}
         key={answer.uid}
         draggable="true"
@@ -33,18 +34,18 @@ const Answers = ({answers, storyId, clueId, startDrag, dropAnswer, highlightUid}
       <Link
         className="my-list-item"
         key="add-answer"
-        to={{ pathname: Routes.createAnswer(storyId, clueId) }}> + Add Answer
+        to={{ pathname: Routes.createAnswer(clueUid) }}> + Add Answer
       </Link>
     </div>
   )
 }
 
 const stateToProps = (state, {clueUid}) => {
-  const {clueId, storyId} = splitUid(clueUid)
+  const {storyUid} = splitUid(clueUid)
   return {
     answers: getAnswersListByClue(state, clueUid),
-    storyId,
-    clueId,
+    storyUid,
+    clueUid,
   }
 }
 
@@ -52,8 +53,8 @@ Answers.propTypes = {
   startDrag: React.PropTypes.func.isRequired,
   dropAnswer: React.PropTypes.func.isRequired,
   answers: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-  storyId: React.PropTypes.string.isRequired,
-  clueId: React.PropTypes.string.isRequired,
+  storyUid: React.PropTypes.string.isRequired,
+  clueUid: React.PropTypes.string.isRequired,
   highlight: React.PropTypes.string,
 }
 export default connect(stateToProps, {

@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 
 import * as Routes from '../routes'
 import { getStoriesList } from '../reducers'
+import { Story } from '../resources'
 
 const stateToProps = (state) => ({
   storiesList: getStoriesList(state),
@@ -14,7 +15,7 @@ const Stories = ({storiesList}) => {
   const stories = storiesList.map(story => (
     <Link
       key={story.uid}
-      to={Routes.story(story.uid)}
+      to={Story.route(story.uid)}
       className="my-list-item">
       {story.uid}
     </Link>
