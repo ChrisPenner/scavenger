@@ -1,4 +1,6 @@
+/* @flow */
 import R from 'ramda'
+import type { ResourceType } from './resources'
 
 const actionsList = [
   'CHANGE_EXPLORER',
@@ -14,10 +16,14 @@ const actionsList = [
 
 ]
 
-const actionTypeCreators = {
+const actionTypeCreators: {[name: string]: (type:ResourceType) => string} = {
   del: (type) => `DELETE_${type}`,
   set: (type) => `SET_${type}`,
   load: (type) => `LOAD_${type}`,
   change: (type) => `CHANGE_${type}`,
 }
-export default R.merge(R.zipObj(actionsList, actionsList), actionTypeCreators)
+
+type ActionType = any
+
+const actionTypes: {[keyName: string]: ActionType} = R.merge(R.zipObj(actionsList, actionsList), actionTypeCreators)
+export default actionTypes

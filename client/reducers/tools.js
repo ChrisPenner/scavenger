@@ -4,6 +4,7 @@ import R from 'ramda'
 
 import at from '../action-types'
 
+export type ToolsType = { testMessage: string }
 export const DEFAULT_STATE = { testMessage: '' }
 export default handleActions({
   [at.CHANGE_TEST_MESSAGE]: (state, {payload}) => R.assoc('testMessage', payload, state),

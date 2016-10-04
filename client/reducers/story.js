@@ -5,7 +5,10 @@ import R from 'ramda'
 import at from '../action-types'
 import commonReducer from './common'
 import { Story, Clue } from '../resources'
+import type { StoryType } from '../resources'
 import { splitUid } from '../utils'
+
+type StoryReducerT = {[id:string]: StoryType}
 
 const transformClueUids = R.curry((fn, state, {payload}) => {
   const {uid} = payload
@@ -17,8 +20,9 @@ const transformClueUids = R.curry((fn, state, {payload}) => {
   }, state)
 })
 
-export const DEFAULT_STATE = {}
-export default commonReducer(Story.type,
+export const DEFAULT_STATE: StoryReducerT = {}
+
+const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story.type,
   handleActions({
     [at.set(Clue.type)]: (
       transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))
@@ -31,3 +35,5 @@ export default commonReducer(Story.type,
     ),
   }, DEFAULT_STATE)
 )
+
+export default reducer

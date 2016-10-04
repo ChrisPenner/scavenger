@@ -1,6 +1,12 @@
 /* @flow */
 import R from 'ramda'
 
+type Uids = {
+  storyUid?: string,
+  clueUid?: string,
+  answerUid?: string,
+}
+
 const concatWithColon = (prev, next) => `${prev}:${next}`
 export const splitUid = (uid: string) => {
   const splitList = R.split(':', uid)

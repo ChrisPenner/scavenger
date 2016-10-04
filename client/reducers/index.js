@@ -11,11 +11,15 @@ import groups from './group'
 import messages from './message'
 import at from '../action-types'
 import { Story, Answer, Clue } from '../resources'
+import type { StoryType, ClueType, AnswerType, GroupType, MessageType } from '../resources'
 import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
 import { loadedReducer } from '../lib/loaded'
 import { wispReducer } from '../lib/wisp'
+
+import type { ExplorerType } from './explorer'
+import type { ToolsType } from './tools'
 
 export default combineReducers({
   routing: routerReducer,
@@ -32,57 +36,65 @@ export default combineReducers({
   toasts: wispReducer,
 })
 
-const listFromMapping = (mapping: Object) => Object.keys(mapping).map(key => mapping[key])
+type MapOf<T> = {[uid:string]: T}
+function listFromMapping<T> (mapping: MapOf<T>): Array<T> {
+  return Object.keys(mapping).map(key => mapping[key])
+}
 
-export const getClue = (state: Object, clueUid: string) => state.clues[clueUid]
-export const getClues = (state: Object) => state.clues
-export const getClueUidsByStory = (state: Object, storyUid: string) => getStory(state, storyUid).clues
-export const getCluesList = (state: Object) => listFromMapping(state.clues)
-export const getCluesByStory = (state: Object, storyUid: string) => {
+export const getClue = (state: Object, clueUid: string): ClueType => state.clues[clueUid]
+export const getClues = (state: Object): MapOf<ClueType> => state.clues
+export const getClueUidsByStory = (state: Object, storyUid: string): Array<string> => getStory(state, storyUid).clues
+export const getCluesList = (state: Object): Array<ClueType> => listFromMapping(state.clues)
+export const getCluesByStory = (state: Object, storyUid: string): Array<ClueType> => {
   return getClueUidsByStory(state, storyUid).map(clueUid => getClue(state, clueUid))
 }
 
-export const getCluesListByStory = (state: Object, storyUid: string) => getCluesByStory(state, storyUid)
+export const getStory = (state: Object, storyUid: string): StoryType => state.stories[storyUid]
+export const getStories = (state: Object): MapOf<StoryType> => state.stories
+export const getStoriesList = (state: Object): Array<StoryType> => listFromMapping(state.stories)
+export const getStoryUids = (state: Object): Array<string> => R.keys(getStories(state))
 
-export const getStory = (state: Object, storyUid: string) => state.stories[storyUid]
-export const getStories = (state: Object) => state.stories
-export const getStoriesList = (state: Object) => listFromMapping(state.stories)
-export const getStoryUids = (state: Object) => R.keys(getStories(state))
+export const getCodesList = (state: Object): Array<string> => listFromMapping(state.codes)
 
-export const getCodesList = (state: Object) => listFromMapping(state.codes)
+export const getGroupsList = (state: Object): Array<GroupType> => R.sortBy(R.prop("createdAt"), listFromMapping(state.groups))
 
-export const getGroups = (state: Object) => state.groups
-export const getGroupsList = (state: Object) => R.sortBy(R.prop("createdAt"), listFromMapping(state.groups))
-export const getGroupUids = (state: Object) => R.keys(getGroups(state))
-
-export const getAnswer = (state: Object, answerUid: string) => state.answers[answerUid]
-export const getAnswers = (state: Object) => state.answers
-export const getAnswersByClue = (state: Object, clueUid: string) => getClue(state, clueUid).answerUids.map(answerUid => getAnswer(state, answerUid))
-export const getAnswersListByClue = (state: Object, clueUid: string) => listFromMapping(getAnswersByClue(state, clueUid))
-
-export const getMessages = (state:Object) => state.messages
-export const getMessagesByGroup = (state:Object, groupUid:string) => {
-  const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
-  return R.pickBy(isFromGroup, getMessages(state))
+export const getAnswer = R.curry((state: Object, answerUid: string) => state.answers[answerUid])
+export const getAnswers = (state: Object): MapOf<AnswerType> => state.answers
+export const getAnswersByClue = (state: Object, clueUid: string): Array<AnswerType> => {
+  return getClue(state, clueUid).answerUids.map(getAnswer(state))
 }
-export const getMessagesByStory = (state:Object, storyUid:string) => {
-  const isFromStory = R.compose(R.equals(storyUid), R.prop('storyUid'))
-  return R.pickBy(isFromStory, getMessages(state))
+export const getAnswersListByClue = (state: Object, clueUid: string): Array<AnswerType> => {
+  return getAnswersByClue(state, clueUid)
 }
+
+export const getMessages = (state:Object): MapOf<MessageType> => state.messages
 
 export const byDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
 
-export const getGroupMessages = (state: Object, groupUid: string) => {
-    return R.sort(byDateDescending, R.values(getMessagesByGroup(state, groupUid)))
+export const getGroupMessages = (state: Object, groupUid: string): Array<MessageType> => {
+  const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
+  return R.compose(
+    R.sort(byDateDescending),
+    R.values,
+    R.pickBy(isFromGroup),
+    getMessages
+  )(state)
 }
-export const getStoryMessages = (state: Object, storyUid: string) => {
-  return R.sort(byDateDescending, R.values(getMessagesByStory(state, storyUid)))
+
+export const getStoryMessages = (state: Object, storyUid: string): Array<MessageType> => {
+  const isFromStory = R.compose(R.equals(storyUid), R.prop('storyUid'))
+  return R.compose(
+    R.sort(byDateDescending),
+    R.values,
+    R.pickBy(isFromStory),
+    getMessages
+  )(state)
 }
 
+export const getExplorer = (state: Object): ExplorerType => state.explorer
 
-export const getExplorer = (state: Object) => state.explorer
-export const getToolData = (state: Object) => state.tools
+export const getToolData = (state: Object): ToolsType => state.tools
 
-export const getDragData = (state: Object) => state.ui.dragData
+export const getDragData = (state: Object): mixed => state.ui.dragData
 
-export const isLoaded = ({loaded}: Object) => (loaded[at.load(Story.type)] && loaded[at.load(Clue.type)] && loaded[at.load(Answer.type)])
+export const isLoaded = ({loaded}: Object): boolean => (loaded[at.load(Story.type)] && loaded[at.load(Clue.type)] && loaded[at.load(Answer.type)])

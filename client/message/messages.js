@@ -2,8 +2,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { getGroupMessages, getStoryMessages } from '../reducers'
+import type { MessageType } from '../resources'
 
-const Messages = ({messages}: Object) => {
+const Messages = ({messages}: {messages: Array<MessageType>}) => {
   const messageRows = messages.map(({uid, text, mediaUrl, sender, receiver, groupUid, storyUid, sent}) => (
       <tr key={uid}>
         <td>
