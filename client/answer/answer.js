@@ -108,11 +108,11 @@ Answer.propTypes = {
 }
 
 const stateToProps = (state, {params}) => {
-  const {answerUid} = uidsFromParams(params)
+  const {storyUid, answerUid} = uidsFromParams(params)
   const answer = getAnswer(state, answerUid)
   return {
     answer,
-    clueUids: getClueUidsByStory(state, answer.storyUid)
+    clueUids: getClueUidsByStory(state, storyUid)
   }
 }
 

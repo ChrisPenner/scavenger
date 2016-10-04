@@ -58,7 +58,6 @@ class Create extends React.Component {
 
   create() {
     const uid = this.getUid()
-    debugger
     return this.createAnswer({
       uid,
       pattern: this.state.pattern,
