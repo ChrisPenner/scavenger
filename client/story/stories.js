@@ -7,11 +7,17 @@ import * as Routes from '../routes'
 import { getStoriesList } from '../reducers'
 import { Story } from '../resources'
 
+import type { StoryType } from '../resources'
+
 const stateToProps = (state) => ({
   storiesList: getStoriesList(state),
 })
 
-const Stories = ({storiesList}) => {
+type StoriesProps = {
+  storiesList: Array<StoryType>,
+}
+
+const Stories = ({storiesList}: StoriesProps) => {
   const stories = storiesList.map(story => (
     <Link
       key={story.uid}
@@ -34,11 +40,6 @@ const Stories = ({storiesList}) => {
         </div>
     </div>
   )
-}
-
-Stories.propTypes = {
-  story: React.PropTypes.object,
-  storiesList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
 export default connect(stateToProps)(Stories)

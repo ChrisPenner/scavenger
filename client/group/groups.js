@@ -6,11 +6,17 @@ import { Link } from 'react-router'
 import * as Routes from '../routes'
 import { getGroupsList } from '../reducers'
 
+import type { GroupType } from '../resources'
+
 const stateToProps = (state) => ({
   groupList: getGroupsList(state),
 })
 
-const Groups = ({groupList}) => {
+type GroupsProps = {
+  groupList: Array<GroupType>
+}
+
+const Groups = ({groupList}: GroupsProps) => {
   const groups = groupList.map(group => {
       return (
             <tr key={group.uid}>
@@ -54,11 +60,6 @@ const Groups = ({groupList}) => {
         </div>
     </div>
   )
-}
-
-Groups.propTypes = {
-  group: React.PropTypes.object,
-  groupList: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
 export default connect(stateToProps)(Groups)

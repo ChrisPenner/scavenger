@@ -44,7 +44,6 @@ function listFromMapping<T> (mapping: MapOf<T>): Array<T> {
 export const getClue = (state: Object, clueUid: string): ClueType => state.clues[clueUid]
 export const getClues = (state: Object): MapOf<ClueType> => state.clues
 export const getClueUidsByStory = (state: Object, storyUid: string): Array<string> => getStory(state, storyUid).clues
-export const getCluesList = (state: Object): Array<ClueType> => listFromMapping(state.clues)
 export const getCluesByStory = (state: Object, storyUid: string): Array<ClueType> => {
   return getClueUidsByStory(state, storyUid).map(clueUid => getClue(state, clueUid))
 }

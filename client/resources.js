@@ -19,6 +19,7 @@ const storyFactory = (args: Object): StoryType => ({
 })
 
 export type CodeType = {
+  uid: string,
   storyUid: string,
   wordString: string,
   used: boolean,
@@ -26,6 +27,7 @@ export type CodeType = {
 }
 
 const codeFactory = (args: Object): CodeType => ({
+  uid: null,
   storyUid: '',
   wordString: '',
   used: false,
@@ -59,6 +61,7 @@ export type MessageType = {
   sender?: string,
   receiver?: string,
   mediaUrl?: string,
+  source? : string,
 }
 
 const messageFactory = (args: Object): MessageType => ({

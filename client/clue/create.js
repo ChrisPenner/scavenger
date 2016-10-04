@@ -10,12 +10,18 @@ const stateToProps = (state) => {
     clues: getClues(state)
   }
 }
+
+type CreateClueProps = {
+  createClue: Function,
+  params: { storyUid: string },
+}
+
 class Create extends React.Component {
   state: Object
   storyUid: string
   create: () => void
   createClue: (c: Object) => void
-  constructor({createClue, params: {storyUid}}) {
+  constructor({createClue, params: {storyUid}}: CreateClueProps) {
     super()
     this.state = {
       id: '',
@@ -101,10 +107,6 @@ class Create extends React.Component {
       </div>
     )
   }
-}
-
-Create.propTypes = {
-  createClue: React.PropTypes.func.isRequired,
 }
 
 export default connect(stateToProps, {

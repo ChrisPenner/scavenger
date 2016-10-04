@@ -8,9 +8,19 @@ import { splitUid } from '../utils'
 import { getAnswersListByClue } from '../reducers'
 import { startDrag, dropAnswer } from '../actions'
 import { Answer } from '../resources'
+import type { AnswerType } from '../resources'
 import * as Routes from '../routes'
 
-const Answers = ({answers, storyUid, clueUid, startDrag, dropAnswer, highlightUid}) => {
+type AnswersProps = {
+  startDrag: Function,
+  dropAnswer: Function,
+  answers: Array<AnswerType>,
+  storyUid: string,
+  clueUid: string,
+  highlightUid: string,
+}
+
+const Answers = ({answers, storyUid, clueUid, startDrag, dropAnswer, highlightUid}: AnswersProps) => {
   const answerLinks = answers.map((answer, index) => {
     const classes = classnames('my-list-item', {
       'highlighted': highlightUid === answer.uid,
@@ -49,14 +59,6 @@ const stateToProps = (state, {clueUid}) => {
   }
 }
 
-Answers.propTypes = {
-  startDrag: React.PropTypes.func.isRequired,
-  dropAnswer: React.PropTypes.func.isRequired,
-  answers: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-  storyUid: React.PropTypes.string.isRequired,
-  clueUid: React.PropTypes.string.isRequired,
-  highlight: React.PropTypes.string,
-}
 export default connect(stateToProps, {
   startDrag,
   dropAnswer

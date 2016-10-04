@@ -7,11 +7,16 @@ import { getStories } from '../reducers'
 const stateToProps = (state) => {
   return getStories(state)
 }
+
+type CreateStoryProps = {
+  createStory: Function,
+}
+
 class Create extends React.Component {
   state: Object
   create: () => void
   createStory: (s: Object) => void
-  constructor({createStory}) {
+  constructor({createStory}: CreateStoryProps) {
     super()
     this.state = {
       uid: '',
@@ -81,9 +86,7 @@ class Create extends React.Component {
     )
   }
 }
-Create.propTypes = {
-  createStory: React.PropTypes.func.isRequired,
-}
+
 export default connect(stateToProps, {
   createStory
 })(Create)
