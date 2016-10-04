@@ -5,10 +5,10 @@ import classnames from 'classnames'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import * as Routes from '../routes'
 import { splitUid, uidsFromParams } from '../utils'
 import { getAnswer, getClueUidsByStory } from '../reducers'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
+import { Clue } from '../resources'
 
 const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => {
   let patternError
@@ -108,16 +108,16 @@ Answer.propTypes = {
 }
 
 const stateToProps = (state, {params}) => {
-  const {answerUid} = uidsFromParams(params)
+  const {storyUid, answerUid} = uidsFromParams(params)
   const answer = getAnswer(state, answerUid)
   return {
     answer,
-    clueUids: getClueUidsByStory(state, answer.storyUid)
+    clueUids: getClueUidsByStory(state, storyUid)
   }
 }
 
 export default connect(stateToProps, {
   changeAnswer,
   saveAnswer,
-  deleteAnswer: (uid) => deleteAnswer(uid, Routes.clue(splitUid(uid).clueUid)),
+  deleteAnswer: (uid) => deleteAnswer(uid, Clue.route(splitUid(uid).clueUid)),
 })(Answer)

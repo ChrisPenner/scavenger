@@ -14,6 +14,7 @@ import { Groups } from './group'
 import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
+import * as Res from './resources'
 import { loadStory, loadCodes, loadClue, loadAnswer, loadGroup, loadMessage } from './actions'
 import { Explorer } from './explorer'
 import { GroupMessages, StoryMessages, MessageChoices } from './message'
@@ -33,22 +34,22 @@ const App = connect(state => ({loaded: isLoaded(state)}))
         </div>
         <div className="nav-right">
           <Link
-            to={Routes.messages()}
+            to={Res.Message.route(Routes.INDEX)}
             activeClassName="is-active"
             className="nav-item is-tab"> Messages
           </Link>
           <Link
-            to={Routes.explorer()}
+            to={Routes.explorer(Routes.INDEX)}
             activeClassName="is-active"
             className="nav-item is-tab"> Explorer
           </Link>
           <Link
-            to={Routes.stories()}
+            to={Res.Story.route(Routes.INDEX)}
             activeClassName="is-active"
             className="nav-item is-tab"> Stories
           </Link>
           <Link
-            to={Routes.storycode()}
+            to={Res.Code.route(Routes.INDEX)}
             activeClassName="is-active"
             className="nav-item is-tab"> Codes
           </Link>
@@ -90,45 +91,45 @@ ReactDOM.render(
         path="/"
         component={App}
         onEnter={load}>
-        <IndexRedirect to={Routes.stories()} />
+        <IndexRedirect to={Res.Story.route(Routes.INDEX)} />
         <Route
-          path={Routes.stories()}
+          path={Res.Story.route(Routes.INDEX)}
           components={{ story: Stories }} />
         <Route
-          path={Routes.groups()}
+          path={Res.Group.route(Routes.GROUP_UID_PARAM)}
           components={{ main: Groups }} />
         <Route
-          path={Routes.messages()}
+          path={Res.Message.route(Routes.INDEX)}
           components={{ main: MessageChoices }} />
         <Route
-          path={Routes.groupMessages()}
+          path={Routes.groupMessages(Routes.GROUP_UID_PARAM)}
           components={{ main: GroupMessages }} />
         <Route
-          path={Routes.storyMessages()}
+          path={Routes.storyMessages(Routes.STORY_UID_PARAM)}
           components={{ main: StoryMessages }} />
         <Route
           path={Routes.explorer()}
           components={{ main: Explorer }} />
         <Route
-          path={Routes.story()}
+          path={Res.Story.route(Routes.STORY_UID_PARAM)}
           components={{ story: Story }} />
         <Route
-          path={Routes.storycode()}
+          path={Res.Code.route(Routes.INDEX)}
           components={{ main: Codes }} />
         <Route
-          path={Routes.clue()}
+          path={Res.Clue.route(Routes.CLUE_UID_PARAM)}
           components={{ story: Story, clue: Clue }} />
         <Route
-          path={Routes.answer()}
+          path={Res.Answer.route(Routes.ANSWER_UID_PARAM)}
           components={{ story: Story, clue: Clue, answer: Answer }} />
         <Route
           path={Routes.createStory()}
           components={{ main: CreateStory }} />
         <Route
-          path={Routes.createClue()}
+          path={Routes.createClue(Routes.STORY_UID_PARAM)}
           components={{ main: CreateClue }} />
         <Route
-          path={Routes.createAnswer()}
+          path={Routes.createAnswer(Routes.CLUE_UID_PARAM)}
           components={{ main: CreateAnswer }} />
       </Route>
       <Route

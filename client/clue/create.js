@@ -12,17 +12,17 @@ const stateToProps = (state) => {
 }
 class Create extends React.Component {
   state: Object
-  storyId: string
+  storyUid: string
   create: () => void
   createClue: (c: Object) => void
-  constructor({createClue, params: {storyId}}) {
+  constructor({createClue, params: {storyUid}}) {
     super()
     this.state = {
       id: '',
       text: '',
       hint: '',
     }
-    this.storyId = storyId
+    this.storyUid = storyUid
     this.create = this.create.bind(this)
     this.createClue = createClue
   }
@@ -40,7 +40,7 @@ class Create extends React.Component {
 
   create() {
     this.createClue({
-      uid: `${this.storyId}:${this.state.id}`,
+      uid: `${this.storyUid}:${this.state.id}`,
       text: this.state.text,
       hint: this.state.hint,
     })

@@ -74,5 +74,5 @@ Story.propTypes = {
 export default connect(stateToProps, {
   changeStory,
   saveStory,
-  deleteStory: (uid) => deleteStory(uid, Routes.stories()),
+  deleteStory: (uid) => deleteStory(uid, Story.route()),
 })(Story)

@@ -1,5 +1,5 @@
 /* @flow */
-import APIRoutes from './api'
+import R from 'ramda'
 
 export type StoryType = {
   uid: string,
@@ -16,14 +16,14 @@ const storyFactory = (args: Object): StoryType => ({
   ...args,
 })
 
-export type StoryCodeType = {
+export type CodeType = {
   storyUid: string,
   wordString: string,
   used: boolean,
   singleUse: boolean,
 }
 
-const storyCodeFactory = (args: Object): StoryType => ({
+const codeFactory = (args: Object): CodeType => ({
   storyUid: '',
   wordString: '',
   used: false,
@@ -73,7 +73,7 @@ export type ClueType = {
   uid: string,
   storyUid: string,
   hint: string,
-  mediaUrl: string,
+  mediaUrl?: string,
   answerUids: Array<string>,
 }
 
@@ -106,44 +106,58 @@ const answerFactory = (args: Object): AnswerType => ({
 
 export type ResourceT = {
   route: Function,
-  new: (o:Object) => Object,
+  api: {
+    route: Function,
+  },
+  new: Function,
   type: string,
 }
 
-export const Story = {
-  route: APIRoutes.story,
-  new: storyFactory,
+const addRoutes = ({route, ...resource}): any => {
+  const baseRoute = (uid?: string) => `${route}${uid ? uid : ""}`
+  return {
+    ...resource,
+    route: baseRoute,
+    api: {
+      route: R.compose(R.concat('/api'), baseRoute),
+    }
+  }
+}
+
+export const Story = addRoutes({
   type: 'STORY',
-}
+  route: '/stories/',
+  new: storyFactory,
+})
 
-export const Code = {
-  route: APIRoutes.code,
-  new: storyCodeFactory,
+export const Code = addRoutes({
   type: 'CODE',
-}
+  route: '/codes/',
+  new: codeFactory,
+})
 
-export const Clue = {
-  route: APIRoutes.clue,
-  new: clueFactory,
+export const Clue = addRoutes({
   type: 'CLUE',
-}
+  route: '/clues/',
+  new: clueFactory,
+})
 
-export const Answer = {
-  route: APIRoutes.answer,
-  new: answerFactory,
+export const Answer = addRoutes({
   type: 'ANSWER',
-}
+  route: '/answers/',
+  new: answerFactory,
+})
 
-export const Group = {
-  route: APIRoutes.group,
-  new: groupFactory,
+export const Group = addRoutes({
   type: 'GROUP',
-}
+  route: '/groups/',
+  new: groupFactory,
+})
 
-export const Message = {
-  route: APIRoutes.messages,
-  new: messageFactory,
+export const Message = addRoutes({
   type: 'MESSAGE',
-}
+  route: '/messages/',
+  new: messageFactory,
+})
 
 export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP' | 'MESSAGE' | 'CODE'
