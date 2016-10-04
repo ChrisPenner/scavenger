@@ -24,7 +24,7 @@ const processResponse = (respPromise) => {
   })
 }
 
-const apiRequest = (route, method: MethodType='GET', payload=undefined) => {
+const apiRequest = (route: string, method: MethodType='GET', payload=undefined) => {
   const options: Object = {
     method,
     credentials: 'same-origin',
@@ -35,8 +35,7 @@ const apiRequest = (route, method: MethodType='GET', payload=undefined) => {
   return processResponse(fetch(route, options))
 }
 
-
-const middleman = (makeRequest) => (store: Object) => (next: Function) => (action: Object) => {
+const middleman = (makeRequest: Function) => (store: Object) => (next: Function) => (action: Object) => {
   if(!R.has(API, action)){
     return next(action)
   }

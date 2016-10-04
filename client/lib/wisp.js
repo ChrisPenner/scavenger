@@ -14,12 +14,17 @@ type optionsT = {
   message?: string,
 }
 
-export const createToast = (payload: optionsT) => ({
+type action = {
+  type: string,
+  payload: Object,
+}
+
+export const createToast = (payload: optionsT): action => ({
   type: CREATE_TOAST,
   payload,
 })
 
-export const hideToast = (payload: optionsT) => ({
+export const hideToast = (payload: optionsT): action => ({
   type: HIDE_TOAST,
   payload,
 })
@@ -39,7 +44,7 @@ export const successToast = toast({type: 'success'})
 export const errorToast = toast({type: 'error'})
 
 const DEFAULT_STATE = {}
-export const wispReducer = handleActions({
+export const wispReducer: (state: any, action: Object) => any = handleActions({
   [CREATE_TOAST]: (state, { payload }) => R.assoc(payload.id, payload, state),
   [HIDE_TOAST]: (state, { payload }) => R.dissoc(payload.id, state),
 }, DEFAULT_STATE)

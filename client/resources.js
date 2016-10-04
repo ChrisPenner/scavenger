@@ -1,6 +1,8 @@
 /* @flow */
 import R from 'ramda'
 
+export type ResourceType = string
+
 export type StoryType = {
   uid: string,
   defaultHint: string,
@@ -53,6 +55,7 @@ export type MessageType = {
   storyUid: string,
   groupUid: string,
   text: string,
+  sent: string,
   sender?: string,
   receiver?: string,
   mediaUrl?: string,
@@ -110,10 +113,10 @@ export type ResourceT = {
     route: Function,
   },
   new: Function,
-  type: string,
+  type: ResourceType,
 }
 
-const addRoutes = ({route, ...resource}): any => {
+const addRoutes = ({route, ...resource}): ResourceT => {
   const baseRoute = (uid?: string) => `${route}${uid ? uid : ""}`
   return {
     ...resource,
@@ -159,5 +162,3 @@ export const Message = addRoutes({
   route: '/messages/',
   new: messageFactory,
 })
-
-export type ResourceType = 'STORY' | 'CLUE' | 'ANSWER' | 'GROUP' | 'MESSAGE' | 'CODE'

@@ -10,7 +10,6 @@ import at from '../action-types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
-import type { apiT } from '../api'
 import { API, INDEX, DELETE, PUT } from '../lib/middleman'
 import * as Routes from '../routes'
 
@@ -59,7 +58,7 @@ export const {
 )
 
 // Async
-const dropper = (actionType: string) => (index: number) => (dispatch: any, getState: Function) => {
+const dropper = (actionType: string) => (index: number) => (dispatch: Function, getState: Function) => {
    const uid = getDragData(getState())
    dispatch({ type: actionType, payload: {uid, index}})
  }
@@ -67,7 +66,7 @@ const dropper = (actionType: string) => (index: number) => (dispatch: any, getSt
 export const dropClue = dropper(at.DROP_CLUE)
 export const dropAnswer = dropper(at.DROP_ANSWER)
 
-const saveResource = (resource: ResourceT, getResourceState: Function) => (uid: string) => (dispatch: any, getState: Function) => {
+const saveResource = (resource: ResourceT, getResourceState: Function) => (uid: string) => (dispatch: Function, getState: Function) => {
   return dispatch({
     type: at.set(resource.type),
     [API]: {
@@ -137,7 +136,7 @@ export const loadAnswer = loader(Answer)
 export const loadGroup = loader(Group)
 export const loadMessage = loader(Message)
 
-export const creator = (resource: ResourceT) => (payload: any) => (dispatch: any, getState: Function) => {
+export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function, getState: Function) => {
   return dispatch({
     type: at.set(resource.type),
     payload,
@@ -169,7 +168,7 @@ const intoMessage = R.applySpec({
 
 const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))
 
-export const sendMessage = () => (dispatch: any, getState: any) => {
+export const sendMessage = () => (dispatch: Function, getState: Function) => {
   const {sender, receiver, text, mediaUrl} = getExplorer(getState())
   dispatch({
     type: at.SEND_MESSAGE,

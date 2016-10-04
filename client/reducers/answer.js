@@ -6,14 +6,18 @@ import transform from '../lib/transform'
 import at from '../action-types'
 import commonReducer from './common'
 import { Answer, Clue, Story } from '../resources'
+import type { AnswerType } from '../resources'
 import { phoneNumber } from '../lib/validators'
+
+type AnswerReducerT = {[id:string]: AnswerType}
 
 const validate = R.map(R.evolve({
   receiver: phoneNumber
 }))
 
-const DEFAULT_STATE = {}
-export default transform(validate,
+const DEFAULT_STATE: AnswerReducerT = {}
+
+const reducer: (state: ?Object, action: Object) => AnswerReducerT = transform(validate,
   commonReducer(Answer.type,
     handleActions({
       [at.del(Clue.type)]: (state, {payload: {uid}}) => {
@@ -27,3 +31,5 @@ export default transform(validate,
     }, DEFAULT_STATE)
   )
 )
+
+export default reducer

@@ -7,14 +7,13 @@ import middleman from './lib/middleman'
 import { browserHistory } from 'react-router'
 
 import reducer from './reducers'
-import { INDEX, GET, PUT, DELETE } from './api'
 
 const middleware = compose(
   applyMiddleware(
     middleman,
     promiseMiddleware,
     routerMiddleware(browserHistory),
-    thunk.withExtraArgument({INDEX, GET, PUT, DELETE})
+    thunk,
   ),
   window.devToolsExtension ? window.devToolsExtension() : f => f)
 const store = createStore(reducer, middleware)

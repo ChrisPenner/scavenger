@@ -6,8 +6,11 @@ import transform from '../lib/transform'
 import at from '../action-types'
 import { splitUid } from '../utils'
 import { Clue, Answer, Story } from '../resources'
+import type { ClueType } from '../resources'
 import commonReducer from './common'
 import { phoneNumber } from '../lib/validators'
+
+type ClueReducerT = {[id:string]: ClueType}
 
 const validate = R.map(R.evolve({
   sender: phoneNumber
@@ -23,8 +26,9 @@ const transformAnswerUids = R.curry((fn, state, {payload}) => {
   }, state)
 })
 
-const DEFAULT_STATE = {}
-export default transform(validate,
+const DEFAULT_STATE: ClueReducerT = {}
+
+const reducer: (state: ?Object, action: Object) => ClueReducerT = transform(validate,
   commonReducer(Clue.type,
     handleActions({
       [at.set(Answer.type)]: (
@@ -33,7 +37,7 @@ export default transform(validate,
 
       [at.del(Answer.type)]: (
         transformAnswerUids(({uid}) => R.without([uid]))
-    ),
+      ),
 
       [at.DROP_ANSWER]: (
         transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
@@ -46,3 +50,5 @@ export default transform(validate,
     }, DEFAULT_STATE)
   )
 )
+
+export default reducer

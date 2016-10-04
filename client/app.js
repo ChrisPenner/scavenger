@@ -20,7 +20,7 @@ import { Explorer } from './explorer'
 import { GroupMessages, StoryMessages, MessageChoices } from './message'
 import { Toasts } from './lib/wisp'
 
-type appArgs = {main: any, story: any, clue: any, answer: any}
+type appArgs = {main: ReactClass<*>, story: ReactClass<*>, clue: ReactClass<*>, answer: ReactClass<*>}
 const App = connect(state => ({loaded: isLoaded(state)}))
 (({loaded, main, story, clue, answer}) => {
   if (!loaded){
