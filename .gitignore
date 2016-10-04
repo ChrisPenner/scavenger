@@ -7,3 +7,4 @@ app/secrets.py*
 /server/static/
 npm-debug.log
 /.tmp/
+/.data
