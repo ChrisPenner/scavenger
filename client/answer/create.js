@@ -7,7 +7,7 @@ import * as Routes from '../routes'
 import { createAnswer } from '../actions'
 import type { FSA } from '../actions'
 
-import { getCluesByStory, getAnswers } from '../reducers'
+import { getClueUidsByStory, getAnswers } from '../reducers'
 import { Answer } from '../resources'
 import { uidsFromParams } from '../utils'
 
@@ -15,24 +15,32 @@ const stateToProps = (state, {params}) => {
   const {storyUid, clueUid} = uidsFromParams(params)
   return {
     answers: getAnswers(state),
-    clues: getCluesByStory(state, storyUid),
-    stories: getCluesByStory(state, storyUid),
+    clueUids: storyUid && getClueUidsByStory(state, storyUid),
     storyUid,
     clueUid,
   }
 }
+
+type CreateAnswerProps = {
+  createAnswer: Function,
+  push: Function,
+  clueUids: Array<string>,
+  clueUid: string,
+  clueUids: string,
+}
+
 class Create extends React.Component {
   create: () => void
   createAnswer: (a: Object) => Promise<FSA>
   state: Object
   clueUid: string
   push: (path: string) => FSA
-  constructor({createAnswer, clues, clueUid, push}) {
+  constructor({createAnswer, clueUids, clueUid, push}: CreateAnswerProps) {
     super()
     this.state = {
       answerUid: '',
       pattern: '',
-      nextClue: clues[0].uid,
+      nextClue: clueUids[0],
     }
     this.create = this.create.bind(this)
     this.createAnswer = createAnswer
@@ -108,11 +116,11 @@ class Create extends React.Component {
                                        value={this.state.nextClue}
                                        onChange={(e) => this.update({
                                                    nextClue: e.target.value
-                                                 })} > {this.props.clues.map(
-                                                                                                                                                                                                            clue => <option
-                                                                                                                                                                                                                      key={clue.uid}
-                                                                                                                                                                                                                      value={clue.uid}>
-                                                                                                                                                                                                                      {clue.uid}
+                                                 })} > {this.props.clueUids.map(
+                                                                                                                                                                                                            option => <option
+                                                                                                                                                                                                                      key={option}
+                                                                                                                                                                                                                      value={option}>
+                                                                                                                                                                                                                      {option}
                                                                                                                                                                                                                     </option>
                                                                                                                                                                                                           )} </select></span>
           </div>
@@ -126,10 +134,7 @@ class Create extends React.Component {
     )
   }
 }
-Create.propTypes = {
-  createAnswer: React.PropTypes.func.isRequired,
-  clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-}
+
 export default connect(stateToProps, {
   createAnswer,
   push,

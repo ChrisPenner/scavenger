@@ -5,8 +5,14 @@ import { connect } from 'react-redux'
 import { getExplorer } from '../reducers'
 import { changeExplorer, sendMessage } from '../actions'
 
+import type { MessageType } from '../resources'
+
+type TextsProps = {
+  texts: Array<MessageType>,
+}
+
 const Texts = ({texts}) => {
-  const textsView = texts.map(({sender, receiver, body, mediaUrl, source} , i) => {
+  const textsView = texts.map(({sender, receiver, text, mediaUrl, source}, i) => {
     return (
       <tr key={i} className={source === 'user' ? 'green': 'blue'}>
         <td>
@@ -16,7 +22,7 @@ const Texts = ({texts}) => {
           {receiver}
         </td>
         <td>
-          {body}
+          {text}
         </td>
         <td>
           {mediaUrl && <div><img src={mediaUrl} /></div> }
@@ -57,8 +63,18 @@ Texts.propTypes = {
   texts: React.PropTypes.arrayOf(React.PropTypes.object),
 }
 
+type ExplorerProps = {
+  receiver: string,
+  sender: string,
+  text: string,
+  texts: Array<MessageType>,
+  changeExplorer: Function,
+  sendMessage: Function,
+  mediaUrl: string,
+}
+
 const stateToProps = getExplorer
-const Explorer = ({receiver, sender, text, mediaUrl, changeExplorer, sendMessage, texts}) => {
+const Explorer = ({receiver, sender, text, mediaUrl, changeExplorer, sendMessage, texts}: ExplorerProps) => {
   return (
     <div>
       <h1 className="title">Explorer</h1>
@@ -126,7 +142,6 @@ const Explorer = ({receiver, sender, text, mediaUrl, changeExplorer, sendMessage
                 Send
               </button>
             </div>
-
           </form>
         </div>
         <div className="column is-8">
@@ -136,14 +151,7 @@ const Explorer = ({receiver, sender, text, mediaUrl, changeExplorer, sendMessage
     </div>
   )
 }
-Explorer.propTypes = {
-  receiver: PropTypes.string.isRequired,
-  sender: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-  texts: PropTypes.arrayOf(PropTypes.object).isRequired,
-  changeExplorer: PropTypes.func.isRequired,
-  sendMessage: PropTypes.func.isRequired,
-}
+
 export default connect(stateToProps, {
   changeExplorer,
   sendMessage

@@ -9,8 +9,17 @@ import { splitUid, uidsFromParams } from '../utils'
 import { getAnswer, getClueUidsByStory } from '../reducers'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 import { Clue } from '../resources'
+import type { AnswerType } from '../resources'
 
-const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => {
+type AnswerProps = {
+  answer: AnswerType,
+  clueUids: Array<string>,
+  changeAnswer: Function,
+  saveAnswer: Function,
+  deleteAnswer: Function,
+}
+
+const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}: AnswerProps) => {
   let patternError
   try {
     new RegExp(answer.pattern)
@@ -97,14 +106,6 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}) => {
         </div>
       </section>
   )
-}
-
-Answer.propTypes = {
-  answer: React.PropTypes.object.isRequired,
-  clueUids: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-  changeAnswer: React.PropTypes.func.isRequired,
-  saveAnswer: React.PropTypes.func.isRequired,
-  deleteAnswer: React.PropTypes.func.isRequired,
 }
 
 const stateToProps = (state, {params}) => {

@@ -13,6 +13,8 @@ import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reduc
 import { API, INDEX, DELETE, PUT } from '../lib/middleman'
 import * as Routes from '../routes'
 
+import type { MessageType } from '../resources'
+
 export type FSA = {
   type: string,
   payload?: any,
@@ -159,9 +161,9 @@ const focusBody = R.lensPath(['Body', 0])
 const focusMedia = R.lensPath(['Media', 0])
 const focusTo = R.lensPath(['$', 'to'])
 const focusSender = R.lensPath(['$', 'from'])
-const intoMessage = R.applySpec({
-  body: R.view(focusBody),
-  to: R.view(focusTo),
+const intoMessage: (t: Object) => MessageType = R.applySpec({
+  text: R.view(focusBody),
+  receiver: R.view(focusTo),
   sender: R.view(focusSender),
   mediaUrl: R.view(focusMedia),
 })
@@ -175,7 +177,7 @@ export const sendMessage = () => (dispatch: Function, getState: Function) => {
     payload: {
       receiver,
       sender,
-      body: text,
+      text,
       mediaUrl: mediaUrl,
       source: 'user',
     }

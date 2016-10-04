@@ -4,7 +4,10 @@ import { connect } from 'react-redux'
 import { getGroupMessages, getStoryMessages } from '../reducers'
 import type { MessageType } from '../resources'
 
-const Messages = ({messages}: {messages: Array<MessageType>}) => {
+type MessagesProps = {
+  messages: Array<MessageType>,
+}
+const Messages = ({messages}: MessagesProps) => {
   const messageRows = messages.map(({uid, text, mediaUrl, sender, receiver, groupUid, storyUid, sent}) => (
       <tr key={uid}>
         <td>
@@ -62,9 +65,6 @@ const Messages = ({messages}: {messages: Array<MessageType>}) => {
       </tbody>
     </table>
   )
-}
-Messages.propTypes = {
-  messages: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
 const stateToPropsGroup = (state, {params:{groupUid}}) => {

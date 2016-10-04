@@ -8,13 +8,23 @@ import { changeStory, saveStory, deleteStory } from '../actions'
 import { Clues } from '../clue'
 import * as Routes from '../routes'
 
+import type { StoryType } from '../resources'
+
 const stateToProps = (state, {params}) => {
   const {storyUid} = uidsFromParams(params)
   return {
     story: getStory(state, storyUid),
   }
 }
-const Story = ({story, changeStory, saveStory, deleteStory}) => {
+
+type StoryProps = {
+  story: StoryType,
+  changeStory: Function,
+  saveStory: Function,
+  deleteStory: Function,
+}
+
+const Story = ({story, changeStory, saveStory, deleteStory}: StoryProps) => {
   return (
     <section className="notification is-info">
       <h2> Story </h2>
@@ -65,12 +75,6 @@ const Story = ({story, changeStory, saveStory, deleteStory}) => {
   )
 }
 
-Story.propTypes = {
-  story: React.PropTypes.object.isRequired,
-  changeStory: React.PropTypes.func.isRequired,
-  saveStory: React.PropTypes.func.isRequired,
-  deleteStory: React.PropTypes.func.isRequired,
-}
 export default connect(stateToProps, {
   changeStory,
   saveStory,

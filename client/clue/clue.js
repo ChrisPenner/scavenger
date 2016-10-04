@@ -11,7 +11,7 @@ import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
 import { getToolData } from '../reducers'
 import { uidsFromParams, splitUid } from '../utils'
 import { Story } from '../resources'
-import type { AnswerType } from '../resources'
+import type { ClueType, AnswerType } from '../resources'
 
 const findMatchingAnswer = (text: string, answers: Array<AnswerType>) => {
   const checkMatch = R.compose(R.not, R.isEmpty)
@@ -26,13 +26,23 @@ const findMatchingAnswer = (text: string, answers: Array<AnswerType>) => {
 const stateToProps = (state, {params}) => {
   const {clueUid} = uidsFromParams(params)
   return {
-    clue: getClue(state, clueUid),
+    clue: clueUid && getClue(state, clueUid),
     testMessage: getToolData(state).testMessage,
-    answers: getAnswersByClue(state, clueUid)
+    answers: clueUid && getAnswersByClue(state, clueUid)
   }
 }
 
-const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessage, testMessage}) => {
+type ClueProps = {
+  clue: ClueType,
+  changeClue: Function,
+  saveClue: Function,
+  deleteClue: Function,
+  changeTestMessage: Function,
+  testMessage: string,
+  answers: Array<AnswerType>,
+}
+
+const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessage, testMessage}: ClueProps) => {
   let matchingAnswer, regexErr
   try {
     matchingAnswer = findMatchingAnswer(testMessage, answers)
@@ -135,16 +145,6 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
       <Answers highlightUid={highlightAnswerUid} clueUid={clue.uid} />
     </section>
   )
-}
-
-Clue.propTypes = {
-  clue: React.PropTypes.object.isRequired,
-  changeClue: React.PropTypes.func.isRequired,
-  saveClue: React.PropTypes.func.isRequired,
-  deleteClue: React.PropTypes.func.isRequired,
-  changeTestMessage: React.PropTypes.func.isRequired,
-  testMessage: React.PropTypes.string.isRequired,
-  answers: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
 export default connect(stateToProps, {

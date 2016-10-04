@@ -7,13 +7,19 @@ import { Link } from 'react-router'
 import * as Routes from '../routes'
 import { getCodesList } from '../reducers'
 
+import type { CodeType } from '../resources'
+
 const stateToProps = (state) => ({
   codes: getCodesList(state),
 })
 
 const countUsed = R.compose(R.length, R.filter(R.prop('used')))
 
-const Code = ({codes}) => {
+type CodeProps = {
+  codes: Array<CodeType>,
+}
+
+const Code = ({codes}: CodeProps) => {
   const codeRows = codes.map(code => {
       return (
             <tr key={code.uid}>
@@ -42,11 +48,6 @@ const Code = ({codes}) => {
           </table>
      </section>
   )
-}
-
-Code.propTypes = {
-  code: React.PropTypes.object,
-  codes: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 }
 
 export default connect(stateToProps)(Code)

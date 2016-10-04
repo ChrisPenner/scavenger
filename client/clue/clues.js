@@ -8,6 +8,7 @@ import { getCluesByStory } from '../reducers'
 import * as Routes from '../routes'
 import { startDrag, dropClue } from '../actions'
 import { Clue } from '../resources'
+import type { ClueType } from '../resources'
 
 const stateToProps = (state, {storyUid}) => {
   return {
@@ -16,7 +17,14 @@ const stateToProps = (state, {storyUid}) => {
   }
 }
 
-const Clues = ({clues, storyUid, startDrag, dropClue}) => {
+type CluesProps = {
+  clues: Array<ClueType>,
+  storyUid: string,
+  startDrag: Function,
+  dropClue: Function,
+}
+
+const Clues = ({clues, storyUid, startDrag, dropClue}: CluesProps) => {
   const clueLinks = clues.map((clue, index) => (
     <Link
       key={clue.uid}
@@ -42,12 +50,7 @@ const Clues = ({clues, storyUid, startDrag, dropClue}) => {
       </div>
   )
 }
-Clues.propTypes = {
-  clues: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-  storyUid: React.PropTypes.string.isRequired,
-  startDrag: React.PropTypes.func.isRequired,
-  dropClue: React.PropTypes.func.isRequired,
-}
+
 export default connect(stateToProps, {
   startDrag,
   dropClue
