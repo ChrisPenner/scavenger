@@ -1,0 +1,5 @@
+cron:
+  - description: Datastore Backup
+    url: /_ah/datastore_admin/backup.create?name=DatastoreBackup&kind=Answer&kind=Clue&kind=Story&kind=Message&kind=Group&kind=StoryCode&kind=User&filesystem=gs&gs_bucket_name=look-go-datastore-backups
+    schedule: every 12 hours
+    target: ah-builtin-python-bundle
