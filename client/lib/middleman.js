@@ -11,11 +11,6 @@ export const GET = 'GET'
 export const DELETE = 'DELETE'
 export const PUT = 'PUT'
 
-// export const apiCall = ({type, route, method, payload}) => ({
-//   type,
-//   [API]:
-// })
-
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
     return resp.json().catch(() => {
