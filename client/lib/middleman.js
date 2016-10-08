@@ -41,8 +41,7 @@ type middlemanSpec = {
 }
 
 type Config = {[key:string]: (state :Object, payload: Object) => Object }
-const middleman = (makeRequest: Function) => (actions: Config) => ({getState}: {getState: Function}) => (next: Function) => (action: Object) => {
-  debugger
+const middleman = (makeRequest: Function) => (actions: Config) => ({getState, dispatch}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
   if(! R.has(action.type, actions)){
     return next(action)
   }
@@ -54,27 +53,33 @@ const middleman = (makeRequest: Function) => (actions: Config) => ({getState}: {
     camelizer = R.map(camelizeKeys)
   }
 
-  next({
+  dispatch({
     type: IS_PENDING,
     payload: resource,
   })
 
   return makeRequest(route, method, payload)
     .then(camelizer).then(
-      data => next({
-        type: action.type,
-        payload: {
-          ...data,
-          ...context,
-        },
-      }),
+      data => {
+        next({
+          type: action.type,
+          payload: {
+            ...data,
+            ...context,
+          },
+        })
+        dispatch({
+          type: NOT_PENDING,
+          payload: resource,
+        })
+      },
       error => {
         next({
           type: API_ERROR,
           error,
         })
 
-        next({
+        dispatch({
           type: NOT_PENDING,
           paylaod: resource,
           error,

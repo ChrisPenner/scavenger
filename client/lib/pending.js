@@ -7,8 +7,11 @@ export const NOT_PENDING = '@pending/NOT_PENDING'
 
 const DEFAULT_STATE = {}
 const reducer = handleActions({
-  [IS_PENDING]: (state, { payload: {resource} }) => R.assoc(resource, true, state),
-  [NOT_PENDING]: (state, { payload: {resource} }) => R.assoc(resource, false, state),
+  [IS_PENDING]: (state, { payload:resource }) => R.assoc(resource, true, state),
+  [NOT_PENDING]: (state, { payload:resource }) => {
+    debugger
+    return R.assoc(resource, false, state)
+  },
 }, DEFAULT_STATE)
 
 export default reducer

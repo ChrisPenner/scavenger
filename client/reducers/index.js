@@ -9,13 +9,13 @@ import clues from './clue'
 import answers from './answer'
 import groups from './group'
 import messages from './message'
+import pending from '../lib/pending'
 import at from '../action-types'
 import { Story, Answer, Clue } from '../resources'
 import type { StoryType, ClueType, AnswerType, GroupType, MessageType } from '../resources'
 import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
-import { loadedReducer } from '../lib/loaded'
 import { wispReducer } from '../lib/wisp'
 
 import type { ExplorerType } from './explorer'
@@ -32,7 +32,7 @@ export default combineReducers({
   messages,
   tools,
   ui,
-  loaded: loadedReducer,
+  pending,
   toasts: wispReducer,
 })
 
