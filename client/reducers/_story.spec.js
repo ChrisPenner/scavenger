@@ -5,7 +5,7 @@ import { applyThunk } from '../lib/redux-test'
 
 import at from '../action-types'
 import reducer from './story'
-import { changeStory, setStory, setClue, dropClue } from '../actions'
+import { changeStory, saveStory, saveClue, dropClue } from '../actions'
 import { Story, Clue } from '../resources'
 
 describe('Story Reducer', function() {
@@ -45,13 +45,13 @@ describe('Story Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.load(Story.type), function() {
+  describe(at.fetch(Story.type), function() {
     it('should overwrite stories', function() {
       const payload = {
         [newStory.uid]: newStory,
       }
       const action = {
-        type: at.load(Story.type),
+        type: at.fetch(Story.type),
         payload
       }
       const newState = reducer(startStories, action)
@@ -79,10 +79,10 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.set(Story.type), function() {
+  describe(at.save(Story.type), function() {
     it('should overwrite the story', function() {
       const newStory = R.assoc('defaultHint', 'new-hint', startStory)
-      const action = setStory(newStory)
+      const action = saveStory(newStory)
       const newState = reducer(startStories, action)
       expect(newState[startStory.uid]).to.eql(newStory)
     });
@@ -98,7 +98,7 @@ describe('Story Reducer', function() {
     });
   });
 
-  describe(at.set(Clue.type), function() {
+  describe(at.save(Clue.type), function() {
     it('should add a clue to the story', function() {
       const newClue = Clue.new({
         uid: 'STORY:NEWCLUE',
@@ -108,7 +108,7 @@ describe('Story Reducer', function() {
         mediaUrl: 'media.url',
         answerUids: ['answer'],
       })
-      const action = setClue(newClue)
+      const action = saveClue(newClue)
       const newState = reducer(startStories, action)
       expect(newState[startStory.uid].clues).to.contain('STORY:NEWCLUE')
     });
@@ -122,7 +122,7 @@ describe('Story Reducer', function() {
         mediaUrl: 'media.url',
         answerUids: ['answer'],
       })
-      const action = setClue(newClue)
+      const action = saveClue(newClue)
       const newState = reducer(startStories, action)
       expect(R.allUniq(newState[startStory.uid].clues)).to.be.true
     });

@@ -26,7 +26,7 @@ describe('Actions', function() {
         const actualToast = R.dissoc('id', toastAction.payload)
         const expectedToast = R.dissoc('id', createToast({ id: 'whatever', title: 'Saved', type: "success", message: undefined }).payload)
 
-        expect(actionTypes).to.eql([at.set(Story.type), CREATE_TOAST])
+        expect(actionTypes).to.eql([at.save(Story.type), CREATE_TOAST])
         expect(setAction).to.eql(setStory(serverResponse))
         expect(actualToast).to.eql(expectedToast)
       }).then(done).catch(done)
@@ -40,12 +40,12 @@ describe('Actions', function() {
         const actions = store.getActions()
         const actionTypes = R.pluck('type', actions)
 
-        const [setAction, _, toastAction] = actions
+        const [createAction, _, toastAction] = actions
         const actualToast = R.dissoc('id', toastAction.payload)
         const expectedToast = R.dissoc('id', createToast({ id: 'whatever', title: 'Created', type: "success", message: undefined }).payload)
 
         expect(actionTypes).to.eql([at.set(Story.type), '@@router/CALL_HISTORY_METHOD', CREATE_TOAST])
-        expect(setAction).to.eql(setStory(fakeResource))
+        expect(createAction).to.eql(createStory(fakeResource))
         expect(actualToast).to.eql(expectedToast)
       }).then(done).catch(done)
     })

@@ -16,13 +16,13 @@ describe('Message Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.load(Message.type), function() {
+  describe(at.fetch(Message.type), function() {
     it('should overwrite messages', function() {
       const payload = {
         [newMessage.uid]: newMessage,
       }
       const action = {
-        type: at.load(Message.type),
+        type: at.fetch(Message.type),
         payload
       }
       const newState = reducer(startMessages, action)

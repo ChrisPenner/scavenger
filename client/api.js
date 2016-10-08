@@ -6,7 +6,7 @@ import { getStory, getClue, getAnswer } from './reducers'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
 import { INDEX, PUT, DELETE } from './lib/middleman'
 
-export default configureMiddleman({
+export const middlemanConfig = {
   [at.fetch(Story.type)]: () => ({
     resource: Story.type,
     route: Story.api.route(),
@@ -90,4 +90,6 @@ export default configureMiddleman({
       uid
     }
   }),
-})
+}
+
+export default configureMiddleman(middlemanConfig)

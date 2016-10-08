@@ -4,7 +4,7 @@ import R from 'ramda'
 
 import at from '../action-types'
 import reducer from './answer'
-import { changeAnswer, setAnswer } from '../actions'
+import { changeAnswer, saveAnswer } from '../actions'
 import { Answer, Clue, Story } from '../resources'
 import type {AnswerType} from '../resources'
 
@@ -32,13 +32,13 @@ describe('Answer Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.load(Answer.type), function() {
+  describe(at.fetch(Answer.type), function() {
     it('should overwrite answers', function() {
       const payload = {
         [newAnswer.uid]: newAnswer,
       }
       const action = {
-        type: at.load(Answer.type),
+        type: at.fetch(Answer.type),
         payload
       }
       const newState = reducer(startAnswers, action)
@@ -60,10 +60,10 @@ describe('Answer Reducer', function() {
     });
   });
 
-  describe(at.set(Answer.type), function() {
+  describe(at.save(Answer.type), function() {
     it('should overwrite the answer', function() {
       const newAnswer = R.assoc('pattern', 'new-pattern', startAnswer)
-      const action = setAnswer(newAnswer)
+      const action = saveAnswer(newAnswer)
       const newState = reducer(startAnswers, action)
       expect(newState[startAnswer.uid]).to.eql(newAnswer)
     });

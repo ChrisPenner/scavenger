@@ -16,13 +16,13 @@ describe('Group Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.load(Group.type), function() {
+  describe(at.fetch(Group.type), function() {
     it('should overwrite groups', function() {
       const payload = {
         [newGroup.uid]: newGroup,
       }
       const action = {
-        type: at.load(Group.type),
+        type: at.fetch(Group.type),
         payload
       }
       const newState = reducer(startGroups, action)
