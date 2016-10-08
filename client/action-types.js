@@ -20,6 +20,7 @@ const actionTypeCreators: {[name: string]: (type:ResourceType) => string} = {
   save: (type) => `SAVE_${type}`,
   fetch: (type) => `FETCH_${type}`,
   change: (type) => `CHANGE_${type}`,
+  create: (type) => `CREATE_${type}`,
 }
 
 type ActionType = any

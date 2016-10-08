@@ -61,20 +61,20 @@ const middleman = (makeRequest: Function) => (actions: Config) => ({getState, di
   return makeRequest(route, method, payload)
     .then(camelizer).then(
       data => {
-        next({
+        dispatch({
+          type: NOT_PENDING,
+          payload: resource,
+        })
+        return next({
           type: action.type,
           payload: {
             ...data,
             ...context,
           },
         })
-        dispatch({
-          type: NOT_PENDING,
-          payload: resource,
-        })
       },
       error => {
-        next({
+        return next({
           type: API_ERROR,
           error,
         })

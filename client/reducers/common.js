@@ -17,6 +17,10 @@ const baseResourceReducer = (resourceType: ResourceType) => handleActions({
     (state, {payload}) => R.assoc(payload.uid, payload, state)
   ),
 
+  [at.create(resourceType)]: (
+    (state, {payload}) => R.assoc(payload.uid, payload, state)
+  ),
+
   [at.del(resourceType)]: (
     (state, {payload:{uid}}) => R.dissoc(uid, state)
   ),

@@ -123,13 +123,8 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
 
 export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function, getState: Function) => {
   return dispatch({
-    type: at.set(resource.type),
+    type: at.create(resource.type),
     payload,
-    ['API']: {
-      route: resource.api.route(payload.uid),
-      method: 'PUT',
-      payload,
-    }
   }).then(() => dispatch(push(resource.route(payload.uid))))
     .then(R.tap(() => dispatch(successToast('Created'))))
 }
