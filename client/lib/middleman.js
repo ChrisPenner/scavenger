@@ -8,8 +8,6 @@ export const GET = 'GET'
 export const DELETE = 'DELETE'
 export const PUT = 'PUT'
 
-export const API_ERROR = '@middleman/API_ERROR'
-
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
     return resp.json().catch(() => {
@@ -74,11 +72,6 @@ const middleman = (makeRequest: Function) => (actions: Config) => ({getState, di
         })
       },
       error => {
-        return next({
-          type: API_ERROR,
-          error,
-        })
-
         dispatch({
           type: NOT_PENDING,
           paylaod: resource,

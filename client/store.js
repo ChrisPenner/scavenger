@@ -2,7 +2,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { routerMiddleware } from 'react-router-redux'
-import promiseMiddleware from 'redux-promise';
 import api from './api'
 import { browserHistory } from 'react-router'
 
@@ -11,7 +10,6 @@ import reducer from './reducers'
 const middleware = compose(
   applyMiddleware(
     api,
-    promiseMiddleware,
     routerMiddleware(browserHistory),
     thunk,
   ),
