@@ -5,7 +5,7 @@ import type { ResourceType } from '../resources'
 import at from '../action-types'
 
 const baseResourceReducer = (resourceType: ResourceType) => handleActions({
-  [at.load(resourceType)]: (
+  [at.fetch(resourceType)]: (
     (state, {payload}) => payload
   ),
 
@@ -13,7 +13,7 @@ const baseResourceReducer = (resourceType: ResourceType) => handleActions({
     (state, {payload: {path, value}}) => R.assocPath(path, value, state)
   ),
 
-  [at.set(resourceType)]: (
+  [at.save(resourceType)]: (
     (state, {payload}) => R.assoc(payload.uid, payload, state)
   ),
 

@@ -95,5 +95,3 @@ export const getExplorer = (state: Object): ExplorerType => state.explorer
 export const getToolData = (state: Object): ToolsType => state.tools
 
 export const getDragData = (state: Object): mixed => state.ui.dragData
-
-export const isLoaded = ({loaded}: Object): boolean => (loaded[at.load(Story.type)] && loaded[at.load(Clue.type)] && loaded[at.load(Answer.type)])

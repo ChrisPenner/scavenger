@@ -24,7 +24,7 @@ export const DEFAULT_STATE: StoryReducerT = {}
 
 const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story.type,
   handleActions({
-    [at.set(Clue.type)]: (
+    [at.save(Clue.type)]: (
       transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))
     ),
     [at.del(Clue.type)]: (

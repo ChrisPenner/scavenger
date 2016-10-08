@@ -1,15 +1,14 @@
 /* @flow */
-import toastr from 'toastr'
 import R from 'ramda'
 import { camelizeKeys, decamelizeKeys } from 'humps'
-
-export const API = '@middleman/API'
-export const API_ERROR = '@middleman/API_ERROR'
+import { IS_PENDING, NOT_PENDING } from './pending'
 
 export const INDEX = 'INDEX'
 export const GET = 'GET'
 export const DELETE = 'DELETE'
 export const PUT = 'PUT'
+
+export const API_ERROR = '@middleman/API_ERROR'
 
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
@@ -35,17 +34,32 @@ const apiRequest = (route: string, method: MethodType='GET', payload=undefined) 
   return processResponse(fetch(route, options))
 }
 
-const middleman = (makeRequest: Function) => (store: Object) => (next: Function) => (action: Object) => {
-  if(!R.has(API, action)){
+type middlemanSpec = {
+  route: string,
+  method: string,
+  context?: Object,
+}
+
+type Config = {[key:string]: (state :Object, payload: Object) => Object }
+const middleman = (makeRequest: Function) => (actions: Config) => ({getState}: {getState: Function}) => (next: Function) => (action: Object) => {
+  debugger
+  if(! R.has(action.type, actions)){
     return next(action)
   }
-  let {route, method, payload:dataPayload, context} = action[API]
+  const state = getState()
+  let {route, method, payload, resource, context} = actions[action.type](state, action.payload)
   let camelizer = camelizeKeys
   if (method === INDEX) {
     method = GET
     camelizer = R.map(camelizeKeys)
   }
-  return makeRequest(route, method, dataPayload)
+
+  next({
+    type: IS_PENDING,
+    payload: resource,
+  })
+
+  return makeRequest(route, method, payload)
     .then(camelizer).then(
       data => next({
         type: action.type,
@@ -57,6 +71,12 @@ const middleman = (makeRequest: Function) => (store: Object) => (next: Function)
       error => {
         next({
           type: API_ERROR,
+          error,
+        })
+
+        next({
+          type: NOT_PENDING,
+          paylaod: resource,
           error,
         })
         throw(error)

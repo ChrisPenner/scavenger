@@ -31,7 +31,7 @@ const DEFAULT_STATE: ClueReducerT = {}
 const reducer: (state: ?Object, action: Object) => ClueReducerT = transform(validate,
   commonReducer(Clue.type,
     handleActions({
-      [at.set(Answer.type)]: (
+      [at.save(Answer.type)]: (
         transformAnswerUids(({uid}) => R.compose(R.uniq, R.append(uid)))
       ),
 
