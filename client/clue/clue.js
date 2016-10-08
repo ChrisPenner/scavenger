@@ -3,6 +3,7 @@ import React from 'react'
 import R from 'ramda'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
+import loadGuard from '../lib/loaded'
 
 import * as Routes from '../routes'
 import { Answers } from '../answer'
@@ -10,7 +11,7 @@ import { getClue, getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
 import { getToolData } from '../reducers'
 import { uidsFromParams, splitUid } from '../utils'
-import { Story } from '../resources'
+import { Story, Clue, Answer } from '../resources'
 import type { ClueType, AnswerType } from '../resources'
 
 const findMatchingAnswer = (text: string, answers: Array<AnswerType>) => {
@@ -32,6 +33,13 @@ const stateToProps = (state, {params}) => {
   }
 }
 
+const dispatchProps = {
+  saveClue,
+  changeClue,
+  deleteClue: (uid) => deleteClue(uid, Story.route(splitUid(uid).storyUid)),
+  changeTestMessage,
+}
+
 type ClueProps = {
   clue: ClueType,
   changeClue: Function,
@@ -42,7 +50,7 @@ type ClueProps = {
   answers: Array<AnswerType>,
 }
 
-const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessage, testMessage}: ClueProps) => {
+const ClueComponent = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessage, testMessage}: ClueProps) => {
   let matchingAnswer, regexErr
   try {
     matchingAnswer = findMatchingAnswer(testMessage, answers)
@@ -147,9 +155,7 @@ const Clue = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessag
   )
 }
 
-export default connect(stateToProps, {
-  saveClue,
-  changeClue,
-  deleteClue: (uid) => deleteClue(uid, Story.route(splitUid(uid).storyUid)),
-  changeTestMessage,
-})(Clue)
+export default R.compose(
+  loadGuard([Clue.type, Answer.type]),
+  connect(stateToProps, dispatchProps)
+)(ClueComponent)

@@ -1,8 +1,9 @@
 /* @flow */
 import React from 'react'
-
+import R from 'ramda'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import loadGuard from '../lib/loaded'
 
 import { getCluesByStory } from '../reducers'
 import * as Routes from '../routes'
@@ -15,6 +16,11 @@ const stateToProps = (state, {storyUid}) => {
     clues: getCluesByStory(state, storyUid),
     storyUid,
   }
+}
+
+const dispatchProps = {
+  startDrag,
+  dropClue
 }
 
 type CluesProps = {
@@ -51,10 +57,10 @@ const Clues = ({clues, storyUid, startDrag, dropClue}: CluesProps) => {
   )
 }
 
-export default connect(stateToProps, {
-  startDrag,
-  dropClue
-})(Clues)
+export default R.compose(
+  loadGuard([Clue.type]),
+  connect(stateToProps, dispatchProps)
+)(Clues)
 
 
 

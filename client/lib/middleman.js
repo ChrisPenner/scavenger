@@ -59,17 +59,20 @@ const middleman = (makeRequest: Function) => (actions: Config) => ({getState, di
   return makeRequest(route, method, payload)
     .then(camelizer).then(
       data => {
-        dispatch({
-          type: NOT_PENDING,
-          payload: resource,
-        })
-        return next({
+        // Have to run it first, then dispatch pending option, then we can return the result
+        // Otherwise things are considered loaded before they're actually applied to the store
+        const result = next({
           type: action.type,
           payload: {
             ...data,
             ...context,
           },
         })
+        dispatch({
+          type: NOT_PENDING,
+          payload: resource,
+        })
+        return result
       },
       error => {
         dispatch({
