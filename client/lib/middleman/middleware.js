@@ -46,6 +46,16 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
     camelizer = R.map(camelizeKeys)
   }
 
+  next({
+    type: `PENDING_${action.type}`,
+    meta: {
+      middleman: {
+        status: IS_PENDING,
+        resource,
+      },
+    },
+  })
+
   return makeRequest(route, method, payload)
     .then(camelizer).then(
       data => next({
@@ -57,12 +67,12 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
         meta: {
           middleman: {
             resource,
-            status: IS_PENDING,
+            status: NOT_PENDING,
           },
         },
       }),
       error => {
-        dispatch({
+        next({
           type: API_ERROR,
           error,
           meta: {
