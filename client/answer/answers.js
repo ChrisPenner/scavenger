@@ -1,8 +1,10 @@
 /* @flow */
 import React from 'react'
+import R from 'ramda'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
+import loadGuard from '../lib/loaded'
 
 import { splitUid } from '../utils'
 import { getAnswersListByClue } from '../reducers'
@@ -10,6 +12,20 @@ import { startDrag, dropAnswer } from '../actions'
 import { Answer } from '../resources'
 import type { AnswerType } from '../resources'
 import * as Routes from '../routes'
+
+const stateToProps = (state, {clueUid}) => {
+  const {storyUid} = splitUid(clueUid)
+  return {
+    answers: getAnswersListByClue(state, clueUid),
+    storyUid,
+    clueUid,
+  }
+}
+
+const dispatchProps = {
+  startDrag,
+  dropAnswer
+}
 
 type AnswersProps = {
   startDrag: Function,
@@ -50,16 +66,7 @@ const Answers = ({answers, storyUid, clueUid, startDrag, dropAnswer, highlightUi
   )
 }
 
-const stateToProps = (state, {clueUid}) => {
-  const {storyUid} = splitUid(clueUid)
-  return {
-    answers: getAnswersListByClue(state, clueUid),
-    storyUid,
-    clueUid,
-  }
-}
-
-export default connect(stateToProps, {
-  startDrag,
-  dropAnswer
-})(Answers)
+export default R.compose(
+  connect(stateToProps, dispatchProps),
+  loadGuard([Answer.type])
+)(Answers)

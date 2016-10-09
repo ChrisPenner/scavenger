@@ -1,7 +1,10 @@
 /* @flow */
 import React from 'react'
+import R from 'ramda'
 import { connect } from 'react-redux'
+import loadGuard from '../lib/loaded'
 
+import { Story, Clue, Answer } from '../resources'
 import { uidsFromParams } from '../utils'
 import { getStory } from '../reducers'
 import { changeStory, saveStory, deleteStory } from '../actions'
@@ -17,6 +20,12 @@ const stateToProps = (state, {params}) => {
   }
 }
 
+const dispatchProps = {
+  changeStory,
+  saveStory,
+  deleteStory: (uid) => deleteStory(uid, Story.route()),
+}
+
 type StoryProps = {
   story: StoryType,
   changeStory: Function,
@@ -24,7 +33,7 @@ type StoryProps = {
   deleteStory: Function,
 }
 
-const Story = ({story, changeStory, saveStory, deleteStory}: StoryProps) => {
+const StoryComponent = ({story, changeStory, saveStory, deleteStory}: StoryProps) => {
   return (
     <section className="notification is-info">
       <h2> Story </h2>
@@ -75,8 +84,7 @@ const Story = ({story, changeStory, saveStory, deleteStory}: StoryProps) => {
   )
 }
 
-export default connect(stateToProps, {
-  changeStory,
-  saveStory,
-  deleteStory: (uid) => deleteStory(uid, Story.route()),
-})(Story)
+export default R.compose(
+  loadGuard([Story.type]),
+  connect(stateToProps, dispatchProps)
+)(StoryComponent)

@@ -9,6 +9,7 @@ import reducer from './ui'
 const defaultUi = {
   dragData: null
 }
+
 describe('UI Reducer', function() {
 
   it('should return a default state', function() {

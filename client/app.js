@@ -7,7 +7,6 @@ import Animate from 'react-addons-css-transition-group'
 
 import store from './store'
 
-import { isLoaded } from './reducers'
 import { Stories, Story, CreateStory } from './story'
 import { Codes } from './codes'
 import { Groups } from './group'
@@ -15,17 +14,13 @@ import { Clue, CreateClue } from './clue'
 import { Answer, CreateAnswer } from './answer'
 import * as Routes from './routes'
 import * as Res from './resources'
-import { loadStory, loadCodes, loadClue, loadAnswer, loadGroup, loadMessage } from './actions'
+import { fetchStory, fetchClue, fetchAnswer, fetchCode, fetchGroup, fetchMessage } from './actions'
 import { Explorer } from './explorer'
 import { GroupMessages, StoryMessages, MessageChoices } from './message'
 import { Toasts } from './lib/wisp'
 
 type appArgs = {main: ReactClass<*>, story: ReactClass<*>, clue: ReactClass<*>, answer: ReactClass<*>}
-const App = connect(state => ({loaded: isLoaded(state)}))
-(({loaded, main, story, clue, answer}) => {
-  if (!loaded){
-    return <div>Loading...</div>
-  }
+const App = ({main, story, clue, answer}: appArgs) => {
   return (
     <div>
       <nav className="nav has-shadow">
@@ -63,11 +58,11 @@ const App = connect(state => ({loaded: isLoaded(state)}))
             { clue ?  (<div className="column is-4"> {clue} </div>) : null }
             { answer ?  (<div className="column is-4"> {answer} </div>) : null }
           </Animate>
-          )}
+        )}
 
-              </section>
-            </div>
-  )})
+      </section>
+    </div>
+  )}
 
 const My404 = () => (
   <div>
@@ -76,12 +71,12 @@ const My404 = () => (
 )
 
 const load = () => {
-  store.dispatch(loadStory())
-  store.dispatch(loadCodes())
-  store.dispatch(loadClue())
-  store.dispatch(loadAnswer())
-  store.dispatch(loadGroup())
-  store.dispatch(loadMessage())
+  store.dispatch(fetchStory())
+  store.dispatch(fetchCode())
+  store.dispatch(fetchClue())
+  store.dispatch(fetchAnswer())
+  store.dispatch(fetchGroup())
+  store.dispatch(fetchMessage())
 }
 
 ReactDOM.render(

@@ -1,15 +1,8 @@
 /* @flow */
-import toastr from 'toastr'
 import R from 'ramda'
 import { camelizeKeys, decamelizeKeys } from 'humps'
-
-export const API = '@middleman/API'
-export const API_ERROR = '@middleman/API_ERROR'
-
-export const INDEX = 'INDEX'
-export const GET = 'GET'
-export const DELETE = 'DELETE'
-export const PUT = 'PUT'
+import { IS_PENDING, NOT_PENDING, GET, INDEX, DELETE, PUT, API_ERROR } from './constants'
+import type {Config} from './'
 
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
@@ -35,17 +28,35 @@ const apiRequest = (route: string, method: MethodType='GET', payload=undefined) 
   return processResponse(fetch(route, options))
 }
 
-const middleman = (makeRequest: Function) => (store: Object) => (next: Function) => (action: Object) => {
-  if(!R.has(API, action)){
+type middlemanSpec = {
+  route: string,
+  method: string,
+  context?: Object,
+}
+
+export default (actions: Config, makeRequest:Function = apiRequest) => ({getState, dispatch}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
+  if(! R.has(action.type, actions)){
     return next(action)
   }
-  let {route, method, payload:dataPayload, context} = action[API]
+  const state = getState()
+  let {route, method, payload, resource, context} = actions[action.type](state, action.payload)
   let camelizer = camelizeKeys
   if (method === INDEX) {
     method = GET
     camelizer = R.map(camelizeKeys)
   }
-  return makeRequest(route, method, dataPayload)
+
+  next({
+    type: `PENDING_${action.type}`,
+    meta: {
+      middleman: {
+        status: IS_PENDING,
+        resource,
+      },
+    },
+  })
+
+  return makeRequest(route, method, payload)
     .then(camelizer).then(
       data => next({
         type: action.type,
@@ -53,16 +64,25 @@ const middleman = (makeRequest: Function) => (store: Object) => (next: Function)
           ...data,
           ...context,
         },
+        meta: {
+          middleman: {
+            resource,
+            status: NOT_PENDING,
+          },
+        },
       }),
       error => {
         next({
           type: API_ERROR,
           error,
+          meta: {
+            middleman: {
+              resource,
+              status: NOT_PENDING,
+            }
+          }
         })
         throw(error)
       }
     )
 }
-
-export const testMiddleman = (returnData:any) => middleman(()=>Promise.resolve(returnData))
-export default middleman(apiRequest)

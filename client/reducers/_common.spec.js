@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import R from 'ramda'
 
 import at from '../action-types'
-import { changeClue, setClue } from '../actions'
+import { changeClue, saveClue } from '../actions'
 import reducerWrapper from './common'
 import { Clue } from '../resources'
 
@@ -24,11 +24,11 @@ describe('Common Reducer', function() {
     });
   });
 
-  describe('LOAD_*', function() {
+  describe('SAVE_*', function() {
     it('should replace state with payload', function() {
-      const action = { type: at.load(Clue.type), payload: 42 }
+      const action = { type: at.save(Clue.type), payload: {uid: 42 }}
       const newState = reducer({}, action)
-      expect(newState).to.eql(42)
+      expect(newState).to.eql({'42': {uid: 42}})
     });
   });
 
@@ -37,14 +37,6 @@ describe('Common Reducer', function() {
       const action = changeClue(['bob'], 42)
       const newState = reducer({ 'bob': 7 }, action)
       expect(newState).to.eql({ 'bob': 42 })
-    });
-  });
-
-  describe('SET_*', function() {
-    it('should set payload at its uid', function() {
-      const action = setClue({ uid: 'myuid', value: 42})
-      const newState = reducer({}, action)
-      expect(newState).to.eql({'myuid': { uid: 'myuid', value: 42}})
     });
   });
 

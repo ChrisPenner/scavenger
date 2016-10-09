@@ -13,14 +13,14 @@ const actionsList = [
 
   'RECEIVE_MESSAGE',
   'SEND_MESSAGE',
-
 ]
 
 const actionTypeCreators: {[name: string]: (type:ResourceType) => string} = {
   del: (type) => `DELETE_${type}`,
-  set: (type) => `SET_${type}`,
-  load: (type) => `LOAD_${type}`,
+  save: (type) => `SAVE_${type}`,
+  fetch: (type) => `FETCH_${type}`,
   change: (type) => `CHANGE_${type}`,
+  create: (type) => `CREATE_${type}`,
 }
 
 type ActionType = any

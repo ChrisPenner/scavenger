@@ -49,11 +49,16 @@ export const wispReducer: (state: any, action: Object) => any = handleActions({
   [HIDE_TOAST]: (state, { payload }) => R.dissoc(payload.id, state),
 }, DEFAULT_STATE)
 
+const statusToClass = {
+  'success': 'is-success',
+  'error': 'is-danger',
+}
+
 export const Toasts = connect(({toasts}) => ({toasts}))(({toasts}) => {
   return (
     <Animate className="toasts" transitionName="toast" transitionEnterTimeout={200} transitionLeaveTimeout={400}>
-    {R.map((({title, message, id}) => (
-      <div key={id} className="notification is-success">
+    {R.map((({title, message, id, type}) => (
+      <div key={id} className={`notification ${statusToClass[type]}`}>
         <h1 className="subtitle">{title}</h1>
       </div>
     )), R.values(toasts))}

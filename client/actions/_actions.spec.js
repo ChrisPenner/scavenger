@@ -1,52 +1,36 @@
 /* @flow */
 import R from 'ramda'
 import { expect } from 'chai'
-import { createMockStore } from '../_store.spec.js'
+import { createMockStore, createMockAPIStore } from '../_store.spec.js'
+import { CALL_HISTORY_METHOD } from 'react-router-redux'
 
 import at from '../action-types'
-import { saveStory, setStory, createStory, dropAnswer, dropClue} from './'
-import reducer, { getStory } from '../reducers'
+import { saveStory, createStory, dropAnswer, dropClue} from './'
 import { Story } from '../resources'
-import { createToast, CREATE_TOAST } from '../lib/wisp'
-
-const fakeResource = { uid: 'myuid', value: 42 }
-const getDefaultState = () => reducer(undefined, {type: 'INIT'})
+import {  CREATE_TOAST } from '../lib/wisp'
 
 describe('Actions', function() {
+  const initialState = {}
+  const serverResponse = {}
+  const store = createMockAPIStore(initialState)
+  beforeEach(() => store.clearActions())
 
   describe('saveResource', function() {
-    it('should set resource and trigger success notification', function(done) {
-      const initialState = { stories: {[fakeResource.uid]: fakeResource }}
-      const serverResponse = {uid: fakeResource.uid, value: 'changed'}
-      const store = createMockStore(initialState, serverResponse)
-      store.dispatch(saveStory(fakeResource.uid)).then(() => {
+    it('should send save action and trigger success notification', function(done) {
+      store.dispatch(saveStory('my-uid')).then(() => {
         const actions = store.getActions()
-        const actionTypes = R.pluck('type', actions)
-        const [setAction, toastAction] = actions
-        const actualToast = R.dissoc('id', toastAction.payload)
-        const expectedToast = R.dissoc('id', createToast({ id: 'whatever', title: 'Saved', type: "success", message: undefined }).payload)
-
-        expect(actionTypes).to.eql([at.set(Story.type), CREATE_TOAST])
-        expect(setAction).to.eql(setStory(serverResponse))
-        expect(actualToast).to.eql(expectedToast)
+        const types = R.map(R.prop('type'), actions)
+        expect(types).to.eql([at.save(Story.type), CREATE_TOAST])
       }).then(done).catch(done)
     })
   });
 
   describe('createResource', function() {
-    it('should put resource then set it, redirect, and show notification', function(done) {
-      const store = createMockStore(getDefaultState(), fakeResource)
-      store.dispatch(createStory(fakeResource)).then(() => {
+    it('should send create action and trigger success notification', function(done) {
+      store.dispatch(createStory('my-uid')).then(() => {
         const actions = store.getActions()
-        const actionTypes = R.pluck('type', actions)
-
-        const [setAction, _, toastAction] = actions
-        const actualToast = R.dissoc('id', toastAction.payload)
-        const expectedToast = R.dissoc('id', createToast({ id: 'whatever', title: 'Created', type: "success", message: undefined }).payload)
-
-        expect(actionTypes).to.eql([at.set(Story.type), '@@router/CALL_HISTORY_METHOD', CREATE_TOAST])
-        expect(setAction).to.eql(setStory(fakeResource))
-        expect(actualToast).to.eql(expectedToast)
+        const types = R.map(R.prop('type'), actions)
+        expect(types).to.eql([at.create(Story.type), CALL_HISTORY_METHOD, CREATE_TOAST])
       }).then(done).catch(done)
     })
   });

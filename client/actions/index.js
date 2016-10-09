@@ -2,7 +2,7 @@
 import xml2js from 'xml2js-es6-promise'
 import R from 'ramda'
 import swal from 'sweetalert'
-import { successToast } from '../lib/wisp'
+import { successToast, errorToast } from '../lib/wisp'
 import { push, goBack } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
@@ -10,7 +10,6 @@ import at from '../action-types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
 import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
-import { API, INDEX, DELETE, PUT } from '../lib/middleman'
 import * as Routes from '../routes'
 
 import type { MessageType } from '../resources'
@@ -42,8 +41,14 @@ export const {
   startDrag,
   stopDrag,
 
-  receiveMessage,
+  fetchStory,
+  fetchClue,
+  fetchAnswer,
+  fetchGroup,
+  fetchMessage,
+  fetchCode,
 
+  receiveMessage,
 } = createActions({
   [at.change(Story.type)]: changer,
   [at.change(Clue.type)]: changer,
@@ -52,11 +57,15 @@ export const {
 
   [at.RECEIVE_MESSAGE]: R.assoc('source', 'server'),
 },
-  at.set(Story.type),
-  at.set(Clue.type),
-  at.set(Answer.type),
   at.START_DRAG,
-  at.STOP_DRAG
+  at.STOP_DRAG,
+
+  at.fetch(Story.type),
+  at.fetch(Clue.type),
+  at.fetch(Answer.type),
+  at.fetch(Group.type),
+  at.fetch(Message.type),
+  at.fetch(Code.type),
 )
 
 // Async
@@ -67,21 +76,6 @@ const dropper = (actionType: string) => (index: number) => (dispatch: Function, 
 
 export const dropClue = dropper(at.DROP_CLUE)
 export const dropAnswer = dropper(at.DROP_ANSWER)
-
-const saveResource = (resource: ResourceT, getResourceState: Function) => (uid: string) => (dispatch: Function, getState: Function) => {
-  return dispatch({
-    type: at.set(resource.type),
-    [API]: {
-      route: resource.api.route(uid),
-      method: PUT,
-      payload: getResourceState(getState(), uid),
-    }
-  }).then(R.tap(() => dispatch(successToast('Saved'))))
-}
-
-export const saveStory = saveResource(Story, getStory)
-export const saveClue = saveResource(Clue, getClue)
-export const saveAnswer = saveResource(Answer, getAnswer)
 
 const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function, getState: Function) => swal({
   title: "Delete?",
@@ -94,16 +88,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
     dispatch(push(route))
     return dispatch({
       type: at.del(resource.type),
-      payload: {
-        uid,
-      },
-      [API]: {
-        route: resource.api.route(uid),
-        method: DELETE,
-        context: {
-          uid
-        }
-      }
+      payload: uid,
     })
       .then(() => swal({
         title: "Deleted",
@@ -118,42 +103,35 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   }
 })
 
-
 export const deleteStory = deleter(Story)
 export const deleteClue = deleter(Clue)
 export const deleteAnswer = deleter(Answer)
 
-const loader = (resource: ResourceT) => () => ({
-  type: at.load(resource.type),
-  [API]: {
-    route: resource.api.route(),
-    method: INDEX,
-  }
-})
-
-export const loadStory = loader(Story)
-export const loadCodes = loader(Code)
-export const loadClue = loader(Clue)
-export const loadAnswer = loader(Answer)
-export const loadGroup = loader(Group)
-export const loadMessage = loader(Message)
-
-export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function, getState: Function) => {
+export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
   return dispatch({
-    type: at.set(resource.type),
+    type: at.create(resource.type),
     payload,
-    [API]: {
-      route: resource.api.route(payload.uid),
-      method: PUT,
-      payload,
-    }
   }).then(() => dispatch(push(resource.route(payload.uid))))
     .then(R.tap(() => dispatch(successToast('Created'))))
+    .catch(() => dispatch(errorToast('Failed to Create')))
 }
 
 export const createStory = creator(Story)
 export const createClue = creator(Clue)
 export const createAnswer = creator(Answer)
+
+export const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
+  return dispatch({
+    type: at.save(resource.type),
+    payload: uid,
+  }).then(() => dispatch(successToast('Saved')))
+  .catch(() => dispatch(errorToast('Failed to Save')))
+}
+
+export const saveStory = saver(Story)
+export const saveClue = saver(Clue)
+export const saveAnswer = saver(Answer)
+
 
 const parseTwiML = xml2js
 const focusMessages = R.lensPath(['Response', 'Message'])

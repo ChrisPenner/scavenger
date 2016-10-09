@@ -4,12 +4,27 @@ import R from 'ramda'
 import classnames from 'classnames'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
+import loadGuard from '../lib/loaded'
 
 import { splitUid, uidsFromParams } from '../utils'
 import { getAnswer, getClueUidsByStory } from '../reducers'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
-import { Clue } from '../resources'
+import { Answer, Clue } from '../resources'
 import type { AnswerType } from '../resources'
+
+const dispatchProps = {
+  changeAnswer,
+  saveAnswer,
+  deleteAnswer: (uid) => deleteAnswer(uid, Clue.route(splitUid(uid).clueUid)),
+}
+
+const stateToProps = (state, {params}) => {
+  const {storyUid, answerUid} = uidsFromParams(params)
+  return {
+    answer: getAnswer(state, answerUid),
+    clueUids: getClueUidsByStory(state, storyUid)
+  }
+}
 
 type AnswerProps = {
   answer: AnswerType,
@@ -19,7 +34,7 @@ type AnswerProps = {
   deleteAnswer: Function,
 }
 
-const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}: AnswerProps) => {
+const AnswerComponent = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}: AnswerProps) => {
   let patternError
   try {
     new RegExp(answer.pattern)
@@ -108,16 +123,7 @@ const Answer = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnswer}: Answ
   )
 }
 
-const stateToProps = (state, {params}) => {
-  const {storyUid, answerUid} = uidsFromParams(params)
-  return {
-    answer: getAnswer(state, answerUid),
-    clueUids: getClueUidsByStory(state, storyUid)
-  }
-}
-
-export default connect(stateToProps, {
-  changeAnswer,
-  saveAnswer,
-  deleteAnswer: (uid) => deleteAnswer(uid, Clue.route(splitUid(uid).clueUid)),
-})(Answer)
+export default R.compose(
+  loadGuard([Clue.type, Answer.type]),
+  connect(stateToProps, dispatchProps)
+)(AnswerComponent)

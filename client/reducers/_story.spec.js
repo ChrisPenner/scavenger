@@ -5,7 +5,7 @@ import { applyThunk } from '../lib/redux-test'
 
 import at from '../action-types'
 import reducer from './story'
-import { changeStory, setStory, setClue, dropClue } from '../actions'
+import { createClue, dropClue } from '../actions'
 import { Story, Clue } from '../resources'
 
 describe('Story Reducer', function() {
@@ -45,72 +45,21 @@ describe('Story Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.load(Story.type), function() {
-    it('should overwrite stories', function() {
-      const payload = {
-        [newStory.uid]: newStory,
-      }
-      const action = {
-        type: at.load(Story.type),
-        payload
-      }
-      const newState = reducer(startStories, action)
-      expect(newState).to.eql(payload)
-    });
-  });
-
-  describe(at.change(Story.type), function() {
-    it('should change fields on story', function() {
-      const action = changeStory([startStory.uid, 'defaultHint'], '42')
-      const newState = reducer(startStories, action)
-      expect(newState).to.eql({
-        [startStory.uid]: {
-          ...startStory,
-          defaultHint: '42',
-        },
-        [startStory2.uid]: {
-          ...startStory2
-        },
-        [startStory3.uid]: {
-          ...startStory3
-        }
-      })
-      expect(newState[startStory.uid]).not.to.equal(startStory)
-    });
-  });
-
-  describe(at.set(Story.type), function() {
-    it('should overwrite the story', function() {
-      const newStory = R.assoc('defaultHint', 'new-hint', startStory)
-      const action = setStory(newStory)
-      const newState = reducer(startStories, action)
-      expect(newState[startStory.uid]).to.eql(newStory)
-    });
-  });
-
-  describe(at.del(Story.type), function() {
-    it('should delete the story', function() {
-      const action = {type: at.del(Story.type), payload: {uid: startStory.uid}}
-      const newState = reducer(startStories, action)
-      expect(newState).to.eql(
-        R.dissoc(startStory.uid, startStories)
-      )
-    });
-  });
-
-  describe(at.set(Clue.type), function() {
+  describe(at.create(Clue.type), function() {
     it('should add a clue to the story', function() {
+      const newClueUid = `${startStory.uid}:NEWCLUE`
       const newClue = Clue.new({
-        uid: 'STORY:NEWCLUE',
-        storyUid: 'STORY',
+        uid: newClueUid,
+        storyUid: startStory.uid,
         text: 'text',
         hint: 'hint',
         mediaUrl: 'media.url',
         answerUids: ['answer'],
       })
-      const action = setClue(newClue)
-      const newState = reducer(startStories, action)
-      expect(newState[startStory.uid].clues).to.contain('STORY:NEWCLUE')
+      const action = createClue(newClue)
+
+      const newState = testThunk(startStories, action)
+      expect(newState[startStory.uid].clues).to.contain(newClueUid)
     });
 
     it('should not add a clue to the story if it already exists', function() {
@@ -122,7 +71,7 @@ describe('Story Reducer', function() {
         mediaUrl: 'media.url',
         answerUids: ['answer'],
       })
-      const action = setClue(newClue)
+      const action = createClue(newClue)
       const newState = reducer(startStories, action)
       expect(R.allUniq(newState[startStory.uid].clues)).to.be.true
     });
