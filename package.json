@@ -61,7 +61,7 @@
     "test:server": "nosetests server/test",
     "build": "webpack",
     "watch": "webpack --watch",
-    "deploy": "npm run test:all && npm run build && ./deploy.sh",
-    "lint": "eslint client/*/**.js"
+    "lint": "eslint client/*/**.js",
+    "deploy": "npm run test:all && npm run lint && npm run build && ./deploy.sh"
   }
 }
