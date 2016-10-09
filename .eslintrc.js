@@ -2,8 +2,9 @@ module.exports = {
   "globals": {
     "describe": true,
     "it": true,
+    "beforeEach": true,
     "React": false,
-    "beforeEach": true
+    "ReactClass": false,
   },
   "env": {
     "browser": true,

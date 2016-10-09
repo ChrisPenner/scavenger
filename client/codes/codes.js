@@ -2,11 +2,9 @@
 import React from 'react'
 import R from 'ramda'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
 import { Code } from '../resources'
 import loadingGuard from '../lib/loaded'
 
-import * as Routes from '../routes'
 import { getCodesList } from '../reducers'
 
 import type { CodeType } from '../resources'
@@ -23,14 +21,14 @@ type CodeProps = {
 
 const CodeComponent = ({codes}: CodeProps) => {
   const codeRows = codes.map(code => {
-      return (
-            <tr key={code.uid}>
-                <td>{code.storyUid}</td>
-                <td>{code.wordString}</td>
-                <td>{code.used ? 'USED' : ''}</td>
-                <td>{code.singleUse ? 'Single Use' : 'Multi Use'}</td>
-            </tr>
-          )
+    return (
+      <tr key={code.uid}>
+        <td>{code.storyUid}</td>
+        <td>{code.wordString}</td>
+        <td>{code.used ? 'USED' : ''}</td>
+        <td>{code.singleUse ? 'Single Use' : 'Multi Use'}</td>
+      </tr>
+    )
   })
   return (
      <section>

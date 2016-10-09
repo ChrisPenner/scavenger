@@ -1,9 +1,6 @@
 /* @flow */
 import { expect } from 'chai'
-import R from 'ramda'
 
-import at from '../action-types'
-import { startDrag, stopDrag, changeTestMessage } from '../actions'
 import reducer, { DEFAULT_STATE } from './tools'
 
 describe('Tools Reducer', function() {
@@ -17,6 +14,6 @@ describe('Tools Reducer', function() {
       const action = {type: undefined}
       const newState = reducer(DEFAULT_STATE, action)
       expect(newState).to.equal(DEFAULT_STATE)
-    });
-  });
-});
+    })
+  })
+})

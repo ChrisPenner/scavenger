@@ -11,7 +11,6 @@ import { splitUid } from '../utils'
 type StoryReducerT = {[id:string]: StoryType}
 
 const transformClueUids = R.curry((fn, state, {payload}) => {
-  const {uid} = payload
   const storyUid = splitUid(payload.uid).storyUid
   return R.evolve({
     [storyUid]: {

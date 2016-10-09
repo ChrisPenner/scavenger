@@ -6,7 +6,6 @@ import { connect } from 'react-redux'
 import classnames from 'classnames'
 import loadGuard from '../lib/loaded'
 
-import { splitUid } from '../utils'
 import { getAnswersListByClue } from '../reducers'
 import { startDrag, dropAnswer } from '../actions'
 import { Answer } from '../resources'
@@ -14,10 +13,8 @@ import type { AnswerType } from '../resources'
 import * as Routes from '../routes'
 
 const stateToProps = (state, {clueUid}) => {
-  const {storyUid} = splitUid(clueUid)
   return {
     answers: getAnswersListByClue(state, clueUid),
-    storyUid,
     clueUid,
   }
 }
@@ -31,12 +28,11 @@ type AnswersProps = {
   startDrag: Function,
   dropAnswer: Function,
   answers: Array<AnswerType>,
-  storyUid: string,
   clueUid: string,
   highlightUid: string,
 }
 
-const Answers = ({answers, storyUid, clueUid, startDrag, dropAnswer, highlightUid}: AnswersProps) => {
+const Answers = ({answers, clueUid, startDrag, dropAnswer, highlightUid}: AnswersProps) => {
   const answerLinks = answers.map((answer, index) => {
     const classes = classnames('my-list-item', {
       'highlighted': highlightUid === answer.uid,

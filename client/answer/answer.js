@@ -3,7 +3,6 @@ import React from 'react'
 import R from 'ramda'
 import classnames from 'classnames'
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
 import loadGuard from '../lib/loaded'
 
 import { splitUid, uidsFromParams } from '../utils'

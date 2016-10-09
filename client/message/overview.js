@@ -5,7 +5,8 @@ import R from 'ramda'
 import loadingGuard from '../lib/loaded'
 import * as Routes from '../routes'
 import { getStoryUids, getGroupsList, getMessages } from '../reducers'
-import { Group, Message, Story } from '../resources'
+import { Group, Story } from '../resources'
+import type {GroupType} from '../resources'
 
 const getNumMessagesByGroup = R.curry((state, groupUid) => {
   const messages = getMessages(state)
@@ -16,7 +17,12 @@ const getNumMessagesByGroup = R.curry((state, groupUid) => {
 const storyMessageStateToProps = state => ({
   storyUids: getStoryUids(state),
 })
-const StoryMessageOverviewComponent = ({storyUids}) => {
+
+type StoryMessageProps = {
+  storyUids: Array<string>
+}
+
+const StoryMessageOverviewComponent = ({storyUids}: StoryMessageProps) => {
   const storyList = storyUids.map(storyUid => (
     <tr key={storyUid}>
       <td>{storyUid}</td>
@@ -54,10 +60,15 @@ const StoryMessageOverview = R.compose(
 
 const groupMessageStateToProps = state => ({
   groupList: getGroupsList(state),
-    messageCount: getNumMessagesByGroup(state)
+  messageCount: getNumMessagesByGroup(state)
 })
 
-const GroupMessageOverviewComponent = ({groupList, messageCount}) => {
+type GroupListProps = {
+  groupList: Array<GroupType>,
+  messageCount: (uid: string) => number,
+}
+
+const GroupMessageOverviewComponent = ({groupList, messageCount}: GroupListProps) => {
   const groups = groupList.map(group => {
     return (
       <tr key={group.uid}>

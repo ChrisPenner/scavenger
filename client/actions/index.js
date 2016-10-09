@@ -4,12 +4,12 @@ import R from 'ramda'
 import swal from 'sweetalert'
 import { successToast, errorToast } from '../lib/wisp'
 import { push, goBack } from 'react-router-redux'
-import { createAction, createActions } from 'redux-actions'
+import { createActions } from 'redux-actions'
 
 import at from '../action-types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
-import { getStory, getClue, getAnswer, getExplorer, getDragData } from '../reducers'
+import { getExplorer, getDragData } from '../reducers'
 import * as Routes from '../routes'
 
 import type { MessageType } from '../resources'
@@ -70,16 +70,16 @@ export const {
 
 // Async
 const dropper = (actionType: string) => (index: number) => (dispatch: Function, getState: Function) => {
-   const uid = getDragData(getState())
-   dispatch({ type: actionType, payload: {uid, index}})
- }
+  const uid = getDragData(getState())
+  dispatch({ type: actionType, payload: {uid, index}})
+}
 
 export const dropClue = dropper(at.DROP_CLUE)
 export const dropAnswer = dropper(at.DROP_ANSWER)
 
-const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function, getState: Function) => swal({
-  title: "Delete?",
-  type: "warning",
+const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function) => swal({
+  title: 'Delete?',
+  type: 'warning',
   showCancelButton: true,
   closeOnConfirm: false,
   showLoaderOnConfirm: true,
@@ -91,14 +91,14 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
       payload: uid,
     })
       .then(() => swal({
-        title: "Deleted",
-        type: "success",
+        title: 'Deleted',
+        type: 'success',
         showConfirmButton: false,
         timer: 700,
       }))
       .catch((message) => {
         dispatch(goBack())
-        swal("Error", message, "error")
+        swal('Error', message, 'error')
       })
   }
 })

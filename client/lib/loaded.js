@@ -6,7 +6,7 @@ const stateToProps = state => ({api: state.api})
 
 const loadingGuard = (dependencies: Array<string>) => (Component: ReactClass<*>)=> connect(stateToProps)(({api, ...props}: Object) => {
   const isLoaded = (resource) => {
-    return api[resource] && api[resource].initialized;
+    return api[resource] && api[resource].initialized
   }
   if (!R.all(isLoaded, dependencies)){
     return (

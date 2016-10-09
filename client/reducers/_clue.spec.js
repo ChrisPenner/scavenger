@@ -5,9 +5,8 @@ import { applyThunk } from '../lib/redux-test'
 
 import at from '../action-types'
 import reducer from './clue'
-import { changeClue, saveClue, saveAnswer, dropAnswer } from '../actions'
+import { saveAnswer, dropAnswer } from '../actions'
 import { Clue, Answer, Story } from '../resources'
-import type { ClueType } from '../resources'
 
 describe('Clue Reducer', function() {
   const answerUid = 'STORY:CLUE:ANSWER'
@@ -24,15 +23,6 @@ describe('Clue Reducer', function() {
   const startClues = {
     [startClue.uid]: startClue,
   }
-
-  const newClue = Clue.new({
-    uid: 'STORY:NEWCLUE',
-    storyUid: 'NEWSTORY',
-    text: 'new text',
-    hint: 'new hint',
-    mediaUrl: 'newmedia.url',
-    answerUids: ['STORY:CLUE:NEW'],
-  })
 
   const testThunk = applyThunk(reducer, startClues)
 
@@ -52,7 +42,7 @@ describe('Clue Reducer', function() {
       const action = saveAnswer(newAnswer)
       const newState = testThunk(startClues, action)
       expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:NEWANSWER')
-    });
+    })
 
     it('should add an answer to the clue', function() {
       const newAnswer = Answer.new({
@@ -65,7 +55,7 @@ describe('Clue Reducer', function() {
       const action = saveAnswer(newAnswer)
       const newState = testThunk(startClues, action)
       expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:NEWANSWER')
-    });
+    })
 
 
     it('should not add an answer to the clue if it already exists', function() {
@@ -79,40 +69,40 @@ describe('Clue Reducer', function() {
       const action = saveAnswer(newAnswer)
       const newState = reducer(startClues, action)
       expect(R.allUniq(newState[startClue.uid].answerUids)).to.be.true
-    });
-  });
+    })
+  })
 
   describe(at.del(Story.type), function() {
-    it("should delete the clue if its story is deleted", function() {
+    it('should delete the clue if its story is deleted', function() {
       const action = {type: at.del(Story.type), payload: {uid: startClue.storyUid}}
       const newState = reducer(startClues, action)
       expect(newState).to.eql({})
-    });
-  });
+    })
+  })
 
   describe(at.del(Answer.type), function() {
     it('should delete the answer from answerUids', function() {
       const action = {type: at.del(Answer.type), payload: {uid: answerUid}}
       const newState = reducer(startClues, action)
       expect(newState[startClue.uid].answerUids).to.not.contain(answerUid)
-    });
-  });
+    })
+  })
 
   describe('DROP_ANSWER', function() {
-    it("should move an answer earlier", function() {
+    it('should move an answer earlier', function() {
       const newState = testThunk({ui: {dragData: answerUid}}, dropAnswer(2))
       expect(newState[startClue.uid].answerUids).to.eql([secondAnswerUid, thirdAnswerUid, answerUid])
-    });
+    })
 
-    it("should move an answer later", function() {
+    it('should move an answer later', function() {
       const newState = testThunk({ui: {dragData: thirdAnswerUid}}, dropAnswer(1))
       expect(newState[startClue.uid].answerUids).to.eql([answerUid, thirdAnswerUid, secondAnswerUid])
-    });
+    })
 
-    it("should not move an answer when same index", function() {
+    it('should not move an answer when same index', function() {
       const newState = testThunk({ui: {dragData: secondAnswerUid}}, dropAnswer(1))
       expect(newState[startClue.uid].answerUids).to.eql([answerUid, secondAnswerUid, thirdAnswerUid])
-    });
-  });
+    })
+  })
 
-});
+})

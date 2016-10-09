@@ -33,12 +33,6 @@ describe('Story Reducer', function() {
     [startStory3.uid]: startStory3
   }
 
-  const newStory = Story.new({
-    uid: 'NEWSTORY',
-    defaultHint: 'my new hint',
-    clues: ['NEWSTORY:NEWCLUE'],
-  })
-
   const testThunk = applyThunk(reducer, startStories)
 
   it('should return a default state', function() {
@@ -60,7 +54,7 @@ describe('Story Reducer', function() {
 
       const newState = testThunk(startStories, action)
       expect(newState[startStory.uid].clues).to.contain(newClueUid)
-    });
+    })
 
     it('should not add a clue to the story if it already exists', function() {
       const newClue = Clue.new({
@@ -74,23 +68,23 @@ describe('Story Reducer', function() {
       const action = createClue(newClue)
       const newState = reducer(startStories, action)
       expect(R.allUniq(newState[startStory.uid].clues)).to.be.true
-    });
-  });
+    })
+  })
 
   describe('DROP_CLUE', function() {
-    it("should move a clue earlier", function() {
+    it('should move a clue earlier', function() {
       const newState = testThunk({ui: {dragData: clueUid}}, dropClue(2))
       expect(newState[startStory.uid].clues).to.eql([secondClueUid, thirdClueUid, clueUid])
-    });
+    })
 
-    it("should move a clue later", function() {
+    it('should move a clue later', function() {
       const newState = testThunk({ui: {dragData: thirdClueUid}}, dropClue(1))
       expect(newState[startStory.uid].clues).to.eql([clueUid, thirdClueUid, secondClueUid])
-    });
+    })
 
-    it("should not move a clue when same index", function() {
+    it('should not move a clue when same index', function() {
       const newState = testThunk({ui: {dragData: secondClueUid}}, dropClue(1))
       expect(newState[startStory.uid].clues).to.eql([clueUid, secondClueUid, thirdClueUid])
-    });
-  });
-});
+    })
+  })
+})

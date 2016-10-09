@@ -4,12 +4,11 @@ import R from 'ramda'
 import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
-import { Story, Clue, Answer } from '../resources'
+import { Story } from '../resources'
 import { uidsFromParams } from '../utils'
 import { getStory } from '../reducers'
-import { changeStory, saveStory, deleteStory } from '../actions'
+import { changeStory, saveStory } from '../actions'
 import { Clues } from '../clue'
-import * as Routes from '../routes'
 
 import type { StoryType } from '../resources'
 
@@ -23,17 +22,15 @@ const stateToProps = (state, {params}) => {
 const dispatchProps = {
   changeStory,
   saveStory,
-  deleteStory: (uid) => deleteStory(uid, Story.route()),
 }
 
 type StoryProps = {
   story: StoryType,
   changeStory: Function,
   saveStory: Function,
-  deleteStory: Function,
 }
 
-const StoryComponent = ({story, changeStory, saveStory, deleteStory}: StoryProps) => {
+const StoryComponent = ({story, changeStory, saveStory}: StoryProps) => {
   return (
     <section className="notification is-info">
       <h2> Story </h2>
@@ -41,14 +38,6 @@ const StoryComponent = ({story, changeStory, saveStory, deleteStory}: StoryProps
         {story.uid}
       </h1>
       <div className="level">
-        {/*
-        This is too dangerous :P
-        <button
-          className="button is-danger level-item"
-          onClick={() => deleteStory(story.uid)}>
-          Delete
-        </button>
-        */}
         <button
           className="button is-success level-item"
           onClick={() => saveStory(story.uid)}>

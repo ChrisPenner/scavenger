@@ -1,8 +1,6 @@
 /* @flow */
 import R from 'ramda'
 
-import at from '../action-types'
-import { Story, Answer, Clue } from '../resources'
 import type { StoryType, ClueType, AnswerType, GroupType, MessageType } from '../resources'
 
 import type { ExplorerType } from './explorer'
@@ -27,7 +25,7 @@ export const getStoryUids = (state: Object): Array<string> => R.keys(getStories(
 
 export const getCodesList = (state: Object): Array<string> => listFromMapping(state.codes)
 
-export const getGroupsList = (state: Object): Array<GroupType> => R.sortBy(R.prop("createdAt"), listFromMapping(state.groups))
+export const getGroupsList = (state: Object): Array<GroupType> => R.sortBy(R.prop('createdAt'), listFromMapping(state.groups))
 
 export const getAnswer = R.curry((state: Object, answerUid: string) => state.answers[answerUid])
 export const getAnswers = (state: Object): MapOf<AnswerType> => state.answers

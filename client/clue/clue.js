@@ -2,10 +2,8 @@
 import React from 'react'
 import R from 'ramda'
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
 import loadGuard from '../lib/loaded'
 
-import * as Routes from '../routes'
 import { Answers } from '../answer'
 import { getClue, getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
@@ -51,7 +49,7 @@ type ClueProps = {
 }
 
 const ClueComponent = ({answers, clue, changeClue, saveClue, deleteClue, changeTestMessage, testMessage}: ClueProps) => {
-  let matchingAnswer, regexErr
+  let matchingAnswer
   try {
     matchingAnswer = findMatchingAnswer(testMessage, answers)
   } catch(err) {

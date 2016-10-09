@@ -9,4 +9,4 @@ describe('Explorer Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-});
+})

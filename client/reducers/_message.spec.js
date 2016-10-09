@@ -9,4 +9,4 @@ describe('Message Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-});
+})
