@@ -1,5 +1,5 @@
 /* @flow */
-import React, {PropTypes} from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { getExplorer } from '../reducers'
@@ -11,7 +11,7 @@ type TextsProps = {
   texts: Array<MessageType>,
 }
 
-const Texts = ({texts}) => {
+const Texts = ({texts}: TextsProps) => {
   const textsView = texts.map(({sender, receiver, text, mediaUrl, source}, i) => {
     return (
       <tr key={i} className={source === 'user' ? 'green': 'blue'}>
@@ -58,9 +58,6 @@ const Texts = ({texts}) => {
       </table>
     </div>
   )
-}
-Texts.propTypes = {
-  texts: React.PropTypes.arrayOf(React.PropTypes.object),
 }
 
 type ExplorerProps = {

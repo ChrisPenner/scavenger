@@ -18,31 +18,31 @@ type GroupsProps = {
 
 const Groups = ({groupList}: GroupsProps) => {
   const groups = groupList.map(group => {
-      return (
-            <tr key={group.uid}>
-              <td><Link to={Routes.groupMessages(group.uid)}>{group.uid}</Link></td>
-                <td><Link to={Routes.storyMessages(group.storyUid)}>{group.storyUid}</Link></td>
-                <td>{group.clueUid}</td>
-                <td>{group.createdAt}</td>
-                <td>{group.completedAt}</td>
-                <td>
-                  <Link
-                    to={Routes.groupMessages(group.uid)}
-                    className="button has-margin-5 is-primary"> 
-                    View Transcript
-                  </Link>
-                  <a className="button has-margin-5 is-success">Restart Group</a>
-                  <a className="button has-margin-5 is-danger">End Group</a>
-                </td>
-            </tr>
-          )
+    return (
+      <tr key={group.uid}>
+        <td><Link to={Routes.groupMessages(group.uid)}>{group.uid}</Link></td>
+        <td><Link to={Routes.storyMessages(group.storyUid)}>{group.storyUid}</Link></td>
+        <td>{group.clueUid}</td>
+        <td>{group.createdAt}</td>
+        <td>{group.completedAt}</td>
+        <td>
+          <Link
+            to={Routes.groupMessages(group.uid)}
+            className="button has-margin-5 is-primary"> 
+            View Transcript
+          </Link>
+          <a className="button has-margin-5 is-success">Restart Group</a>
+          <a className="button has-margin-5 is-danger">End Group</a>
+        </td>
+      </tr>
+    )
   })
 
   return (
     <div>
       <h1 className="title">Groups</h1>
       <div className="my-list">
-          <table className="table is-bordered is-striped group__table">
+        <table className="table is-bordered is-striped group__table">
           <thead>
             <tr>
               <th>Group Code</th>
@@ -56,8 +56,8 @@ const Groups = ({groupList}: GroupsProps) => {
           <tbody>
             {groups}
           </tbody>
-          </table>
-        </div>
+        </table>
+      </div>
     </div>
   )
 }

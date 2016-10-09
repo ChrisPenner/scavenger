@@ -80,8 +80,8 @@ class Create extends React.Component {
               id="text"
               className="textarea"
               onChange={(e) => this.update({
-                          text: e.target.value
-                        })}
+                text: e.target.value
+              })}
               value={this.state.text} />
           </div>
           <label
@@ -94,8 +94,8 @@ class Create extends React.Component {
               id="hint"
               className="textarea"
               onChange={(e) => this.update({
-                          hint: e.target.value
-                        })}
+                hint: e.target.value
+              })}
               value={this.state.hint} />
           </div>
           <button

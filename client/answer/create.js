@@ -3,7 +3,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
-import * as Routes from '../routes'
 import { createAnswer } from '../actions'
 import type { FSA } from '../actions'
 
@@ -101,8 +100,8 @@ class Create extends React.Component {
               id="pattern"
               className="input"
               onChange={(e) => this.update({
-                          pattern: e.target.value
-                        })}
+                pattern: e.target.value
+              })}
               value={this.state.pattern} />
           </div>
           <label
@@ -112,17 +111,17 @@ class Create extends React.Component {
           </label>
           <div className="control">
             <span className="select"><select
-                                       id="next-clue"
-                                       value={this.state.nextClue}
-                                       onChange={(e) => this.update({
-                                                   nextClue: e.target.value
-                                                 })} > {this.props.clueUids.map(
-                                                                                                                                                                                                            option => <option
-                                                                                                                                                                                                                      key={option}
-                                                                                                                                                                                                                      value={option}>
-                                                                                                                                                                                                                      {option}
-                                                                                                                                                                                                                    </option>
-                                                                                                                                                                                                          )} </select></span>
+                id="next-clue"
+                value={this.state.nextClue}
+                onChange={(e) => this.update({
+                  nextClue: e.target.value
+                })} > {this.props.clueUids.map(
+                  option => <option
+                    key={option}
+                    value={option}>
+                    {option}
+                  </option>
+                )} </select></span>
           </div>
           <button
             onClick={this.create}

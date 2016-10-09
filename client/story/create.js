@@ -72,16 +72,16 @@ class Create extends React.Component {
               id="hint"
               className="textarea"
               onChange={(e) => this.update({
-                          defaultHint: e.target.value
-                        })}
+                defaultHint: e.target.value
+              })}
               value={this.state.defaultHint} />
-          </div>
-          <button
-            onClick={this.create}
-            className="button is-success">
-            Create
-          </button>
-        </div>
+      </div>
+      <button
+        onClick={this.create}
+      className="button is-success">
+      Create
+    </button>
+      </div>
       </div>
     )
   }
