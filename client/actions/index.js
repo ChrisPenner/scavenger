@@ -107,7 +107,7 @@ export const deleteStory = deleter(Story)
 export const deleteClue = deleter(Clue)
 export const deleteAnswer = deleter(Answer)
 
-export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function, getState: Function) => {
+export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
   return dispatch({
     type: at.create(resource.type),
     payload,
@@ -120,12 +120,12 @@ export const createStory = creator(Story)
 export const createClue = creator(Clue)
 export const createAnswer = creator(Answer)
 
-export const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function, getState: Function) => {
+export const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
   return dispatch({
     type: at.save(resource.type),
     payload: uid,
-  }).then(R.tap(() => dispatch(successToast('Saved'))))
-    .catch(() => dispatch(errorToast('Failed to Save')))
+  }).then(() => dispatch(successToast('Saved')))
+  .catch(() => dispatch(errorToast('Failed to Save')))
 }
 
 export const saveStory = saver(Story)

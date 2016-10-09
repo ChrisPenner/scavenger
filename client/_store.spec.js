@@ -5,10 +5,23 @@ import promiseMiddleware from 'redux-promise';
 import { testMiddleman } from './lib/middleman'
 import { middlemanConfig } from './api'
 
-export const createMockStore = (initialState: any, serverResponse: any) => {
+export const createMockStore = (initialState: any, serverResponse: any, apiActions: ?Object) => {
   const middleware = [
-    testMiddleman(middlemanConfig, serverResponse),
     thunk,
+    testMiddleman(serverResponse),
+  ]
+  return configureStore(middleware)(initialState)
+}
+
+const returnPromiseMiddleware = ({dispatch}: Object) => (next: Function) => (action: Object) => {
+  next(action)
+  return Promise.resolve('blah')
+}
+
+export const createAPIStore = (initialState: any) => {
+  const middleware = [
+    thunk,
+    returnPromiseMiddleware
   ]
   return configureStore(middleware)(initialState)
 }

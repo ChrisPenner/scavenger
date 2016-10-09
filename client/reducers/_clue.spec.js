@@ -50,7 +50,7 @@ describe('Clue Reducer', function() {
         nextClue: 'MY-NEXT-CLUE',
       })
       const action = saveAnswer(newAnswer)
-      const newState = reducer(startClues, action)
+      const newState = testThunk(startClues, action)
       expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:NEWANSWER')
     });
 
@@ -63,7 +63,7 @@ describe('Clue Reducer', function() {
         nextClue: 'MY-NEXT-CLUE',
       })
       const action = saveAnswer(newAnswer)
-      const newState = reducer(startClues, action)
+      const newState = testThunk(startClues, action)
       expect(newState[startClue.uid].answerUids).to.contain('STORY:CLUE:NEWANSWER')
     });
 

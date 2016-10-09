@@ -47,17 +47,19 @@ describe('Story Reducer', function() {
 
   describe(at.create(Clue.type), function() {
     it('should add a clue to the story', function() {
+      const newClueUid = `${startStory.uid}:NEWCLUE`
       const newClue = Clue.new({
-        uid: 'STORY:NEWCLUE',
-        storyUid: 'STORY',
+        uid: newClueUid,
+        storyUid: startStory.uid,
         text: 'text',
         hint: 'hint',
         mediaUrl: 'media.url',
         answerUids: ['answer'],
       })
       const action = createClue(newClue)
-      const newState = reducer(startStories, action)
-      expect(newState[startStory.uid].clues).to.contain('STORY:NEWCLUE')
+
+      const newState = testThunk(startStories, action)
+      expect(newState[startStory.uid].clues).to.contain(newClueUid)
     });
 
     it('should not add a clue to the story if it already exists', function() {

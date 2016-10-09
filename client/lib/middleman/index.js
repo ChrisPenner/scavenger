@@ -6,6 +6,6 @@ import middleware from './middleware'
 export { INDEX, GET, DELETE, PUT } from './constants'
 export type Config = {[key:string]: (state :Object, payload: Object) => Object }
 
-export const testMiddleman = (returnData:any) => middleware({}, ()=>Promise.resolve(returnData))
+export const testMiddleman = (returnData:any, actions: Object = {}) => middleware(actions, ()=>Promise.resolve(returnData))
 
 export const configureMiddleware = (config: Config) => middleware(config)
