@@ -13,6 +13,7 @@ module.exports = {
       './client/css/bulma',
       './client/css/toastr',
       './client/css/sweetalert',
+      './client/css/spinners',
     ],
     'vendor': [
       'react',

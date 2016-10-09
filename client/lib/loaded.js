@@ -9,7 +9,14 @@ const loadingGuard = (dependencies: Array<string>) => (Component: ReactClass<*>)
     return api[resource] && api[resource].initialized;
   }
   if (!R.all(isLoaded, dependencies)){
-    return <div> Loading... </div>
+    return (
+      <div className="sk-folding-cube">
+        <div className="sk-cube1 sk-cube"></div>
+        <div className="sk-cube2 sk-cube"></div>
+        <div className="sk-cube4 sk-cube"></div>
+        <div className="sk-cube3 sk-cube"></div>
+      </div>
+    )
   }
   return <Component {...props} />
 })
