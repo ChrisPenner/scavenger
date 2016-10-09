@@ -11,7 +11,7 @@ import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
 import { wispReducer } from '../lib/wisp'
-import { reducer as apiReducer } from '../api'
+import { reducer as api } from '../lib/middleman'
 
 export default combineReducers({
   routing: routerReducer,
@@ -25,6 +25,6 @@ export default combineReducers({
   tools,
   ui,
   toasts: wispReducer,
-  api: apiReducer,
+  api,
 })
 

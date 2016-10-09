@@ -2,7 +2,7 @@
 import R from 'ramda'
 import { camelizeKeys, decamelizeKeys } from 'humps'
 import { IS_PENDING, NOT_PENDING, GET, INDEX, DELETE, PUT, API_ERROR } from './constants'
-import type Config from './'
+import type {Config} from './'
 
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {

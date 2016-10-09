@@ -1,5 +1,5 @@
 /* @flow */
-import configureMiddleman, { INDEX, PUT, DELETE } from './lib/middleman'
+import { INDEX, PUT, DELETE, configureMiddleware } from './lib/middleman'
 import at from './action-types'
 import { getStory, getClue, getAnswer } from './reducers'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
@@ -90,6 +90,4 @@ export const middlemanConfig = {
   }),
 }
 
-const middleman = configureMiddleman(middlemanConfig)
-export const reducer = middleman.reducer
-export const middleware = middleman.middleware
+export default configureMiddleware(middlemanConfig)

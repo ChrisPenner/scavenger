@@ -2,7 +2,7 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { routerMiddleware } from 'react-router-redux'
-import { middleware as apiMiddleware } from './api'
+import apiMiddleware from './api'
 import { browserHistory } from 'react-router'
 
 import reducer from './reducers/root'
