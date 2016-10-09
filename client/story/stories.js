@@ -1,7 +1,9 @@
 /* @flow */
 import React from 'react'
+import R from 'ramda'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import loadGuard from '../lib/loaded'
 
 import * as Routes from '../routes'
 import { getStoriesList } from '../reducers'
@@ -42,4 +44,7 @@ const Stories = ({storiesList}: StoriesProps) => {
   )
 }
 
-export default connect(stateToProps)(Stories)
+export default R.compose(
+  loadGuard([Story.type]),
+  connect(stateToProps),
+)(Stories)

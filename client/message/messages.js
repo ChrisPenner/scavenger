@@ -1,8 +1,12 @@
 /* @flow */
 import React from 'react'
+import R from 'ramda'
 import { connect } from 'react-redux'
 import { getGroupMessages, getStoryMessages } from '../reducers'
+import { Message } from '../resources'
 import type { MessageType } from '../resources'
+
+import loadingGuard from '../lib/loaded'
 
 type MessagesProps = {
   messages: Array<MessageType>,
@@ -79,5 +83,12 @@ const stateToPropsStory = (state, {params:{storyUid}}) => {
   }
 }
 
-export const GroupMessages = connect(stateToPropsGroup)(Messages)
-export const StoryMessages = connect(stateToPropsStory)(Messages)
+export const GroupMessages = R.compose(
+  loadingGuard([Message.type]),
+  connect(stateToPropsGroup)
+)(Messages)
+
+export const StoryMessages = R.compose(
+  loadingGuard([Message.type]),
+  connect(stateToPropsStory)
+)(Messages)

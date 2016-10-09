@@ -3,6 +3,8 @@ import React from 'react'
 import R from 'ramda'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import { Code } from '../resources'
+import loadingGuard from '../lib/loaded'
 
 import * as Routes from '../routes'
 import { getCodesList } from '../reducers'
@@ -19,7 +21,7 @@ type CodeProps = {
   codes: Array<CodeType>,
 }
 
-const Code = ({codes}: CodeProps) => {
+const CodeComponent = ({codes}: CodeProps) => {
   const codeRows = codes.map(code => {
       return (
             <tr key={code.uid}>
@@ -50,4 +52,7 @@ const Code = ({codes}: CodeProps) => {
   )
 }
 
-export default connect(stateToProps)(Code)
+export default R.compose(
+  loadingGuard([Code.type]),
+  connect(stateToProps)
+)(CodeComponent)

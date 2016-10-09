@@ -16,7 +16,7 @@ import * as Routes from './routes'
 import * as Res from './resources'
 import { fetchStory, fetchClue, fetchAnswer, fetchCode, fetchGroup, fetchMessage } from './actions'
 import { Explorer } from './explorer'
-import { GroupMessages, StoryMessages, MessageChoices } from './message'
+import { GroupMessages, StoryMessages, MessageOverview } from './message'
 import { Toasts } from './lib/wisp'
 
 type appArgs = {main: ReactClass<*>, story: ReactClass<*>, clue: ReactClass<*>, answer: ReactClass<*>}
@@ -95,7 +95,7 @@ ReactDOM.render(
           components={{ main: Groups }} />
         <Route
           path={Res.Message.route(Routes.INDEX)}
-          components={{ main: MessageChoices }} />
+          components={{ main: MessageOverview }} />
         <Route
           path={Routes.groupMessages(Routes.GROUP_UID_PARAM)}
           components={{ main: GroupMessages }} />
