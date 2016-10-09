@@ -11,9 +11,3 @@ export const applyThunk = R.curry((reducer: Function, initialState: any, globalS
   thunk(fakeDispatch(actions, Promise.resolve("set dispatch return")), () => globalState)
   return R.reduce(reducer, initialState, actions)
 })
-
-export const thunkCollectActions = (dispatchReturn: any, globalState: any, thunk: Function) => {
-  const actions = []
-  thunk(fakeDispatch(actions, dispatchReturn))
-  return actions
-}

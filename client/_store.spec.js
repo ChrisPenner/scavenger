@@ -15,10 +15,10 @@ export const createMockStore = (initialState: any, serverResponse: any, apiActio
 
 const returnPromiseMiddleware = ({dispatch}: Object) => (next: Function) => (action: Object) => {
   next(action)
-  return Promise.resolve('blah')
+  return Promise.resolve()
 }
 
-export const createAPIStore = (initialState: any) => {
+export const createMockAPIStore = (initialState: any) => {
   const middleware = [
     thunk,
     returnPromiseMiddleware

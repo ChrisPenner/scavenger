@@ -1,24 +1,18 @@
 /* @flow */
 import R from 'ramda'
 import { expect } from 'chai'
-import { createMockStore, createAPIStore } from '../_store.spec.js'
-import { thunkCollectActions } from '../lib/redux-test'
+import { createMockStore, createMockAPIStore } from '../_store.spec.js'
 import { CALL_HISTORY_METHOD } from 'react-router-redux'
 
 import at from '../action-types'
 import { saveStory, createStory, dropAnswer, dropClue} from './'
-import { getStory } from '../reducers'
-import reducer from '../reducers/root'
 import { Story } from '../resources'
-import { createToast, CREATE_TOAST } from '../lib/wisp'
-
-const fakeResource = { uid: 'myuid', value: 42 }
-const getDefaultState = () => reducer(undefined, {type: 'INIT'})
+import {  CREATE_TOAST } from '../lib/wisp'
 
 describe('Actions', function() {
   const initialState = {}
   const serverResponse = {}
-  const store = createAPIStore(initialState)
+  const store = createMockAPIStore(initialState)
   beforeEach(() => store.clearActions())
 
   describe('saveResource', function() {
