@@ -59,8 +59,8 @@ export const Toasts = connect(({toasts}) => ({toasts}))(({toasts}) => {
     <Animate className="toasts" transitionName="toast" transitionEnterTimeout={200} transitionLeaveTimeout={400}>
     {R.map((({title, message, id, type}) => (
       <div key={id} className={`notification ${statusToClass[type]}`}>
-        <h1 className="subtitle">{title}</h1>
-        <h2 className="subtitle">{message}</h2>
+        {title && <h1 className="subtitle">{title}</h1>}
+        {message && <h2 className="subtitle">{message}</h2>}
       </div>
     )), R.values(toasts))}
   </Animate>
