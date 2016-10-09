@@ -2,11 +2,11 @@
 import R from 'ramda'
 import { connect } from 'react-redux'
 
-const stateToProps = state => ({pending: state.pending})
+const stateToProps = state => ({api: state.api})
 
-const loadingGuard = (dependencies: Array<string>) => (Component: ReactClass<*>)=> connect(stateToProps)(({pending, ...props}: Object) => {
+const loadingGuard = (dependencies: Array<string>) => (Component: ReactClass<*>)=> connect(stateToProps)(({api, ...props}: Object) => {
   const isLoaded = (resource) => {
-    return pending[resource] && pending[resource].initialized;
+    return api[resource] && api[resource].initialized;
   }
   if (!R.all(isLoaded, dependencies)){
     return <div> Loading... </div>

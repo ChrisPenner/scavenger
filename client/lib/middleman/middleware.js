@@ -1,12 +1,8 @@
 /* @flow */
 import R from 'ramda'
 import { camelizeKeys, decamelizeKeys } from 'humps'
-import { IS_PENDING, NOT_PENDING } from './pending'
-
-export const INDEX = 'INDEX'
-export const GET = 'GET'
-export const DELETE = 'DELETE'
-export const PUT = 'PUT'
+import { IS_PENDING, NOT_PENDING, GET, INDEX, DELETE, PUT, API_ERROR } from './constants'
+import type Config from './'
 
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
@@ -38,8 +34,7 @@ type middlemanSpec = {
   context?: Object,
 }
 
-type Config = {[key:string]: (state :Object, payload: Object) => Object }
-const middleman = (makeRequest: Function) => (actions: Config) => ({getState, dispatch}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
+export default (actions: Config, makeRequest:Function = apiRequest) => ({getState, dispatch}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
   if(! R.has(action.type, actions)){
     return next(action)
   }
@@ -51,39 +46,33 @@ const middleman = (makeRequest: Function) => (actions: Config) => ({getState, di
     camelizer = R.map(camelizeKeys)
   }
 
-  dispatch({
-    type: IS_PENDING,
-    payload: resource,
-  })
-
   return makeRequest(route, method, payload)
     .then(camelizer).then(
-      data => {
-        // Have to run it first, then dispatch pending option, then we can return the result
-        // Otherwise things are considered loaded before they're actually applied to the store
-        const result = next({
-          type: action.type,
-          payload: {
-            ...data,
-            ...context,
+      data => next({
+        type: action.type,
+        payload: {
+          ...data,
+          ...context,
+        },
+        meta: {
+          middleman: {
+            resource,
+            status: IS_PENDING,
           },
-        })
-        dispatch({
-          type: NOT_PENDING,
-          payload: resource,
-        })
-        return result
-      },
+        },
+      }),
       error => {
         dispatch({
-          type: NOT_PENDING,
-          paylaod: resource,
+          type: API_ERROR,
           error,
+          meta: {
+            middleman: {
+              resource,
+              status: NOT_PENDING,
+            }
+          }
         })
         throw(error)
       }
     )
 }
-
-export const testMiddleman = (returnData:any) => middleman(()=>Promise.resolve(returnData))
-export default middleman(apiRequest)

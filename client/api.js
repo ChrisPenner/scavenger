@@ -1,10 +1,8 @@
 /* @flow */
-import configureMiddleman from './lib/middleman'
-
+import configureMiddleman, { INDEX, PUT, DELETE } from './lib/middleman'
 import at from './action-types'
 import { getStory, getClue, getAnswer } from './reducers'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
-import { INDEX, PUT, DELETE } from './lib/middleman'
 
 export const middlemanConfig = {
   [at.fetch(Story.type)]: () => ({
@@ -92,4 +90,6 @@ export const middlemanConfig = {
   }),
 }
 
-export default configureMiddleman(middlemanConfig)
+const middleman = configureMiddleman(middlemanConfig)
+export const reducer = middleman.reducer
+export const middleware = middleman.middleware

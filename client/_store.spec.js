@@ -7,7 +7,7 @@ import { middlemanConfig } from './api'
 
 export const createMockStore = (initialState: any, serverResponse: any) => {
   const middleware = [
-    testMiddleman(serverResponse)(middlemanConfig),
+    testMiddleman(middlemanConfig, serverResponse),
     thunk,
   ]
   return configureStore(middleware)(initialState)

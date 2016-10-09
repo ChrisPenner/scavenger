@@ -5,7 +5,8 @@ import { createMockStore } from '../_store.spec.js'
 
 import at from '../action-types'
 import { saveStory, setStory, createStory, dropAnswer, dropClue} from './'
-import reducer, { getStory } from '../reducers'
+import { getStory } from '../reducers'
+import reducer from '../reducers/root'
 import { Story } from '../resources'
 import { createToast, CREATE_TOAST } from '../lib/wisp'
 
