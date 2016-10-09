@@ -19,12 +19,4 @@ describe('Tools Reducer', function() {
       expect(newState).to.equal(DEFAULT_STATE)
     });
   });
-
-  describe(at.CHANGE_TEST_MESSAGE, function() {
-    it('should change testMessage', function() {
-      const action = changeTestMessage('new message')
-      const newState = reducer(DEFAULT_STATE, action)
-      expect(newState).to.eql({testMessage: 'new message'})
-    });
-  });
 });

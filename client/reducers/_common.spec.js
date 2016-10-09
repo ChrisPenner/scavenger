@@ -26,9 +26,9 @@ describe('Common Reducer', function() {
 
   describe('SAVE_*', function() {
     it('should replace state with payload', function() {
-      const action = { type: at.save(Clue.type), payload: 42 }
+      const action = { type: at.save(Clue.type), payload: {uid: 42 }}
       const newState = reducer({}, action)
-      expect(newState).to.eql(42)
+      expect(newState).to.eql({'42': {uid: 42}})
     });
   });
 
@@ -37,14 +37,6 @@ describe('Common Reducer', function() {
       const action = changeClue(['bob'], 42)
       const newState = reducer({ 'bob': 7 }, action)
       expect(newState).to.eql({ 'bob': 42 })
-    });
-  });
-
-  describe('SAVE_*', function() {
-    it('should set payload at its uid', function() {
-      const action = saveClue('myuid')
-      const newState = reducer({}, action)
-      expect(newState).to.eql({'myuid': { uid: 'myuid', value: 42}})
     });
   });
 
