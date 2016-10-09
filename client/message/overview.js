@@ -102,7 +102,7 @@ const GroupMessageOverviewComponent = ({groupList, messageCount}) => {
 }
 
 const GroupMessageOverview = R.compose(
-  loadingGuard([Group.type, Message.type]),
+  loadingGuard([Group.type]),
   connect(groupMessageStateToProps)
 )(GroupMessageOverviewComponent)
 
