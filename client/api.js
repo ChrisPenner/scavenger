@@ -41,28 +41,49 @@ export const middlemanConfig = {
     method: INDEX,
   }),
 
-  [at.save(Story.type)]: (state, {uid}) => ({
+  [at.save(Story.type)]: (state, uid) => ({
     resource: Story.type,
     route: Story.api.route(uid),
     method: PUT,
     payload: getStory(state, uid),
   }),
 
-  [at.save(Clue.type)]: (state, {uid}) => ({
+  [at.save(Clue.type)]: (state, uid) => ({
     resource: Clue.type,
     route: Clue.api.route(uid),
     method: PUT,
     payload: getClue(state, uid),
   }),
 
-  [at.save(Answer.type)]: (state, {uid}) => ({
+  [at.save(Answer.type)]: (state, uid) => ({
     resource: Answer.type,
     route: Answer.api.route(uid),
     method: PUT,
     payload: getAnswer(state, uid),
   }),
 
-  [at.del(Story.type)]: (state, {uid}) => ({
+  [at.create(Story.type)]: (state, payload) => ({
+    resource: Story.type,
+    route: Story.api.route(payload.uid),
+    method: PUT,
+    payload,
+  }),
+
+  [at.create(Clue.type)]: (state, payload) => ({
+    resource: Clue.type,
+    route: Clue.api.route(payload.uid),
+    method: PUT,
+    payload,
+  }),
+
+  [at.create(Answer.type)]: (state, payload) => ({
+    resource: Answer.type,
+    route: Answer.api.route(payload.uid),
+    method: PUT,
+    payload,
+  }),
+
+  [at.del(Story.type)]: (state, uid) => ({
     resource: Story.type,
     route: Story.api.route(uid),
     method: DELETE,
@@ -71,7 +92,7 @@ export const middlemanConfig = {
     }
   }),
 
-  [at.del(Clue.type)]: (state, {uid}) => ({
+  [at.del(Clue.type)]: (state, uid) => ({
     resource: Clue.type,
     route: Clue.api.route(uid),
     method: DELETE,
@@ -80,7 +101,7 @@ export const middlemanConfig = {
     }
   }),
 
-  [at.del(Answer.type)]: (state, {uid}) => ({
+  [at.del(Answer.type)]: (state, uid) => ({
     resource: Answer.type,
     route: Answer.api.route(uid),
     method: DELETE,

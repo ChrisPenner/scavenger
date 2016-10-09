@@ -40,9 +40,9 @@ describe('Common Reducer', function() {
     });
   });
 
-  describe('SET_*', function() {
+  describe('SAVE_*', function() {
     it('should set payload at its uid', function() {
-      const action = saveClue({ uid: 'myuid', value: 42})
+      const action = saveClue('myuid')
       const newState = reducer({}, action)
       expect(newState).to.eql({'myuid': { uid: 'myuid', value: 42}})
     });

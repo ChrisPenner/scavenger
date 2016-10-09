@@ -2,7 +2,7 @@
 import xml2js from 'xml2js-es6-promise'
 import R from 'ramda'
 import swal from 'sweetalert'
-import { successToast } from '../lib/wisp'
+import { successToast, errorToast } from '../lib/wisp'
 import { push, goBack } from 'react-router-redux'
 import { createAction, createActions } from 'redux-actions'
 
@@ -48,14 +48,6 @@ export const {
   fetchMessage,
   fetchCode,
 
-  saveStory,
-  saveClue,
-  saveAnswer,
-
-  deleteStory,
-  deleteClue,
-  deleteAnswer,
-
   receiveMessage,
 } = createActions({
   [at.change(Story.type)]: changer,
@@ -74,14 +66,6 @@ export const {
   at.fetch(Group.type),
   at.fetch(Message.type),
   at.fetch(Code.type),
-
-  at.save(Story.type),
-  at.save(Clue.type),
-  at.save(Answer.type),
-
-  at.del(Story.type),
-  at.del(Clue.type),
-  at.del(Answer.type),
 )
 
 // Async
@@ -104,9 +88,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
     dispatch(push(route))
     return dispatch({
       type: at.del(resource.type),
-      payload: {
-        uid,
-      },
+      payload: uid,
     })
       .then(() => swal({
         title: "Deleted",
@@ -121,17 +103,35 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   }
 })
 
+export const deleteStory = deleter(Story)
+export const deleteClue = deleter(Clue)
+export const deleteAnswer = deleter(Answer)
+
 export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function, getState: Function) => {
   return dispatch({
     type: at.create(resource.type),
     payload,
   }).then(() => dispatch(push(resource.route(payload.uid))))
     .then(R.tap(() => dispatch(successToast('Created'))))
+    .catch(() => dispatch(errorToast('Failed to Create')))
 }
 
 export const createStory = creator(Story)
 export const createClue = creator(Clue)
 export const createAnswer = creator(Answer)
+
+export const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function, getState: Function) => {
+  return dispatch({
+    type: at.save(resource.type),
+    payload: uid,
+  }).then(R.tap(() => dispatch(successToast('Saved'))))
+    .catch(() => dispatch(errorToast('Failed to Save')))
+}
+
+export const saveStory = saver(Story)
+export const saveClue = saver(Clue)
+export const saveAnswer = saver(Answer)
+
 
 const parseTwiML = xml2js
 const focusMessages = R.lensPath(['Response', 'Message'])

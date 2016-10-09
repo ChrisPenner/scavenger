@@ -27,6 +27,9 @@ const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story.ty
     [at.save(Clue.type)]: (
       transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))
     ),
+    [at.create(Clue.type)]: (
+      transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))
+    ),
     [at.del(Clue.type)]: (
       transformClueUids(({uid}) => R.without([uid]))
     ),
