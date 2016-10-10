@@ -25,7 +25,10 @@ export const getStoryUids = (state: Object): Array<string> => R.keys(getStories(
 
 export const getCodesList = (state: Object): Array<string> => listFromMapping(state.codes)
 
-export const getGroupsList = (state: Object): Array<GroupType> => R.sortBy(R.prop('createdAt'), listFromMapping(state.groups))
+export const descendingSort = (field: string) => R.comparator((d1, d2) => d1[field] > d2[field])
+export const getGroupsList = (state: Object): Array<GroupType> => {
+  return R.sort(descendingSort('createdAt'), listFromMapping(state.groups))
+}
 
 export const getAnswer = R.curry((state: Object, answerUid: string) => state.answers[answerUid])
 export const getAnswers = (state: Object): MapOf<AnswerType> => state.answers
@@ -38,12 +41,10 @@ export const getAnswersListByClue = (state: Object, clueUid: string): Array<Answ
 
 export const getMessages = (state:Object): MapOf<MessageType> => state.messages
 
-export const byDateDescending = R.comparator((d1, d2) => d1.sent > d2.sent)
-
 export const getGroupMessages = (state: Object, groupUid: string): Array<MessageType> => {
   const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
   return R.compose(
-    R.sort(byDateDescending),
+    R.sort(descendingSort('sent')),
     R.values,
     R.pickBy(isFromGroup),
     getMessages
@@ -53,7 +54,7 @@ export const getGroupMessages = (state: Object, groupUid: string): Array<Message
 export const getStoryMessages = (state: Object, storyUid: string): Array<MessageType> => {
   const isFromStory = R.compose(R.equals(storyUid), R.prop('storyUid'))
   return R.compose(
-    R.sort(byDateDescending),
+    R.sort(descendingSort('sent')),
     R.values,
     R.pickBy(isFromStory),
     getMessages
