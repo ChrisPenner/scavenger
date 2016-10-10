@@ -3,7 +3,7 @@ import { handleActions } from 'redux-actions'
 import R from 'ramda'
 import transform from '../lib/transform'
 
-import at from '../action-types'
+import at from '../actions/types'
 import { splitUid } from '../utils'
 import { Clue, Answer, Story } from '../resources'
 import type { ClueType } from '../resources'

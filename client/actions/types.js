@@ -1,6 +1,6 @@
 /* @flow */
 import R from 'ramda'
-import type { ResourceType } from './resources'
+import type { ResourceType } from '../resources'
 
 const actionsList = [
   'CHANGE_EXPLORER',

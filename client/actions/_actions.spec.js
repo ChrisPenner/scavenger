@@ -1,10 +1,10 @@
 /* @flow */
 import R from 'ramda'
 import { expect } from 'chai'
-import { createMockStore, createMockAPIStore } from '../_store.spec.js'
+import { createMockStore, createMockAPIStore } from '../store/_store.spec'
 import { CALL_HISTORY_METHOD } from 'react-router-redux'
 
-import at from '../action-types'
+import at from '../actions/types'
 import { saveStory, createStory, dropAnswer, dropClue} from './'
 import { Story } from '../resources'
 import {  CREATE_TOAST } from '../lib/wisp'

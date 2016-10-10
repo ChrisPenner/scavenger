@@ -8,7 +8,7 @@ import { Story } from '../resources'
 import { uidsFromParams } from '../utils'
 import { getStory } from '../reducers'
 import { changeStory, saveStory } from '../actions'
-import { Clues } from '../clue'
+import Clues from './clues'
 
 import type { StoryType } from '../resources'
 

@@ -1,6 +1,6 @@
 /* @flow */
 import { INDEX, PUT, DELETE, configureMiddleware } from './lib/middleman'
-import at from './action-types'
+import at from './actions/types'
 import { getStory, getClue, getAnswer } from './reducers'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
 

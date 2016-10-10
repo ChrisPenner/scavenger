@@ -2,7 +2,7 @@
 import { handleActions } from 'redux-actions'
 import R from 'ramda'
 import type { ResourceType } from '../resources'
-import at from '../action-types'
+import at from '../actions/types'
 
 const baseResourceReducer = (resourceType: ResourceType) => handleActions({
   [at.fetch(resourceType)]: (

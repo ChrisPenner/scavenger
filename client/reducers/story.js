@@ -2,7 +2,7 @@
 import { handleActions } from 'redux-actions'
 import R from 'ramda'
 
-import at from '../action-types'
+import at from '../actions/types'
 import commonReducer from './common'
 import { Story, Clue } from '../resources'
 import type { StoryType } from '../resources'

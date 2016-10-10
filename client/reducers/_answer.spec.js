@@ -1,7 +1,7 @@
 /* @flow */
 import { expect } from 'chai'
 
-import at from '../action-types'
+import at from '../actions/types'
 import reducer from './answer'
 import { Answer, Clue, Story } from '../resources'
 

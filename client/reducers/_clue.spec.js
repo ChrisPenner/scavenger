@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import R from 'ramda'
 import { applyThunk } from '../lib/redux-test'
 
-import at from '../action-types'
+import at from '../actions/types'
 import reducer from './clue'
 import { saveAnswer, dropAnswer } from '../actions'
 import { Clue, Answer, Story } from '../resources'

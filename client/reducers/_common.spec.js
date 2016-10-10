@@ -1,7 +1,7 @@
 /* @flow */
 import { expect } from 'chai'
 
-import at from '../action-types'
+import at from '../actions/types'
 import { changeClue } from '../actions'
 import reducerWrapper from './common'
 import { Clue } from '../resources'

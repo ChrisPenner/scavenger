@@ -1,11 +1,9 @@
 /* @flow */
 import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
-import promiseMiddleware from 'redux-promise';
-import { testMiddleman } from './lib/middleman'
-import { middlemanConfig } from './api'
+import { testMiddleman } from '../lib/middleman'
 
-export const createMockStore = (initialState: any, serverResponse: any, apiActions: ?Object) => {
+export const createMockStore = (initialState: any, serverResponse: any) => {
   const middleware = [
     thunk,
     testMiddleman(serverResponse),
@@ -13,7 +11,7 @@ export const createMockStore = (initialState: any, serverResponse: any, apiActio
   return configureStore(middleware)(initialState)
 }
 
-const returnPromiseMiddleware = ({dispatch}: Object) => (next: Function) => (action: Object) => {
+const returnPromiseMiddleware = () => (next: Function) => (action: Object) => {
   next(action)
   return Promise.resolve()
 }

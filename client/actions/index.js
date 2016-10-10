@@ -6,7 +6,7 @@ import { successToast, errorToast } from '../lib/wisp'
 import { push, goBack } from 'react-router-redux'
 import { createActions } from 'redux-actions'
 
-import at from '../action-types'
+import at from '../actions/types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
 import { getExplorer, getDragData } from '../reducers'

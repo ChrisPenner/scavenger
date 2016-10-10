@@ -2,7 +2,7 @@
 import { handleActions } from 'redux-actions'
 import R from 'ramda'
 
-import at from '../action-types'
+import at from '../actions/types'
 
 export type ToolsType = { testMessage: string }
 export const DEFAULT_STATE = { testMessage: '' }

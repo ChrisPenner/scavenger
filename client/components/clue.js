@@ -4,7 +4,7 @@ import R from 'ramda'
 import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
-import { Answers } from '../answer'
+import Answers from './answers'
 import { getClue, getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
 import { getToolData } from '../reducers'
