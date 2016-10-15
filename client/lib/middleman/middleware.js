@@ -5,6 +5,12 @@ import { IS_PENDING, NOT_PENDING, GET, INDEX, API_ERROR } from './constants'
 import appendQuery from 'append-query'
 import type {Config} from './'
 
+const addQueryParams = (route, resourceMeta) => {
+  debugger
+  const { cursor } = resourceMeta
+  return appendQuery(route, {cursor}, { encodeComponents: false })
+}
+
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
     return resp.json().catch(() => {
@@ -22,10 +28,9 @@ type makeRequestType = {
   route: string,
   method: string,
   payload?:any,
-  cursor?:string,
 }
 
-const apiRequest = ({route, method=GET, payload=undefined, cursor}: makeRequestType) => {
+const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => {
   const options: Object = {
     method,
     credentials: 'same-origin',
@@ -33,8 +38,7 @@ const apiRequest = ({route, method=GET, payload=undefined, cursor}: makeRequestT
   if (payload !== undefined) {
     options.body = JSON.stringify(decamelizeKeys(payload))
   }
-  const routeWithParams = appendQuery(route, { cursor }, { encodeComponents: false })
-  return processResponse(fetch(routeWithParams, options))
+  return processResponse(fetch(route, options))
 }
 
 export default (actions: Config, makeRequest:Function = apiRequest) => ({getState}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
@@ -68,9 +72,9 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
       },
     },
   })
-
-  const cursor = R.path([resource, 'cursor'], state)
-  return makeRequest({route, method, payload, cursor})
+  const resourceMeta = state.api[resource] || {}
+  const routeWithParams = addQueryParams(route, resourceMeta)
+  return makeRequest({route: routeWithParams, method, payload})
     .then(camelizer).then(
       ({data, ...meta}) => next({
         type: action.type,
