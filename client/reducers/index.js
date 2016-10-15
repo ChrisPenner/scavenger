@@ -7,7 +7,7 @@ import type { ClueType, AnswerType, GroupType, MessageType } from '../resources'
 import type { ExplorerType } from './explorer'
 import type { ToolsType } from './tools'
 
-type MapOf<T> = {[uid:string]: T}
+export type MapOf<T> = {[uid:string]: T}
 function listFromMapping<T> (mapping: MapOf<T>): Array<T> {
   return Object.keys(mapping).map(key => mapping[key])
 }
@@ -16,9 +16,6 @@ export const getClueUidsByStory = (state: Object, storyUid: string): Array<strin
 export const getCluesByStory = (state: Object, storyUid: string): Array<ClueType> => {
   return getClueUidsByStory(state, storyUid).map(clueUid => Clue.selectors.get(state, clueUid))
 }
-
-
-export const getCodesList = (state: Object): Array<string> => listFromMapping(state.codes)
 
 export const descendingSort = (field: string) => R.comparator((d1, d2) => d1[field] > d2[field])
 export const getGroupsList = (state: Object): Array<GroupType> => {

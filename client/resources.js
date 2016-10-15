@@ -119,7 +119,7 @@ export type ResourceT = {
   type: ResourceType,
   selectors: {
     get: Function,
-    getAll: (state: Object) => Array<Object>,
+    getAll: (state: Object) => {[key:string]: Object},
     getUids: (state: Object) => Array<string>,
   },
 }

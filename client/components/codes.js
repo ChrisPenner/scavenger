@@ -5,22 +5,21 @@ import { connect } from 'react-redux'
 import { Code } from '../resources'
 import loadingGuard from '../lib/loaded'
 
-import { getCodesList } from '../reducers'
-
 import type { CodeType } from '../resources'
+import type { MapOf } from '../reducers'
 
 const stateToProps = (state) => ({
-  codes: getCodesList(state),
+  codes: Code.selectors.getAll(state),
 })
 
 const countUsed = R.compose(R.length, R.filter(R.prop('used')))
 
 type CodeProps = {
-  codes: Array<CodeType>,
+  codes: MapOf<CodeType>,
 }
 
 const CodeComponent = ({codes}: CodeProps) => {
-  const codeRows = codes.map(code => {
+  const codeRows = R.values(codes).map(code => {
     return (
       <tr key={code.uid}>
         <td>{code.storyUid}</td>
