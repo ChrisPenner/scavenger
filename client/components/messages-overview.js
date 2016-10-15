@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import R from 'ramda'
 import loadingGuard from '../lib/loaded'
 import * as Routes from '../routes'
-import { getGroupsList } from '../reducers'
+import { getGroupsList } from '../selectors'
 import { Group, Message, Story } from '../resources'
 import type {GroupType} from '../resources'
 

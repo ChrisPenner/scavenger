@@ -2,7 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { getExplorer } from '../reducers'
+import { getExplorer } from '../selectors'
 import { changeExplorer, sendMessage } from '../actions'
 
 import type { MessageType } from '../resources'

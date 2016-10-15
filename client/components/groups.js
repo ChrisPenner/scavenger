@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 import * as Routes from '../routes'
-import { getGroupsList } from '../reducers'
+import { getGroupsList } from '../selectors'
 
 import type { GroupType } from '../resources'
 

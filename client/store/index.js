@@ -5,7 +5,7 @@ import { routerMiddleware } from 'react-router-redux'
 import apiMiddleware from '../api'
 import { browserHistory } from 'react-router'
 
-import reducer from '../reducers/root'
+import reducer from '../reducers'
 
 const middleware = compose(
   applyMiddleware(

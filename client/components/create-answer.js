@@ -6,7 +6,7 @@ import { push } from 'react-router-redux'
 import { createAnswer } from '../actions'
 import type { FSA } from '../actions'
 
-import { getClueUidsByStory } from '../reducers'
+import { getClueUidsByStory } from '../selectors'
 import { Answer } from '../resources'
 import { uidsFromParams } from '../utils'
 

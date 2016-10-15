@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import classnames from 'classnames'
 import loadGuard from '../lib/loaded'
 
-import { getAnswersListByClue } from '../reducers'
+import { getAnswersListByClue } from '../selectors'
 import { startDrag, dropAnswer } from '../actions'
 import { Answer } from '../resources'
 import type { AnswerType } from '../resources'

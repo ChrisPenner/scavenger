@@ -2,7 +2,7 @@
 import React from 'react'
 import R from 'ramda'
 import { connect } from 'react-redux'
-import { getGroupMessages, getStoryMessages } from '../reducers'
+import { getGroupMessages, getStoryMessages } from '../selectors'
 import { Message } from '../resources'
 import type { MessageType } from '../resources'
 

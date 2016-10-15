@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 import loadGuard from '../lib/loaded'
-import { getCluesByStory } from '../reducers'
+import { getCluesByStory } from '../selectors'
 import * as Routes from '../routes'
 import { startDrag, dropClue } from '../actions'
 import { Clue } from '../resources'

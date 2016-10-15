@@ -6,7 +6,7 @@ import { Code } from '../resources'
 import loadingGuard from '../lib/loaded'
 
 import type { CodeType } from '../resources'
-import type { MapOf } from '../reducers'
+import type { MapOf } from '../selectors'
 
 const stateToProps = (state) => ({
   codes: Code.selectors.getAll(state),

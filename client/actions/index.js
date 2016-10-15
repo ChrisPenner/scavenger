@@ -9,7 +9,7 @@ import { createActions } from 'redux-actions'
 import at from '../actions/types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
-import { getExplorer, getDragData } from '../reducers'
+import { getExplorer, getDragData } from '../selectors'
 import * as Routes from '../routes'
 
 import type { MessageType } from '../resources'

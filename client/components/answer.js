@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
 import { splitUid, uidsFromParams } from '../utils'
-import { getClueUidsByStory } from '../reducers'
+import { getClueUidsByStory } from '../selectors'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 import { Answer, Clue } from '../resources'
 import type { AnswerType } from '../resources'
