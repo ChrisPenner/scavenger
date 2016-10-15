@@ -1,7 +1,7 @@
 /* @flow */
 import R from 'ramda'
 
-import { Story, Clue, Answer, Message } from '../resources'
+import { Story, Clue, Answer, Message, Group } from '../resources'
 import type { ClueType, AnswerType, GroupType, MessageType } from '../resources'
 
 import type { ExplorerType } from '../reducers/explorer'
@@ -19,7 +19,7 @@ export const getCluesByStory = (state: Object, storyUid: string): Array<ClueType
 
 export const descendingSort = (field: string) => R.comparator((d1, d2) => d1[field] > d2[field])
 export const getGroupsList = (state: Object): Array<GroupType> => {
-  return R.sort(descendingSort('createdAt'), listFromMapping(state.groups))
+  return R.sort(descendingSort('createdAt'), listFromMapping(Group.selectors.getAll(state)))
 }
 
 export const getAnswersByClue = (state: Object, clueUid: string): Array<AnswerType> => {

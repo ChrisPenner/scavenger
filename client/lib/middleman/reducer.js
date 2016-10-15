@@ -1,13 +1,15 @@
 /* @flow */
 import R from 'ramda'
 import {IS_PENDING, NOT_PENDING, API_ERROR} from './constants'
-import type {Config} from './'
 
+type MiddlemanState = {
+  extensions: Object,
+}
 const DEFAULT_STATE = {
   extensions: {},
 }
-export default (state: Object = DEFAULT_STATE, action: Object) => {
-  const info = R.path(['meta', 'middleman'], action)
+export default (state: MiddlemanState = DEFAULT_STATE, action: Object) => {
+  const info: Object = R.path(['meta', 'middleman'], action)
   if(!info){
     return state
   }

@@ -57,8 +57,8 @@ export const middlemanConfig = {
   [at.fetch(Story.type)]: fetchAll(Story),
   [at.fetch(Clue.type)]: fetchAll(Clue),
   [at.fetch(Answer.type)]: fetchAll(Answer),
-
   [at.fetch(Group.type)]: fetchPage(Group),
+
   [at.fetch(Message.type)]: fetchPage(Message),
   [at.fetch(Code.type)]: fetchPage(Code),
 

@@ -1,5 +1,6 @@
 /* @flow */
 import R from 'ramda'
+import type { Config } from './'
 
 export const paginationTransformAction = (extensionData: Object={} ) => (options: Object) => {
   if(options.extensions && options.extensions.paginate){
@@ -15,8 +16,8 @@ export const paginationTransformAction = (extensionData: Object={} ) => (options
   return options
 }
 
-export const paginationGetState = (options, { cursor }) => ({
-  [options.resource]: {
+export const paginationGetState = (config: Config, { cursor }: Object) => ({
+  [config.resource]: {
     cursor
   }
 })

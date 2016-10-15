@@ -3,7 +3,7 @@ import R from 'ramda'
 import { IS_PENDING, NOT_PENDING, GET, API_ERROR } from './constants'
 import appendQuery from 'append-query'
 import { paginationTransformAction, paginationGetState } from './pagination'
-import type {Config} from './'
+import type {ConfigMap} from './'
 
 const dataLens = R.lensProp('data')
 
@@ -73,7 +73,7 @@ const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => 
   return processResponse(fetch(route, options))
 }
 
-export default (actions: Config, makeRequest:Function = apiRequest) => ({getState}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
+export default (actions: ConfigMap, makeRequest:Function = apiRequest) => ({getState}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
   if(! R.has(action.type, actions)){
     return next(action)
   }
