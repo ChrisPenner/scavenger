@@ -1,9 +1,10 @@
 /* @flow */
 import R from 'ramda'
-import { camelizeKeys, decamelizeKeys } from 'humps'
-import { IS_PENDING, NOT_PENDING, GET, INDEX, API_ERROR } from './constants'
+import { IS_PENDING, NOT_PENDING, GET, API_ERROR } from './constants'
 import appendQuery from 'append-query'
 import type {Config} from './'
+
+const dataLens = R.lensProp('data')
 
 const addQueryParams = (route, resourceMeta) => {
   const { cursor } = resourceMeta
@@ -33,9 +34,7 @@ const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => 
   const options: Object = {
     method,
     credentials: 'same-origin',
-  }
-  if (payload !== undefined) {
-    options.body = JSON.stringify(decamelizeKeys(payload))
+    body: payload && JSON.stringify(payload),
   }
   return processResponse(fetch(route, options))
 }
@@ -45,22 +44,15 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
     return next(action)
   }
   const state = getState()
-  let {route, method, payload, resource, context} = actions[action.type](state, action.payload)
-  const mapKeys = method === INDEX
-  const camelizer = ({data={}, ...meta}) => {
-    let newData
-    if(mapKeys) {
-      newData = R.map(camelizeKeys, data)
-    } else {
-      newData = camelizeKeys(data)
-    }
-    return {
-      data: newData,
-      ...camelizeKeys(meta),
-    }
-  }
-  // Change method to GET if it's index
-  method = method === INDEX ? GET : method
+  const {
+    route,
+    payload,
+    resource,
+    method=GET,
+    context={},
+    before=R.identity,
+    after=R.identity,
+  } = actions[action.type](state, action.payload)
 
   next({
     type: `PENDING_${action.type}`,
@@ -71,10 +63,12 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
       },
     },
   })
+
   const resourceMeta = state.api[resource] || {}
   const routeWithParams = addQueryParams(route, resourceMeta)
-  return makeRequest({route: routeWithParams, method, payload})
-    .then(camelizer).then(
+
+  return makeRequest({route: routeWithParams, method, payload: before(payload)})
+    .then(R.over(dataLens, after)).then(
       ({data, ...meta}) => next({
         type: action.type,
         payload: {

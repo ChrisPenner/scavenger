@@ -71,6 +71,7 @@ class restful_api(object):
                         logging.error("Failed to serialize in %s.%s: %s", cls.__name__, method, handler.request.body)
                         return handler.abort(400, 'Invalid JSON body')
                 return_value = f(handler, *args, **kwargs)
+                meta = {}
                 if return_value is None:
                     logging.info("Nothing returned from %s.%s", cls.__name__, method)
                     return
