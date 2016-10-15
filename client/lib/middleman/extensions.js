@@ -4,8 +4,8 @@ import type { Config } from './'
 
 export type Extension = {
   getState?: (config: Config, response: Object) => Object,
-  transformAction?: (extensionData: Object, config: Config) => Object,
-  transformResponse?: () => Object
+  transformAction?: (config: Config, extensionData: Object) => Object,
+  transformResponse?: (config: Config) => (response: Object) => Object
 }
 
 export type ExtensionMap = {[key: string]: Extension}
@@ -24,11 +24,12 @@ export const transformAction = (extensions: ExtensionMap, config: Config, extens
   )(config)
 }
 
-export const transformResponse = (extensions: ExtensionMap) => (response: Object) => {
-  const responseExtensions = getExtensionType('transformResponse', extensions)
+export const transformResponse = (extensions: ExtensionMap, config: Config) => (response: Object) => {
+  const responseExtensions = R.values(getExtensionType('transformResponse', extensions))
+  const loadedWithConfig = R.map(extension => extension(config), responseExtensions)
   return R.compose(
     R.identity,
-    ...R.values(responseExtensions)
+    ...loadedWithConfig
   )(response)
 }
 

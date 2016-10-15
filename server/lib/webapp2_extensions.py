@@ -100,6 +100,7 @@ def create_resource_handler(Model, method=None, id_key='uid'):
         get_all = self.request.get('all')
         visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
         query = Model.query()
+        meta = {}
         if get_all:
             results = query.fetch()
         else:
@@ -107,9 +108,7 @@ def create_resource_handler(Model, method=None, id_key='uid'):
             cursor = ndb.Cursor(urlsafe=self.request.get('cursor'))
             results, next_cursor, has_more = query.fetch_page(limit, start_cursor=cursor)
             if has_more:
-                meta = { 'cursor': next_cursor.urlsafe() }
-            else:
-                meta = {}
+                meta.update({ 'cursor': next_cursor.urlsafe() })
         items = (entity.to_dict(include=visible_fields) for entity in results)
         return (meta, {item[id_key]: item for item in items})
 

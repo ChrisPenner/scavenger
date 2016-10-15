@@ -4,7 +4,8 @@ import type { Config } from './'
 import type { Extension } from './extensions'
 
 const transformAction = (extensionData: Object={}) => (config: Config) => {
-  if(config.extensions && config.extensions.paginate){
+  const mode = config.extensions && config.extensions.paginate
+  if(mode === true){
     const cursor = R.path([config.resource, 'cursor'], extensionData)
     return {
       ...config,
@@ -12,6 +13,14 @@ const transformAction = (extensionData: Object={}) => (config: Config) => {
         ...(config.params || {}),
         cursor,
       },
+    }
+  } else if (mode != undefined){
+    return {
+      ...config,
+      params: {
+        ...(config.params || {}),
+        all: true,
+      }
     }
   }
   return config

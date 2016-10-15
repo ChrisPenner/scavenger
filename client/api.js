@@ -17,6 +17,9 @@ const fetchAll = (resource: ResourceT) => () => ({
   resource: resource.type,
   route: resource.api.route(),
   method: GET,
+  extensions: {
+    paginate: false,
+  },
   after: R.map(camelizeKeys),
 })
 

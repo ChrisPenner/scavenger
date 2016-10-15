@@ -3,7 +3,7 @@ import R from 'ramda'
 import { IS_PENDING, NOT_PENDING, GET, API_ERROR } from './constants'
 import appendQuery from 'append-query'
 import { transformAction, getExtensionState, transformResponse } from './extensions'
-import type {ConfigMap} from './'
+import type {ConfigMap, Config} from './'
 import type { ExtensionMap } from './extensions'
 
 const dataLens = R.lensProp('data')
@@ -41,7 +41,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fun
     return next(action)
   }
   const state = getState()
-  const options = actions[action.type](state, action.payload)
+  const config: Config = actions[action.type](state, action.payload)
   const {
     route,
     params={},
@@ -51,7 +51,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fun
     context={},
     before=R.identity,
     after=R.identity,
-  } = transformAction(extensions, options, state.api.extensions)
+  } = transformAction(extensions, config, state.api.extensions)
 
   next({
     type: `PENDING_${action.type}`,
@@ -67,7 +67,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fun
 
   return makeRequest({route: routeWithParams, method, payload: before(payload)})
     .then(R.over(dataLens, after))
-    .then(transformResponse(extensions))
+    .then(transformResponse(extensions, config))
     .then(({data, ...meta}) => next({
       type: action.type,
       payload: {
@@ -78,7 +78,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fun
         middleman: {
           resource,
           status: NOT_PENDING,
-          extensions: getExtensionState(extensions)(options)({data, ...meta}),
+          extensions: getExtensionState(extensions)(config)({data, ...meta}),
         },
       },
     }),
