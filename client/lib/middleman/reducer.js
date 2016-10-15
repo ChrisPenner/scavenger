@@ -3,7 +3,9 @@ import R from 'ramda'
 import {IS_PENDING, NOT_PENDING, API_ERROR} from './constants'
 import type {Config} from './'
 
-const DEFAULT_STATE = {}
+const DEFAULT_STATE = {
+  extensions: {},
+}
 export default (state: Object = DEFAULT_STATE, action: Object) => {
   const info = R.path(['meta', 'middleman'], action)
   if(!info){
@@ -13,7 +15,7 @@ export default (state: Object = DEFAULT_STATE, action: Object) => {
   const {
     resource,
     status,
-    cursor,
+    extensions={},
   } = info
 
   let nextState = state
@@ -23,9 +25,7 @@ export default (state: Object = DEFAULT_STATE, action: Object) => {
     nextState = R.assocPath([resource, 'pending'], false, nextState)
     nextState = R.assocPath([resource, 'initialized'], true, nextState)
   }
-
-  if(cursor){
-    nextState = R.assocPath([resource, 'cursor'], cursor, nextState)
-  }
+  const mergedExtensionState = R.mergeWith(R.merge, state.extensions, extensions)
+  nextState = R.assoc('extensions', mergedExtensionState, nextState)
   return nextState
 }

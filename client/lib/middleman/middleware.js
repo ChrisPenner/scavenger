@@ -2,13 +2,47 @@
 import R from 'ramda'
 import { IS_PENDING, NOT_PENDING, GET, API_ERROR } from './constants'
 import appendQuery from 'append-query'
+import { paginationTransformAction, paginationGetState } from './pagination'
 import type {Config} from './'
 
 const dataLens = R.lensProp('data')
 
-const addQueryParams = (route, resourceMeta) => {
-  const { cursor } = resourceMeta
-  return appendQuery(route, {cursor}, { encodeComponents: false })
+const transformResponseExtensions = {
+}
+
+const transformActionExtensions = {
+  pagination: paginationTransformAction,
+}
+
+const getStateExtensions = {
+  pagination: paginationGetState,
+}
+
+
+const transformAction = (extensions, options, extensionState={}) => {
+  const configuredExtensions = R.mapObjIndexed((extension, name) => extension(R.prop(name, extensionState)), extensions)
+  return R.compose(
+    R.identity,
+    ...R.values(configuredExtensions
+    ))(options)
+}
+
+const transformResponse = (extensions) => (response) => {
+  return R.compose(
+    R.identity,
+    ...R.values(extensions)
+  )(response)
+}
+
+const getExtensionState = (extensions) => (options) => (response) => {
+  const computeStates = R.mapObjIndexed((extension, name) => ({
+    [name]: extension(options, response),
+  }))
+  return R.compose(
+    R.mergeAll,
+    R.values,
+    computeStates
+  )(extensions)
 }
 
 const processResponse = (respPromise) => {
@@ -44,15 +78,17 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
     return next(action)
   }
   const state = getState()
+  const options = actions[action.type](state, action.payload)
   const {
     route,
+    params={},
     payload,
     resource,
     method=GET,
     context={},
     before=R.identity,
     after=R.identity,
-  } = actions[action.type](state, action.payload)
+  } = transformAction(transformActionExtensions, options, state.api.extensions)
 
   next({
     type: `PENDING_${action.type}`,
@@ -64,25 +100,25 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
     },
   })
 
-  const resourceMeta = state.api[resource] || {}
-  const routeWithParams = addQueryParams(route, resourceMeta)
+  const routeWithParams = appendQuery(route, params)
 
   return makeRequest({route: routeWithParams, method, payload: before(payload)})
-    .then(R.over(dataLens, after)).then(
-      ({data, ...meta}) => next({
-        type: action.type,
-        payload: {
-          ...data,
-          ...context,
+    .then(R.over(dataLens, after))
+    .then(transformResponse(transformResponseExtensions))
+    .then(({data, ...meta}) => next({
+      type: action.type,
+      payload: {
+        ...data,
+        ...context,
+      },
+      meta: {
+        middleman: {
+          resource,
+          status: NOT_PENDING,
+          extensions: getExtensionState(getStateExtensions)(options)({data, ...meta}),
         },
-        meta: {
-          middleman: {
-            resource,
-            status: NOT_PENDING,
-            ...meta,
-          },
-        },
-      }),
+      },
+    }),
       error => {
         next({
           type: API_ERROR,

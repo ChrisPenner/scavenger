@@ -7,12 +7,23 @@ import at from './actions/types'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
 import type {ResourceT} from './resources'
 
-const fetch = (resource: ResourceT) => () => ({
+const fetchAll = (resource: ResourceT) => () => ({
   resource: resource.type,
   route: resource.api.route(),
   method: GET,
   after: R.map(camelizeKeys),
 })
+
+const fetchPage = (resource: ResourceT) => () => ({
+  resource: resource.type,
+  route: resource.api.route(),
+  method: GET,
+  after: R.map(camelizeKeys),
+  extensions: {
+    paginate: true,
+  }
+})
+
 
 const save = (resource: ResourceT) => (state, uid) => ({
   resource: resource.type,
@@ -43,12 +54,13 @@ const del = (resource: ResourceT) => (state, uid) => ({
 })
 
 export const middlemanConfig = {
-  [at.fetch(Story.type)]: fetch(Story),
-  [at.fetch(Clue.type)]: fetch(Clue),
-  [at.fetch(Answer.type)]: fetch(Answer),
-  [at.fetch(Group.type)]: fetch(Group),
-  [at.fetch(Message.type)]: fetch(Message),
-  [at.fetch(Code.type)]: fetch(Code),
+  [at.fetch(Story.type)]: fetchAll(Story),
+  [at.fetch(Clue.type)]: fetchAll(Clue),
+  [at.fetch(Answer.type)]: fetchAll(Answer),
+
+  [at.fetch(Group.type)]: fetchPage(Group),
+  [at.fetch(Message.type)]: fetchPage(Message),
+  [at.fetch(Code.type)]: fetchPage(Code),
 
   [at.save(Story.type)]: save(Story),
   [at.save(Clue.type)]: save(Clue),
