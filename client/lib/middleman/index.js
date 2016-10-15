@@ -2,6 +2,7 @@
 
 export {default as reducer} from './reducer'
 import middleware from './middleware'
+import type {ExtensionMap} from './extensions'
 
 export { INDEX, GET, DELETE, PUT } from './constants'
 
@@ -15,6 +16,6 @@ export type Config = {
   after?: Function,
 }
 
-export const testMiddleman = (returnData:any, actions: Object = {}) => middleware(actions, ()=>Promise.resolve(returnData))
+export const testMiddleman = (returnData:any, actions: Object = {}) => middleware(actions, {}, ()=>Promise.resolve(returnData))
 
-export const configureMiddleware = (config: ConfigMap) => middleware(config)
+export const configureMiddleware = (config: ConfigMap, extensions: ExtensionMap) => middleware(config, extensions)

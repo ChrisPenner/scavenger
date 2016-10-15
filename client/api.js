@@ -3,9 +3,15 @@ import R from 'ramda'
 import { camelizeKeys, decamelizeKeys } from 'humps'
 
 import { GET, PUT, DELETE, configureMiddleware } from './lib/middleman'
+import pagination from './lib/middleman/pagination'
 import at from './actions/types'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
 import type {ResourceT} from './resources'
+import type { ExtensionMap } from './lib/middleman/extensions'
+
+const extensions: ExtensionMap = {
+  pagination,
+}
 
 const fetchAll = (resource: ResourceT) => () => ({
   resource: resource.type,
@@ -74,4 +80,4 @@ export const middlemanConfig = {
   [at.del(Clue.type)]: del(Clue),
   [at.del(Answer.type)]: del(Answer),
 }
-export default configureMiddleware(middlemanConfig)
+export default configureMiddleware(middlemanConfig, extensions)

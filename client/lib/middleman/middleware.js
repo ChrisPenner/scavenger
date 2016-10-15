@@ -2,47 +2,19 @@
 import R from 'ramda'
 import { IS_PENDING, NOT_PENDING, GET, API_ERROR } from './constants'
 import appendQuery from 'append-query'
-import { paginationTransformAction, paginationGetState } from './pagination'
+import { transformAction, getExtensionState, transformResponse } from './extensions'
 import type {ConfigMap} from './'
+import type { ExtensionMap } from './extensions'
 
 const dataLens = R.lensProp('data')
 
-const transformResponseExtensions = {
-}
-
-const transformActionExtensions = {
-  pagination: paginationTransformAction,
-}
-
-const getStateExtensions = {
-  pagination: paginationGetState,
-}
-
-
-const transformAction = (extensions, options, extensionState={}) => {
-  const configuredExtensions = R.mapObjIndexed((extension, name) => extension(R.prop(name, extensionState)), extensions)
-  return R.compose(
-    R.identity,
-    ...R.values(configuredExtensions
-    ))(options)
-}
-
-const transformResponse = (extensions) => (response) => {
-  return R.compose(
-    R.identity,
-    ...R.values(extensions)
-  )(response)
-}
-
-const getExtensionState = (extensions) => (options) => (response) => {
-  const computeStates = R.mapObjIndexed((extension, name) => ({
-    [name]: extension(options, response),
-  }))
-  return R.compose(
-    R.mergeAll,
-    R.values,
-    computeStates
-  )(extensions)
+const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => {
+  const options: Object = {
+    method,
+    credentials: 'same-origin',
+    body: payload && JSON.stringify(payload),
+  }
+  return processResponse(fetch(route, options))
 }
 
 const processResponse = (respPromise) => {
@@ -64,16 +36,7 @@ type makeRequestType = {
   payload?:any,
 }
 
-const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => {
-  const options: Object = {
-    method,
-    credentials: 'same-origin',
-    body: payload && JSON.stringify(payload),
-  }
-  return processResponse(fetch(route, options))
-}
-
-export default (actions: ConfigMap, makeRequest:Function = apiRequest) => ({getState}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
+export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Function = apiRequest) => ({getState}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
   if(! R.has(action.type, actions)){
     return next(action)
   }
@@ -88,7 +51,7 @@ export default (actions: ConfigMap, makeRequest:Function = apiRequest) => ({getS
     context={},
     before=R.identity,
     after=R.identity,
-  } = transformAction(transformActionExtensions, options, state.api.extensions)
+  } = transformAction(extensions, options, state.api.extensions)
 
   next({
     type: `PENDING_${action.type}`,
@@ -104,7 +67,7 @@ export default (actions: ConfigMap, makeRequest:Function = apiRequest) => ({getS
 
   return makeRequest({route: routeWithParams, method, payload: before(payload)})
     .then(R.over(dataLens, after))
-    .then(transformResponse(transformResponseExtensions))
+    .then(transformResponse(extensions))
     .then(({data, ...meta}) => next({
       type: action.type,
       payload: {
@@ -115,7 +78,7 @@ export default (actions: ConfigMap, makeRequest:Function = apiRequest) => ({getS
         middleman: {
           resource,
           status: NOT_PENDING,
-          extensions: getExtensionState(getStateExtensions)(options)({data, ...meta}),
+          extensions: getExtensionState(extensions)(options)({data, ...meta}),
         },
       },
     }),

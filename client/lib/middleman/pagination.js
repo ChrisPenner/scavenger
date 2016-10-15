@@ -1,23 +1,31 @@
 /* @flow */
 import R from 'ramda'
 import type { Config } from './'
+import type { Extension } from './extensions'
 
-export const paginationTransformAction = (extensionData: Object={} ) => (options: Object) => {
-  if(options.extensions && options.extensions.paginate){
-    const cursor = R.path([options.resource, 'cursor'], extensionData)
+const transformAction = (extensionData: Object={}) => (config: Config) => {
+  if(config.extensions && config.extensions.paginate){
+    const cursor = R.path([config.resource, 'cursor'], extensionData)
     return {
-      ...options,
+      ...config,
       params: {
-        ...(options.params || {}),
+        ...(config.params || {}),
         cursor,
       },
     }
   }
-  return options
+  return config
 }
 
-export const paginationGetState = (config: Config, { cursor }: Object) => ({
+const getState = (config: Config, { cursor }: Object) => ({
   [config.resource]: {
     cursor
   }
 })
+
+const extensionFunctions: Extension = {
+  getState,
+  transformAction,
+}
+
+export default extensionFunctions
