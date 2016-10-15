@@ -13,6 +13,7 @@ export default (state: Object = DEFAULT_STATE, action: Object) => {
   const {
     resource,
     status,
+    cursor,
   } = info
 
   let nextState = state
@@ -21,6 +22,10 @@ export default (state: Object = DEFAULT_STATE, action: Object) => {
   } else if (status === NOT_PENDING){
     nextState = R.assocPath([resource, 'pending'], false, nextState)
     nextState = R.assocPath([resource, 'initialized'], true, nextState)
+  }
+
+  if(cursor){
+    nextState = R.assocPath([resource, 'cursor'], cursor, nextState)
   }
   return nextState
 }

@@ -74,10 +74,12 @@ class restful_api(object):
                 if return_value is None:
                     logging.info("Nothing returned from %s.%s", cls.__name__, method)
                     return
+                elif isinstance(return_value, tuple):
+                    meta, return_value = return_value
                 handler.response.headers['Content-Type'] = self.content_type
-                response = {
-                    'data': return_value
-                }
+                response = {}
+                response.update(meta)
+                response['data'] = return_value
                 logging.info("Handler response for %s.%s is: %s", cls.__name__, method, response)
                 handler.response.body = json.dumps(response, default=self.custom_serializer)
             return wrapped
@@ -93,10 +95,22 @@ def create_resource_handler(Model, method=None, id_key='uid'):
     custom_serializers = getattr(Model, 'SERIALIZERS', None)
     serializer_func = partial(serialize_json, serializers=custom_serializers)
 
-    def default_index(_):
+    def default_index(self):
+        get_all = self.request.get('all')
         visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
-        items = (entity.to_dict(include=visible_fields) for entity in Model.query().fetch())
-        return {item[id_key]: item for item in items}
+        query = Model.query()
+        if get_all:
+            results = query.fetch()
+        else:
+            limit = self.request.get('limit', 2)
+            cursor = ndb.Cursor(urlsafe=self.request.get('cursor'))
+            results, next_cursor, has_more = query.fetch_page(limit, start_cursor=cursor)
+            if has_more:
+                meta = { 'cursor': next_cursor.urlsafe() }
+            else:
+                meta = {}
+        items = (entity.to_dict(include=visible_fields) for entity in results)
+        return (meta, {item[id_key]: item for item in items})
 
     def default_get(_, uid):
         item = Model.get_by_id(uid)

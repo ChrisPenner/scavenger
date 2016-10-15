@@ -1,7 +1,8 @@
 /* @flow */
 import R from 'ramda'
 import { camelizeKeys, decamelizeKeys } from 'humps'
-import { IS_PENDING, NOT_PENDING, GET, INDEX, DELETE, PUT, API_ERROR } from './constants'
+import { IS_PENDING, NOT_PENDING, GET, INDEX, API_ERROR } from './constants'
+import appendQuery from 'append-query'
 import type {Config} from './'
 
 const processResponse = (respPromise) => {
@@ -13,11 +14,18 @@ const processResponse = (respPromise) => {
     if (json.error) {
       throw json.error
     }
-    return json.data
+    return json
   })
 }
 
-const apiRequest = (route: string, method: MethodType='GET', payload=undefined) => {
+type makeRequestType = {
+  route: string,
+  method: string,
+  payload?:any,
+  cursor?:string,
+}
+
+const apiRequest = ({route, method=GET, payload=undefined, cursor}: makeRequestType) => {
   const options: Object = {
     method,
     credentials: 'same-origin',
@@ -25,26 +33,31 @@ const apiRequest = (route: string, method: MethodType='GET', payload=undefined) 
   if (payload !== undefined) {
     options.body = JSON.stringify(decamelizeKeys(payload))
   }
-  return processResponse(fetch(route, options))
+  const routeWithParams = appendQuery(route, { cursor }, { encodeComponents: false })
+  return processResponse(fetch(routeWithParams, options))
 }
 
-type middlemanSpec = {
-  route: string,
-  method: string,
-  context?: Object,
-}
-
-export default (actions: Config, makeRequest:Function = apiRequest) => ({getState, dispatch}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
+export default (actions: Config, makeRequest:Function = apiRequest) => ({getState}: {getState: Function, dispatch: Function}) => (next: Function) => (action: Object) => {
   if(! R.has(action.type, actions)){
     return next(action)
   }
   const state = getState()
   let {route, method, payload, resource, context} = actions[action.type](state, action.payload)
-  let camelizer = camelizeKeys
-  if (method === INDEX) {
-    method = GET
-    camelizer = R.map(camelizeKeys)
+  const mapKeys = method === INDEX
+  const camelizer = ({data={}, ...meta}) => {
+    let newData
+    if(mapKeys) {
+      newData = R.map(camelizeKeys, data)
+    } else {
+      newData = camelizeKeys(data)
+    }
+    return {
+      data: newData,
+      ...camelizeKeys(meta),
+    }
   }
+  // Change method to GET if it's index
+  method = method === INDEX ? GET : method
 
   next({
     type: `PENDING_${action.type}`,
@@ -56,9 +69,10 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
     },
   })
 
-  return makeRequest(route, method, payload)
+  const cursor = R.path([resource, 'cursor'], state)
+  return makeRequest({route, method, payload, cursor})
     .then(camelizer).then(
-      data => next({
+      ({data, ...meta}) => next({
         type: action.type,
         payload: {
           ...data,
@@ -68,6 +82,7 @@ export default (actions: Config, makeRequest:Function = apiRequest) => ({getStat
           middleman: {
             resource,
             status: NOT_PENDING,
+            ...meta,
           },
         },
       }),

@@ -2,6 +2,7 @@
   "name": "",
   "version": "0.0.1",
   "dependencies": {
+    "append-query": "^2.0.0",
     "babel-core": "6.10.4",
     "babel-loader": "6.2.4",
     "babel-plugin-syntax-flow": "^6.13.0",
