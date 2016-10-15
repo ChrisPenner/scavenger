@@ -1,9 +1,8 @@
 /* @flow */
 import R from 'ramda'
-import type { Config } from './'
 import type { Extension } from './extensions'
 
-const transformAction = (extensionData: Object={}) => (config: Config) => {
+const transformAction = ({config, extensionData={}}) => {
   const mode = config.extensions && config.extensions.paginate
   if(mode === true){
     const cursor = R.path([config.resource, 'cursor'], extensionData)
@@ -26,7 +25,7 @@ const transformAction = (extensionData: Object={}) => (config: Config) => {
   return config
 }
 
-const getState = (config: Config, { cursor }: Object) => ({
+const getState = ({config,  response: { cursor }}) => ({
   [config.resource]: {
     cursor
   }

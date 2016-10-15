@@ -6,8 +6,6 @@ import { transformAction, getExtensionState, transformResponse } from './extensi
 import type {ConfigMap, Config} from './'
 import type { ExtensionMap } from './extensions'
 
-const dataLens = R.lensProp('data')
-
 const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => {
   const options: Object = {
     method,
@@ -49,8 +47,6 @@ export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fun
     resource,
     method=GET,
     context={},
-    before=R.identity,
-    after=R.identity,
   } = transformAction(extensions, config, state.api.extensions)
 
   next({
@@ -65,8 +61,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fun
 
   const routeWithParams = appendQuery(route, params)
 
-  return makeRequest({route: routeWithParams, method, payload: before(payload)})
-    .then(R.over(dataLens, after))
+  return makeRequest({route: routeWithParams, method, payload})
     .then(transformResponse(extensions, config))
     .then(({data, ...meta}) => next({
       type: action.type,

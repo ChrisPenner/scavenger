@@ -6,19 +6,22 @@ import type { Extension } from './extensions'
 
 const dataLens = R.lensProp('data')
 const payloadLens = R.lensProp('payload')
-const transformAction = () => (config: Config) => {
+const transformAction = ({config}) => {
   const mode = config.extensions && config.extensions.camelize
-  if(! mode){
+  if(!mode){
     return config
   }
   return R.over(payloadLens, decamelizeKeys, config)
 }
 
-const transformResponse = (response: Object, extensionConfig: any) => {
-  if(extensionConfig === 'map'){
+const transformResponse = ({config, response}) => {
+  const mode = config.extensions && config.extensions.camelize
+  if(mode === 'map'){
     return R.over(dataLens, R.map(camelizeKeys), response)
-  } 
-  return R.over(dataLens, camelizeKeys, response)
+  } else if (mode != undefined){
+    return R.over(dataLens, camelizeKeys, response)
+  }
+  return response
 }
 
 const camelizer: Extension = {

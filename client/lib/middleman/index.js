@@ -12,8 +12,7 @@ export type Config = {
   resource: string,
   route: string,
   method: string,
-  before?: Function,
-  after?: Function,
+  extensions?: Object,
 }
 
 export const testMiddleman = (returnData:any, actions: Object = {}) => middleware(actions, {}, ()=>Promise.resolve(returnData))

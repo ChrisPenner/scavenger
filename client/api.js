@@ -1,9 +1,7 @@
 /* @flow */
-import R from 'ramda'
-import { camelizeKeys, decamelizeKeys } from 'humps'
-
 import { GET, PUT, DELETE, configureMiddleware } from './lib/middleman'
 import pagination from './lib/middleman/pagination'
+import camelize from './lib/middleman/camelize'
 import at from './actions/types'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
 import type {ResourceT} from './resources'
@@ -11,6 +9,7 @@ import type { ExtensionMap } from './lib/middleman/extensions'
 
 const extensions: ExtensionMap = {
   pagination,
+  camelize,
 }
 
 const fetchAll = (resource: ResourceT) => () => ({
@@ -19,18 +18,18 @@ const fetchAll = (resource: ResourceT) => () => ({
   method: GET,
   extensions: {
     paginate: false,
+    camelize: 'map',
   },
-  after: R.map(camelizeKeys),
 })
 
 const fetchPage = (resource: ResourceT) => () => ({
   resource: resource.type,
   route: resource.api.route(),
   method: GET,
-  after: R.map(camelizeKeys),
   extensions: {
     paginate: true,
-  }
+    camelize: true,
+  },
 })
 
 
@@ -39,8 +38,9 @@ const save = (resource: ResourceT) => (state, uid) => ({
   route: resource.api.route(uid),
   method: PUT,
   payload: resource.selectors.get(state, uid),
-  before: decamelizeKeys,
-  after: camelizeKeys,
+  extensions: {
+    camelize: true,
+  },
 })
 
 const create = (resource: ResourceT) => (state, payload) => ({
@@ -48,8 +48,9 @@ const create = (resource: ResourceT) => (state, payload) => ({
   route: resource.api.route(payload.uid),
   method: PUT,
   payload,
-  before: decamelizeKeys,
-  after: camelizeKeys,
+  extensions: {
+    camelize: true,
+  },
 })
 
 const del = (resource: ResourceT) => (state, uid) => ({
@@ -59,7 +60,9 @@ const del = (resource: ResourceT) => (state, uid) => ({
   context: {
     uid
   },
-  after: camelizeKeys,
+  extensions: {
+    camelize: true,
+  },
 })
 
 export const middlemanConfig = {
