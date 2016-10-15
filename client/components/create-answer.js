@@ -6,14 +6,14 @@ import { push } from 'react-router-redux'
 import { createAnswer } from '../actions'
 import type { FSA } from '../actions'
 
-import { getClueUidsByStory, getAnswers } from '../reducers'
+import { getClueUidsByStory } from '../reducers'
 import { Answer } from '../resources'
 import { uidsFromParams } from '../utils'
 
 const stateToProps = (state, {params}) => {
   const {storyUid, clueUid} = uidsFromParams(params)
   return {
-    answers: getAnswers(state),
+    answers: Answer.selectors.getAll(state),
     clueUids: storyUid && getClueUidsByStory(state, storyUid),
     storyUid,
     clueUid,

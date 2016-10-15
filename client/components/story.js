@@ -6,7 +6,6 @@ import loadGuard from '../lib/loaded'
 
 import { Story } from '../resources'
 import { uidsFromParams } from '../utils'
-import { getStory } from '../reducers'
 import { changeStory, saveStory } from '../actions'
 import Clues from './clues'
 
@@ -15,7 +14,7 @@ import type { StoryType } from '../resources'
 const stateToProps = (state, {params}) => {
   const {storyUid} = uidsFromParams(params)
   return {
-    story: getStory(state, storyUid),
+    story: Story.selectors.get(state, storyUid),
   }
 }
 

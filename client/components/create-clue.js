@@ -3,11 +3,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { createClue } from '../actions'
-import { getClues } from '../reducers'
+import { Clue } from '../resources'
 
 const stateToProps = (state) => {
   return {
-    clues: getClues(state)
+    clues: Clue.selectors.getAll(state)
   }
 }
 

@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
 import { splitUid, uidsFromParams } from '../utils'
-import { getAnswer, getClueUidsByStory } from '../reducers'
+import { getClueUidsByStory } from '../reducers'
 import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
 import { Answer, Clue } from '../resources'
 import type { AnswerType } from '../resources'
@@ -20,7 +20,7 @@ const dispatchProps = {
 const stateToProps = (state, {params}) => {
   const {storyUid, answerUid} = uidsFromParams(params)
   return {
-    answer: getAnswer(state, answerUid),
+    answer: Answer.selectors.get(state, answerUid),
     clueUids: getClueUidsByStory(state, storyUid)
   }
 }

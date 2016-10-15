@@ -117,10 +117,15 @@ export type ResourceT = {
   },
   new: Function,
   type: ResourceType,
+  selectors: {
+    get: Function,
+    getAll: (state: Object) => Array<Object>,
+    getUids: (state: Object) => Array<string>,
+  },
 }
 
 const addRoutes = ({route, ...resource}): ResourceT => {
-  const baseRoute = (uid?: string) => `${route}${uid ? uid : ""}`
+  const baseRoute = (uid?: string) => `${route}${uid ? uid : ''}`
   return {
     ...resource,
     route: baseRoute,
@@ -130,37 +135,54 @@ const addRoutes = ({route, ...resource}): ResourceT => {
   }
 }
 
-export const Story = addRoutes({
+const addSelectors = (resource): ResourceT => {
+  const key = resource.type
+  const selectors = {
+    get: R.curry((state, uid) => R.path([key, uid], state)),
+    getAll: (state) => R.prop(key, state),
+    getUids: (state) => R.keys(R.prop(key, state)),
+
+  }
+  return R.assoc('selectors', selectors, resource)
+}
+
+const addInfo = (resource): ResourceT => R.compose(
+  addSelectors,
+  addRoutes
+)(resource)
+
+
+export const Story = addInfo({
   type: 'STORY',
   route: '/stories/',
   new: storyFactory,
 })
 
-export const Code = addRoutes({
+export const Code = addInfo({
   type: 'CODE',
   route: '/codes/',
   new: codeFactory,
 })
 
-export const Clue = addRoutes({
+export const Clue = addInfo({
   type: 'CLUE',
   route: '/clues/',
   new: clueFactory,
 })
 
-export const Answer = addRoutes({
+export const Answer = addInfo({
   type: 'ANSWER',
   route: '/answers/',
   new: answerFactory,
 })
 
-export const Group = addRoutes({
+export const Group = addInfo({
   type: 'GROUP',
   route: '/groups/',
   new: groupFactory,
 })
 
-export const Message = addRoutes({
+export const Message = addInfo({
   type: 'MESSAGE',
   route: '/messages/',
   new: messageFactory,

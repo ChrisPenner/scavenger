@@ -2,10 +2,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { createStory } from '../actions'
-import { getStories } from '../reducers'
+import { Story } from '../resources'
 
 const stateToProps = (state) => {
-  return getStories(state)
+  return Story.selectors.getAll(state)
 }
 
 type CreateStoryProps = {

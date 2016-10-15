@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
 import Answers from './answers'
-import { getClue, getAnswersByClue } from '../reducers'
+import { getAnswersByClue } from '../reducers'
 import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
 import { getToolData } from '../reducers'
 import { uidsFromParams, splitUid } from '../utils'
@@ -25,7 +25,7 @@ const findMatchingAnswer = (text: string, answers: Array<AnswerType>) => {
 const stateToProps = (state, {params}) => {
   const {clueUid} = uidsFromParams(params)
   return {
-    clue: clueUid && getClue(state, clueUid),
+    clue: clueUid && Clue.selectors.get(state, clueUid),
     testMessage: getToolData(state).testMessage,
     answers: clueUid && getAnswersByClue(state, clueUid)
   }

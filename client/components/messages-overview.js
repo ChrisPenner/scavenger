@@ -4,18 +4,18 @@ import { Link } from 'react-router'
 import R from 'ramda'
 import loadingGuard from '../lib/loaded'
 import * as Routes from '../routes'
-import { getStoryUids, getGroupsList, getMessages } from '../reducers'
-import { Group, Story } from '../resources'
+import { getGroupsList } from '../reducers'
+import { Group, Message, Story } from '../resources'
 import type {GroupType} from '../resources'
 
 const getNumMessagesByGroup = R.curry((state, groupUid) => {
-  const messages = getMessages(state)
+  const messages = Message.selectors.getAll(state)
   const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
   return R.pickBy(isFromGroup, messages)
 })
 
 const storyMessageStateToProps = state => ({
-  storyUids: getStoryUids(state),
+  storyUids: Story.selectors.getUids(state),
 })
 
 type StoryMessageProps = {

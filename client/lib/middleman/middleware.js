@@ -6,7 +6,6 @@ import appendQuery from 'append-query'
 import type {Config} from './'
 
 const addQueryParams = (route, resourceMeta) => {
-  debugger
   const { cursor } = resourceMeta
   return appendQuery(route, {cursor}, { encodeComponents: false })
 }

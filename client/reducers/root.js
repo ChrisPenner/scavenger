@@ -12,16 +12,17 @@ import ui from './ui'
 import tools from './tools'
 import { wispReducer } from '../lib/wisp'
 import { reducer as api } from '../lib/middleman'
+import { Story, Clue, Code, Answer, Group, Message } from '../resources'
 
 export default combineReducers({
+  [Story.type]: stories,
+  [Clue.type]: clues,
+  [Answer.type]: answers,
+  [Group.type]: groups,
+  [Message.type]: messages,
+  [Code.type]: codes,
   routing: routerReducer,
-  stories,
-  codes,
-  clues,
-  answers,
   explorer,
-  groups,
-  messages,
   tools,
   ui,
   toasts: wispReducer,

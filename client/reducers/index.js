@@ -1,7 +1,8 @@
 /* @flow */
 import R from 'ramda'
 
-import type { StoryType, ClueType, AnswerType, GroupType, MessageType } from '../resources'
+import { Story, Clue, Answer, Message } from '../resources'
+import type { ClueType, AnswerType, GroupType, MessageType } from '../resources'
 
 import type { ExplorerType } from './explorer'
 import type { ToolsType } from './tools'
@@ -11,17 +12,11 @@ function listFromMapping<T> (mapping: MapOf<T>): Array<T> {
   return Object.keys(mapping).map(key => mapping[key])
 }
 
-export const getClue = (state: Object, clueUid: string): ClueType => state.clues[clueUid]
-export const getClues = (state: Object): MapOf<ClueType> => state.clues
-export const getClueUidsByStory = (state: Object, storyUid: string): Array<string> => getStory(state, storyUid).clues
+export const getClueUidsByStory = (state: Object, storyUid: string): Array<string> => Story.selectors.get(state, storyUid).clues
 export const getCluesByStory = (state: Object, storyUid: string): Array<ClueType> => {
-  return getClueUidsByStory(state, storyUid).map(clueUid => getClue(state, clueUid))
+  return getClueUidsByStory(state, storyUid).map(clueUid => Clue.selectors.get(state, clueUid))
 }
 
-export const getStory = (state: Object, storyUid: string): StoryType => state.stories[storyUid]
-export const getStories = (state: Object): MapOf<StoryType> => state.stories
-export const getStoriesList = (state: Object): Array<StoryType> => listFromMapping(state.stories)
-export const getStoryUids = (state: Object): Array<string> => R.keys(getStories(state))
 
 export const getCodesList = (state: Object): Array<string> => listFromMapping(state.codes)
 
@@ -30,16 +25,12 @@ export const getGroupsList = (state: Object): Array<GroupType> => {
   return R.sort(descendingSort('createdAt'), listFromMapping(state.groups))
 }
 
-export const getAnswer = R.curry((state: Object, answerUid: string) => state.answers[answerUid])
-export const getAnswers = (state: Object): MapOf<AnswerType> => state.answers
 export const getAnswersByClue = (state: Object, clueUid: string): Array<AnswerType> => {
-  return getClue(state, clueUid).answerUids.map(getAnswer(state))
+  return Clue.selectors.get(state, clueUid).answerUids.map(Answer.selectors.get(state))
 }
 export const getAnswersListByClue = (state: Object, clueUid: string): Array<AnswerType> => {
   return getAnswersByClue(state, clueUid)
 }
-
-export const getMessages = (state:Object): MapOf<MessageType> => state.messages
 
 export const getGroupMessages = (state: Object, groupUid: string): Array<MessageType> => {
   const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
@@ -47,7 +38,7 @@ export const getGroupMessages = (state: Object, groupUid: string): Array<Message
     R.sort(descendingSort('sent')),
     R.values,
     R.pickBy(isFromGroup),
-    getMessages
+    Message.selectors.getAll
   )(state)
 }
 
@@ -57,7 +48,7 @@ export const getStoryMessages = (state: Object, storyUid: string): Array<Message
     R.sort(descendingSort('sent')),
     R.values,
     R.pickBy(isFromStory),
-    getMessages
+    Message.selectors.getAll
   )(state)
 }
 
