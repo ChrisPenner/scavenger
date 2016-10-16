@@ -104,7 +104,7 @@ def create_resource_handler(Model, method=None, id_key='uid'):
         if get_all:
             results = query.fetch()
         else:
-            limit = self.request.get('limit', 2)
+            limit = int(self.request.get('limit', 2))
             cursor = ndb.Cursor(urlsafe=self.request.get('cursor'))
             results, next_cursor, has_more = query.fetch_page(limit, start_cursor=cursor)
             if has_more:

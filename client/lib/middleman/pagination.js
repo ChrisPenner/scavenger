@@ -4,13 +4,14 @@ import type { Extension } from './extensions'
 
 const transformAction = ({config, extensionData={}}) => {
   const mode = config.extensions && config.extensions.paginate
-  if(mode === true){
+  if(mode){
     const cursor = R.path([config.resource, 'cursor'], extensionData)
     return {
       ...config,
       params: {
         ...(config.params || {}),
         cursor,
+        limit: mode,
       },
     }
   } else if (mode != undefined){
@@ -37,3 +38,7 @@ const extensionFunctions: Extension = {
 }
 
 export default extensionFunctions
+
+// export const hasMore = (state, resource) => {
+//   return (!state.api[resource.type].initialized) || state.api.extensions.pagination[resource.type].cursor
+// }

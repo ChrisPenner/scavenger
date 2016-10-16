@@ -9,7 +9,7 @@ export type Extension = {
   }) => Object,
 
   transformAction?: (args: {
-    config: Config, 
+    config: Config,
     extensionData: Object,
   }) => Object,
 
