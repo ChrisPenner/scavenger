@@ -4,16 +4,19 @@ import R from 'ramda'
 import classnames from 'classnames'
 import { connect } from 'react-redux'
 import { getGroupMessages, getStoryMessages } from '../selectors'
-import { Message } from '../resources'
 import { fetchGroupMessage, fetchStoryMessage } from '../actions'
 import type { MessageType } from '../resources'
 import { isPending } from '../lib/middleman/pending'
+import { hasMore } from '../lib/middleman/pagination'
+import { constructIdentifier } from '../api'
+import at from '../actions/types'
 
 const stateToPropsGroup = (state, {params:{groupUid}}) => {
   return {
     messages: getGroupMessages(state, groupUid),
     identifier: groupUid,
-    isPending: isPending(state, Message),
+    isPending: isPending(state, constructIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid)),
+    hasMore: hasMore(state, constructIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid)),
   }
 }
 
@@ -21,7 +24,8 @@ const stateToPropsStory = (state, {params:{storyUid}}) => {
   return {
     messages: getStoryMessages(state, storyUid),
     identifier: storyUid,
-    isPending: isPending(state, Message),
+    isPending: isPending(state, constructIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid)),
+    hasMore: hasMore(state, constructIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid)),
   }
 }
 
@@ -33,8 +37,14 @@ type MessagesProps = {
   identifier: string,
   fetchMore: Function,
   isPending: boolean,
+  hasMore: boolean,
 }
-const Messages = ({messages, identifier, fetchMore, isPending}: MessagesProps) => {
+const Messages = ({messages, identifier, fetchMore, isPending, hasMore}: MessagesProps) => {
+  if (messages.length == 0){
+    return (
+        <div className='title'> No Messages </div>
+    )
+  }
   const messageRows = messages.map(({uid, text, mediaUrl, sender, receiver, groupUid, storyUid, sent}) => (
       <tr key={uid}>
         <td>
@@ -93,10 +103,11 @@ const Messages = ({messages, identifier, fetchMore, isPending}: MessagesProps) =
         </tbody>
       </table>
       <div className='columns'>
-        <a className={classnames('button', 'is-primary', 'column', {'is-loading': isPending})}
+        <a className={
+          classnames('button', 'is-primary', 'column', {'is-loading': isPending, 'is-disabled': !hasMore})}
           onClick={() => fetchMore(identifier)}>
-          + Load More
-      </a>
+          {hasMore ? '+ Load More' : 'No more items'}
+        </a>
       </div>
     </div>
   )

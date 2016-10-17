@@ -18,7 +18,10 @@ import Answer from './components/answer'
 import CreateAnswer from './components/create-answer'
 import * as Routes from './routes'
 import * as Res from './resources'
-import { fetchStory, fetchClue, fetchAnswer, fetchCode, fetchGroup, fetchMessage } from './actions'
+import { fetchStory, fetchClue, fetchAnswer, fetchCode, fetchGroup, fetchStoryMessage, fetchGroupMessage } from './actions'
+import { isInitialized } from './lib/middleman/pending'
+import { constructIdentifier } from './api'
+import at from './actions/types'
 import Explorer from './components/explorer'
 import { GroupMessages, StoryMessages, } from './components/messages'
 import MessageOverview from './components/messages-overview'
@@ -81,7 +84,6 @@ const load = () => {
   store.dispatch(fetchClue())
   store.dispatch(fetchAnswer())
   store.dispatch(fetchGroup())
-  // store.dispatch(fetchMessage())
 }
 
 ReactDOM.render(
@@ -103,10 +105,14 @@ ReactDOM.render(
           components={{ main: MessageOverview }} />
         <Route
           path={Routes.groupMessages(Routes.GROUP_UID_PARAM)}
-          components={{ main: GroupMessages }} />
+          components={{ main: GroupMessages }}
+          onEnter={({params:{groupUid}}) => store.dispatch((dispatch, getState) => (isInitialized(getState(), constructIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid)) || dispatch(fetchGroupMessage(groupUid))))}
+        />
         <Route
           path={Routes.storyMessages(Routes.STORY_UID_PARAM)}
-          components={{ main: StoryMessages }} />
+          components={{ main: StoryMessages }}
+          onEnter={({params:{storyUid}}) => store.dispatch((dispatch, getState) => (isInitialized(getState(), constructIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid)) || dispatch(fetchStoryMessage(storyUid))))}
+        />
         <Route
           path={Routes.explorer()}
           components={{ main: Explorer }} />

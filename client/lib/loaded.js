@@ -5,8 +5,8 @@ import { connect } from 'react-redux'
 const stateToProps = state => ({api: state.api})
 
 const loadingGuard = (dependencies: Array<string>) => (Component: ReactClass<*>)=> connect(stateToProps)(({api, ...props}: Object) => {
-  const isLoaded = (resource) => {
-    return api.pending[resource] && api.pending[resource].initialized
+  const isLoaded = (identifier) => {
+    return api.pending[identifier] && api.pending[identifier].initialized
   }
   if (!R.all(isLoaded, dependencies)){
     return (
