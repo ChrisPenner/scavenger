@@ -26,19 +26,19 @@ const transformAction = ({config, extensionData={}}) => {
   return config
 }
 
-const getState = ({config,  response: { cursor }}) => ({
-  [config.resource]: {
-    cursor
+const reducer = (state: Object={}, action: Object) => {
+  const {status, resource, meta} = R.path(['meta', 'middleman'], action)
+  if (status === 'complete') {
+    const resourceLens = R.lensProp(resource)
+    return R.over(resourceLens, R.assoc('cursor', meta.cursor), state)
   }
-})
+  return state
+}
+
 
 const extensionFunctions: Extension = {
-  getState,
+  reducer,
   transformAction,
 }
 
 export default extensionFunctions
-
-// export const hasMore = (state, resource) => {
-//   return (!state.api[resource.type].initialized) || state.api.extensions.pagination[resource.type].cursor
-// }

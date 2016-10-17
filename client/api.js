@@ -1,6 +1,7 @@
 /* @flow */
 import { GET, PUT, DELETE, configureMiddleware } from './lib/middleman'
 import pagination from './lib/middleman/pagination'
+import pending from './lib/middleman/pending'
 import camelize from './lib/middleman/camelize'
 import at from './actions/types'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
@@ -9,6 +10,7 @@ import type { ExtensionMap } from './lib/middleman/extensions'
 
 const extensions: ExtensionMap = {
   pagination,
+  pending,
   camelize,
 }
 
@@ -86,4 +88,8 @@ export const middlemanConfig = {
   [at.del(Clue.type)]: del(Clue),
   [at.del(Answer.type)]: del(Answer),
 }
-export default configureMiddleware(middlemanConfig, extensions)
+
+export const {
+  middleware,
+  reducer,
+} = configureMiddleware(middlemanConfig, extensions)

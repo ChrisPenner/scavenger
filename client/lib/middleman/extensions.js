@@ -41,10 +41,10 @@ export const transformResponse = (extensions: ExtensionMap, config: Config) => (
   return R.reduce(pipeResponse, response, responseExtensions)
 }
 
-export const getExtensionState = (extensions: ExtensionMap) => (config: Config) => (response: Object) => {
-  const stateExtensions = getExtensionType('getState', extensions)
+export const setStateComplete = (extensions: ExtensionMap, config: Config, state: Object) => (response: Object) => {
+  const stateExtensions = getExtensionType('setStateComplete', extensions)
   const computeStates = R.mapObjIndexed((extension, name) => ({
-    [name]: extension({config, response}),
+    [name]: extension({config, response, state: state[name]}),
   }))
   return R.compose(
     R.mergeAll,
@@ -53,3 +53,28 @@ export const getExtensionState = (extensions: ExtensionMap) => (config: Config) 
   )(stateExtensions)
 }
 
+export const setStatePending = (extensions: ExtensionMap, config: Config, state: Object) => {
+  const stateExtensions = getExtensionType('setStatePending', extensions)
+  const computeStates = R.mapObjIndexed((extension, name) => ({
+    [name]: extension({config, state: state[name]}),
+  }))
+  return R.compose(
+    R.mergeAll,
+    R.values,
+    computeStates
+  )(stateExtensions)
+}
+
+const hasMeta = R.path(['meta', 'middleman'])
+export const combineExtensionReducers = (extensions: ExtensionMap) => {
+  const extensionReducers = R.values(R.mapObjIndexed(({reducer}, name) => {
+    return (state={}, action) => {
+      if (reducer && hasMeta(action)){
+        return R.assoc(name, reducer(state[name], action), state)
+      }
+      return state
+    }
+  }, extensions))
+  const combiner = (combined, next) => (st, act) => combined(next(st, act), act)
+  return extensionReducers.reduce(combiner)
+}

@@ -11,7 +11,7 @@ import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
 import { wispReducer } from '../lib/wisp'
-import { reducer as api } from '../lib/middleman'
+import { reducer as api } from '../api'
 import { Story, Clue, Code, Answer, Group, Message } from '../resources'
 
 export default combineReducers({
