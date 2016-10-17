@@ -165,6 +165,14 @@ class TestScavenger(GAETestCase):
         self.assertItemsEqual(expected_messages, [m.text for m in Message.for_story(self.story.uid)])
         self.assertItemsEqual(expected_messages, [m.text for m in Message.for_group(group.uid)])
 
+
+    def test_completion_sets_group_completed_time(self):
+        status, response = send_message('start {}'.format(self.story_code.word_string))
+        status, response = send_message('my answer is 42')
+        group = Group.query().get()
+        self.assertIsNotNone(group.completed_at)
+
+
     def test_flow_through_story(self):
         # start non-existent story
         status, response = send_message('start asdf')
@@ -484,3 +492,4 @@ class TestAnswerClue(TestCase):
         result_without_media = answer(message_without_media, user, group_mock)
 
         self.assertEqual('STORY:SECONDCLUE', result_without_media.group.clue_uid)
+

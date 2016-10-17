@@ -1,6 +1,7 @@
 from functools import partial
 import re
 import logging
+from datetime import datetime
 from collections import namedtuple
 
 from google.appengine.ext import ndb
@@ -190,6 +191,8 @@ def answer(message, user, group):
         user_data, group_data = split_data(answer_data)
         user.data.update(user_data)
         group.data.update(group_data)
+        if group.clue.is_endpoint:
+            group.completed_at = datetime.now()
         return Result(response_type=CLUE, messages=[group.clue], user=user, group=group)
     # They got the answer wrong - send them a hint
     logging.info('Sending hint')
