@@ -4,7 +4,7 @@ import R from 'ramda'
 import swal from 'sweetalert'
 import { successToast, errorToast } from '../lib/wisp'
 import { push, goBack } from 'react-router-redux'
-import { createActions, createAction } from 'redux-actions'
+import { createAction } from 'redux-actions'
 
 import at from '../actions/types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
@@ -20,65 +20,6 @@ export type FSA = {
   error?: any,
   meta?: any,
 }
-
-const changer = (path: Array<string>, value: any) => ({path, value})
-
-export const changeTestMessage = (payload: any): FSA => ({
-  type: at.CHANGE_TEST_MESSAGE,
-  payload,
-})
-
-export const {
-  changeStory,
-  changeClue,
-  changeAnswer,
-  changeExplorer,
-
-  setStory,
-  setClue,
-  setAnswer,
-
-  startDrag,
-  stopDrag,
-
-  fetchStory,
-  fetchClue,
-  fetchAnswer,
-  fetchGroup,
-  fetchMessage,
-  fetchCode,
-
-  receiveMessage,
-} = createActions({
-  [at.change(Story.type)]: changer,
-  [at.change(Clue.type)]: changer,
-  [at.change(Answer.type)]: changer,
-  [at.CHANGE_EXPLORER]: changer,
-
-  [at.RECEIVE_MESSAGE]: R.assoc('source', 'server'),
-},
-  at.START_DRAG,
-  at.STOP_DRAG,
-
-  at.fetch(Story.type),
-  at.fetch(Clue.type),
-  at.fetch(Answer.type),
-  at.fetch(Group.type),
-  at.fetch(Message.type),
-  at.fetch(Code.type),
-)
-
-export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
-export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)
-
-// Async
-const dropper = (actionType: string) => (index: number) => (dispatch: Function, getState: Function) => {
-  const uid = getDragData(getState())
-  dispatch({ type: actionType, payload: {uid, index}})
-}
-
-export const dropClue = dropper(at.DROP_CLUE)
-export const dropAnswer = dropper(at.DROP_ANSWER)
 
 const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function) => swal({
   title: 'Delete?',
@@ -106,11 +47,22 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   }
 })
 
-export const deleteStory = deleter(Story)
-export const deleteClue = deleter(Clue)
-export const deleteAnswer = deleter(Answer)
+const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
+  return dispatch({
+    type: at.save(resource.type),
+    payload: uid,
+  }).then(() => dispatch(successToast('Saved')))
+  .catch(() => dispatch(errorToast('Failed to Save')))
+}
 
-export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
+const changer = (path: Array<string>, value: any) => ({path, value})
+
+const dropper = (actionType: string) => (index: number) => (dispatch: Function, getState: Function) => {
+  const uid = getDragData(getState())
+  dispatch({ type: actionType, payload: {uid, index}})
+}
+
+const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
   return dispatch({
     type: at.create(resource.type),
     payload,
@@ -119,22 +71,42 @@ export const creator = (resource: ResourceT) => (payload: any) => (dispatch: Fun
     .catch(() => dispatch(errorToast('Failed to Create')))
 }
 
+export const changeTestMessage = createAction(at.CHANGE_TEST_MESSAGE)
+
+export const receiveMessage = createAction(at.RECEIVE_MESSAGE, R.assoc('source', 'server'))
+
+export const startDrag = createAction(at.START_DRAG)
+export const stopDrag = createAction(at.STOP_DRAG)
+
+export const changeStory = createAction(at.change(Story.type), changer)
+export const changeClue = createAction(at.change(Clue.type), changer)
+export const changeAnswer = createAction(at.change(Answer.type), changer)
+export const changeExplorer = createAction(at.CHANGE_EXPLORER, changer)
+
+export const fetchStory = createAction(at.fetch(Story.type))
+export const fetchClue = createAction(at.fetch(Clue.type))
+export const fetchAnswer = createAction(at.fetch(Answer.type))
+export const fetchGroup = createAction(at.fetch(Group.type))
+export const fetchMessage = createAction(at.fetch(Message.type))
+export const fetchCode = createAction(at.fetch(Code.type))
+
+export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
+export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)
+
+export const dropClue = dropper(at.DROP_CLUE)
+export const dropAnswer = dropper(at.DROP_ANSWER)
+
+export const deleteStory = deleter(Story)
+export const deleteClue = deleter(Clue)
+export const deleteAnswer = deleter(Answer)
+
 export const createStory = creator(Story)
 export const createClue = creator(Clue)
 export const createAnswer = creator(Answer)
 
-export const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
-  return dispatch({
-    type: at.save(resource.type),
-    payload: uid,
-  }).then(() => dispatch(successToast('Saved')))
-  .catch(() => dispatch(errorToast('Failed to Save')))
-}
-
 export const saveStory = saver(Story)
 export const saveClue = saver(Clue)
 export const saveAnswer = saver(Answer)
-
 
 const parseTwiML = xml2js
 const focusMessages = R.lensPath(['Response', 'Message'])
@@ -163,6 +135,7 @@ export const sendMessage = () => (dispatch: Function, getState: Function) => {
       source: 'user',
     }
   })
+
   // https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters
   const formData = new FormData()
   formData.append('From', sender)
