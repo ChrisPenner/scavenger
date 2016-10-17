@@ -24,15 +24,15 @@ const fetchAll = (resource: ResourceT) => () => ({
   },
 })
 
-const fetchPage = (resource: ResourceT) => () => ({
-  resource: resource.type,
-  route: resource.api.route(),
-  method: GET,
-  extensions: {
-    paginate: 2,
-    camelize: true,
-  },
-})
+// const fetchPage = (resource: ResourceT) => () => ({
+//   resource: resource.type,
+//   route: resource.api.route(),
+//   method: GET,
+//   extensions: {
+//     paginate: 10,
+//     camelize: true,
+//   },
+// })
 
 
 const save = (resource: ResourceT) => (state, uid) => ({
@@ -71,10 +71,10 @@ export const middlemanConfig = {
   [at.fetch(Story.type)]: fetchAll(Story),
   [at.fetch(Clue.type)]: fetchAll(Clue),
   [at.fetch(Answer.type)]: fetchAll(Answer),
-  [at.fetch(Group.type)]: fetchPage(Group),
 
-  [at.fetch(Message.type)]: fetchPage(Message),
-  [at.fetch(Code.type)]: fetchPage(Code),
+  [at.fetch(Group.type)]: fetchAll(Group),
+  [at.fetch(Message.type)]: fetchAll(Message),
+  [at.fetch(Code.type)]: fetchAll(Code),
 
   [at.save(Story.type)]: save(Story),
   [at.save(Clue.type)]: save(Clue),
