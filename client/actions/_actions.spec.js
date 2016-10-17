@@ -1,7 +1,7 @@
 /* @flow */
 import R from 'ramda'
 import { expect } from 'chai'
-import { createMockStore, createMockAPIStore } from '../store/_store.spec'
+import { createMockStore } from '../store/_store.spec'
 import { CALL_HISTORY_METHOD } from 'react-router-redux'
 
 import at from '../actions/types'
@@ -11,7 +11,7 @@ import {  CREATE_TOAST } from '../lib/wisp'
 
 describe('Actions', function() {
   const initialState = {}
-  const store = createMockAPIStore(initialState)
+  const store = createMockStore(initialState)
   beforeEach(() => store.clearActions())
 
   describe('saveResource', function() {

@@ -1,5 +1,5 @@
 /* @flow */
-import { GET, PUT, DELETE, configureMiddleware } from './lib/middleman'
+import configureMiddleman, { GET, PUT, DELETE } from './lib/middleman'
 import pagination from './lib/middleman/pagination'
 import pending from './lib/middleman/pending'
 import camelize from './lib/middleman/camelize'
@@ -92,4 +92,4 @@ export const middlemanConfig = {
 export const {
   middleware,
   reducer,
-} = configureMiddleware(middlemanConfig, extensions)
+} = configureMiddleman(middlemanConfig, extensions)
