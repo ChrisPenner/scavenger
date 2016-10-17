@@ -6,7 +6,13 @@ import { transformAction, transformResponse } from './extensions'
 import type {ConfigMap, Config} from './'
 import type { ExtensionMap } from './extensions'
 
-const apiRequest = ({route, method=GET, payload=undefined}: makeRequestType) => {
+type makeRequestType = {
+  route: string,
+  method: string,
+  payload?:any,
+}
+
+const apiRequest = ({route, method=GET, payload}: makeRequestType) => {
   const options: Object = {
     method,
     credentials: 'same-origin',
@@ -28,16 +34,11 @@ const processResponse = (respPromise) => {
   })
 }
 
-type makeRequestType = {
-  route: string,
-  method: string,
-  payload?:any,
-}
-
-export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {getState: Function, dispatch: Function}) =>
+export default (actions: ConfigMap, extensions: ExtensionMap) =>
+  ({getState}: {getState: Function, dispatch: Function}) =>
   (next: Function) =>
   (action: Object) => {
-    if(! R.has(action.type, actions)){
+    if(!R.has(action.type, actions)){
       return next(action)
     }
     const state = getState()
@@ -47,7 +48,6 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
       route,
       params={},
       payload,
-      resource,
       method=GET,
       context={},
     } = transformAction(extensions, config, state.api)
@@ -56,7 +56,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
       type: `PENDING_${type}`,
       meta: {
         middleman: {
-          resource,
+          config,
           status: 'pending',
         },
       },
@@ -74,7 +74,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
         },
         meta: {
           middleman: {
-            resource,
+            config,
             status: 'complete',
             meta,
           },
@@ -86,7 +86,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
             error,
             meta: {
               middleman: {
-                resource,
+                config,
                 status: 'error',
               }
             }

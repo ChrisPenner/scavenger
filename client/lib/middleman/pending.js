@@ -4,8 +4,8 @@ import type { Extension } from './extensions'
 import type { ResourceT } from '../../resources'
 
 const reducer = (state: Object={}, action: Object) => {
-  const {status, resource} = R.path(['meta', 'middleman'], action)
-  const resourceLens = R.lensProp(resource)
+  const {status, config:{identifier}} = R.path(['meta', 'middleman'], action)
+  const resourceLens = R.lensProp(identifier)
   if (status === 'complete') {
     const changeStatus = R.compose(
       R.assoc('pending', false),

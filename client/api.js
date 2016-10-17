@@ -14,8 +14,8 @@ const extensions: ExtensionMap = {
   camelize,
 }
 
-const fetchAll = (resource: ResourceT) => () => ({
-  resource: resource.type,
+const fetchAll = (resource: ResourceT, identifier: string) => () => ({
+  identifier,
   route: resource.api.route(),
   method: GET,
   extensions: {
@@ -35,8 +35,8 @@ const fetchAll = (resource: ResourceT) => () => ({
 // })
 
 
-const save = (resource: ResourceT) => (state, uid) => ({
-  resource: resource.type,
+const save = (resource: ResourceT, identifier: string) => (state, uid) => ({
+  identifier,
   route: resource.api.route(uid),
   method: PUT,
   payload: resource.selectors.get(state, uid),
@@ -45,8 +45,8 @@ const save = (resource: ResourceT) => (state, uid) => ({
   },
 })
 
-const create = (resource: ResourceT) => (state, payload) => ({
-  resource: resource.type,
+const create = (resource: ResourceT, identifier: string) => (state, payload) => ({
+  identifier,
   route: resource.api.route(payload.uid),
   method: PUT,
   payload,
@@ -55,8 +55,8 @@ const create = (resource: ResourceT) => (state, payload) => ({
   },
 })
 
-const del = (resource: ResourceT) => (state, uid) => ({
-  resource: resource.type,
+const del = (resource: ResourceT, identifier: string) => (state, uid) => ({
+  identifier,
   route: resource.api.route(uid),
   method: DELETE,
   context: {
@@ -68,28 +68,28 @@ const del = (resource: ResourceT) => (state, uid) => ({
 })
 
 export const middlemanConfig = {
-  [at.fetch(Story.type)]: fetchAll(Story),
-  [at.fetch(Clue.type)]: fetchAll(Clue),
-  [at.fetch(Answer.type)]: fetchAll(Answer),
+  [at.fetch(Story.type)]: fetchAll(Story, Story.type),
+  [at.fetch(Clue.type)]: fetchAll(Clue, Clue.type),
+  [at.fetch(Answer.type)]: fetchAll(Answer, Answer.type),
 
-  [at.fetch(Group.type)]: fetchAll(Group),
-  [at.fetch(Message.type)]: fetchAll(Message),
-  [at.fetch(Code.type)]: fetchAll(Code),
+  [at.fetch(Group.type)]: fetchAll(Group, Group.type),
+  [at.fetch(Message.type)]: fetchAll(Message, Message.type),
+  [at.fetch(Code.type)]: fetchAll(Code, Code.type),
 
-  [at.save(Story.type)]: save(Story),
-  [at.save(Clue.type)]: save(Clue),
-  [at.save(Answer.type)]: save(Answer),
+  [at.save(Story.type)]: save(Story, at.save(Story.type)),
+  [at.save(Clue.type)]: save(Clue, at.save(Clue.type)),
+  [at.save(Answer.type)]: save(Answer, at.save(Answer.type)),
 
-  [at.create(Story.type)]: create(Story),
-  [at.create(Clue.type)]: create(Clue),
-  [at.create(Answer.type)]: create(Answer),
+  [at.create(Story.type)]: create(Story, at.create(Story.type)),
+  [at.create(Clue.type)]: create(Clue, at.create(Clue.type)),
+  [at.create(Answer.type)]: create(Answer, at.create(Answer.type)),
 
-  [at.del(Story.type)]: del(Story),
-  [at.del(Clue.type)]: del(Clue),
-  [at.del(Answer.type)]: del(Answer),
+  [at.del(Story.type)]: del(Story, at.del(Story.type)),
+  [at.del(Clue.type)]: del(Clue, at.del(Clue.type)),
+  [at.del(Answer.type)]: del(Answer, at.del(Answer.type)),
 
-  [at.FETCH_MESSAGES_BY_GROUP]: (state, payload) => ({
-    resource: Message.type,
+  [at.FETCH_MESSAGES_BY_GROUP]: (state, groupUid) => ({
+    identifier: `${at.FETCH_MESSAGES_BY_GROUP}/${groupUid}`,
     type: at.fetch(Message.type),
     route: Message.api.route(),
     method: GET,
@@ -98,12 +98,13 @@ export const middlemanConfig = {
       camelize: 'map',
     },
     params: {
-      groupUid: payload,
+      groupUid,
       sortBy: '-sent',
     },
   }),
 
-  [at.FETCH_MESSAGES_BY_STORY]: (state, payload) => ({
+  [at.FETCH_MESSAGES_BY_STORY]: (state, storyUid) => ({
+    identifier: `${at.FETCH_MESSAGES_BY_STORY}/${storyUid}`,
     resource: Message.type,
     type: at.fetch(Message.type),
     route: Message.api.route(),
@@ -113,7 +114,7 @@ export const middlemanConfig = {
       camelize: 'map',
     },
     params: {
-      storyUid: payload,
+      storyUid: storyUid,
       sortBy: '-sent',
     },
   }),

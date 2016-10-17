@@ -8,7 +8,7 @@ import type { ExtensionMap } from './extensions'
 export type ConfigMap = {[key:string]: (state :Object, payload: Object) => Config }
 
 export type Config = {
-  resource: string,
+  identifier: string,
   route: string,
   method: string,
   extensions?: Object,

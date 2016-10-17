@@ -5,7 +5,7 @@ import type { Extension } from './extensions'
 const transformAction = ({config, extensionData={}}) => {
   const mode = config.extensions && config.extensions.paginate
   if(mode){
-    const cursor = R.path([config.resource, 'cursor'], extensionData)
+    const cursor = R.path([config.identifier, 'cursor'], extensionData)
     return {
       ...config,
       params: {
@@ -28,14 +28,13 @@ const transformAction = ({config, extensionData={}}) => {
 }
 
 const reducer = (state: Object={}, action: Object) => {
-  const {status, resource, meta} = R.path(['meta', 'middleman'], action)
+  const {status, config:{identifier}, meta} = R.path(['meta', 'middleman'], action)
   if (status === 'complete') {
-    const resourceLens = R.lensProp(resource)
-    return R.over(resourceLens, R.assoc('cursor', meta.cursor), state)
+    const identifierLens = R.lensProp(identifier)
+    return R.over(identifierLens, R.assoc('cursor', meta.cursor), state)
   }
   return state
 }
-
 
 const extensionFunctions: Extension = {
   reducer,
@@ -45,6 +44,5 @@ const extensionFunctions: Extension = {
 // export const hasMore = (state:Object, resource:ResourceT) => {
 //   return !state.api.pagination[resource.type].cursor
 // }
-
 
 export default extensionFunctions
