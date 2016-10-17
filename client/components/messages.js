@@ -9,8 +9,6 @@ import { fetchGroupMessage, fetchStoryMessage } from '../actions'
 import type { MessageType } from '../resources'
 import { isPending } from '../lib/middleman/pending'
 
-import loadingGuard from '../lib/loaded'
-
 const stateToPropsGroup = (state, {params:{groupUid}}) => {
   return {
     messages: getGroupMessages(state, groupUid),
@@ -105,11 +103,9 @@ const Messages = ({messages, identifier, fetchMore, isPending}: MessagesProps) =
 }
 
 export const GroupMessages = R.compose(
-  // loadingGuard([Message.type]),
   connect(stateToPropsGroup, dispatchPropsGroup)
 )(Messages)
 
 export const StoryMessages = R.compose(
-  // loadingGuard([Message.type]),
   connect(stateToPropsStory, dispatchPropsStory)
 )(Messages)
