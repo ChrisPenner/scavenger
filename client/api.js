@@ -29,7 +29,7 @@ const fetchPage = (resource: ResourceT) => () => ({
   route: resource.api.route(),
   method: GET,
   extensions: {
-    paginate: 10,
+    paginate: 2,
     camelize: true,
   },
 })

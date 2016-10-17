@@ -52,7 +52,7 @@ export default ( actions: ConfigMap, extensions: ExtensionMap={}, makeRequest:Fu
         resource,
         method=GET,
         context={},
-      } = transformAction(extensions, config, state.api.extensions)
+      } = transformAction(extensions, config, state.api)
 
       next({
         type: `PENDING_${action.type}`,
