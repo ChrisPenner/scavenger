@@ -107,7 +107,7 @@ def create_resource_handler(Model, method=None, id_key='uid'):
 
     def default_index(self):
         params = {decamelize(k): v for (k,v) in self.request.GET.iteritems()}
-        paged = params.pop('paged', True)
+        paged = json.loads(params.pop('paged', 'true'))
         sort_by = params.pop('sort_by', None)
         limit = int(params.pop('limit', 20))
         cursor = ndb.Cursor(urlsafe=params.pop('cursor', None))
