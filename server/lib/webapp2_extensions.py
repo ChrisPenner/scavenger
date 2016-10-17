@@ -7,6 +7,15 @@ from webapp2_extras.routes import PathPrefixRoute
 
 from google.appengine.ext import ndb
 
+def decamelize(s):
+    if not s:
+        return ""
+    def reducer(acc, c):
+        if c.isupper():
+            return acc + '_' + c.lower()
+        return acc + c
+    return reduce(reducer, s[1:], s[0].lower())
+
 class UserFacingError(Exception):
     pass
 
@@ -97,15 +106,36 @@ def create_resource_handler(Model, method=None, id_key='uid'):
     serializer_func = partial(serialize_json, serializers=custom_serializers)
 
     def default_index(self):
-        get_all = self.request.get('all')
+        params = {decamelize(k): v for (k,v) in self.request.GET.iteritems()}
+        paged = params.pop('paged', True)
+        sort_by = params.pop('sort_by', None)
+        limit = int(params.pop('limit', 20))
+        cursor = ndb.Cursor(urlsafe=params.pop('cursor', None))
         visible_fields = getattr(Model, 'VISIBLE_FIELDS', None)
         query = Model.query()
         meta = {}
-        if get_all:
+
+        if sort_by:
+            descending = False
+            if sort_by.startswith('-'):
+                descending = True
+                sort_by = sort_by[1:]
+            if not hasattr(Model, decamelize(sort_by)):
+                raise UserFacingError("Couldn't sort by non-existent property %s" % sort_by)
+            prop = getattr(Model, decamelize(sort_by))
+            if descending:
+                query = query.order(-prop)
+            else:
+                query = query.order(prop)
+
+        for (k, v) in params.iteritems():
+            if not hasattr(Model, k):
+                raise UserFacingError("Couldn't query on non-existent field %s" % k)
+            query = query.filter(getattr(Model, k) == v)
+
+        if not paged:
             results = query.fetch()
         else:
-            limit = int(self.request.get('limit', 20))
-            cursor = ndb.Cursor(urlsafe=self.request.get('cursor'))
             results, next_cursor, has_more = query.fetch_page(limit, start_cursor=cursor)
             if has_more:
                 meta.update({ 'cursor': next_cursor.urlsafe() })

@@ -2,7 +2,7 @@
 import R from 'ramda'
 import { GET, API_ERROR } from './constants'
 import appendQuery from 'append-query'
-import { transformAction, transformResponse, combineExtensionReducers } from './extensions'
+import { transformAction, transformResponse } from './extensions'
 import type {ConfigMap, Config} from './'
 import type { ExtensionMap } from './extensions'
 
@@ -43,6 +43,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
     const state = getState()
     const config: Config = actions[action.type](state, action.payload)
     const {
+      type=action.type,
       route,
       params={},
       payload,
@@ -52,7 +53,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
     } = transformAction(extensions, config, state.api)
 
     next({
-      type: `PENDING_${action.type}`,
+      type: `PENDING_${type}`,
       meta: {
         middleman: {
           resource,
@@ -66,7 +67,7 @@ export default (actions: ConfigMap, extensions: ExtensionMap) => ({getState}: {g
     return apiRequest({route: routeWithParams, method, payload})
       .then(transformResponse(extensions, config))
       .then(({data, ...meta}) => next({
-        type: action.type,
+        type,
         payload: {
           ...data,
           ...context,

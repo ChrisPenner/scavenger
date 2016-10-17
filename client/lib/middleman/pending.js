@@ -1,6 +1,7 @@
 /* @flow */
 import R from 'ramda'
 import type { Extension } from './extensions'
+import type { ResourceT } from '../../resources'
 
 const reducer = (state: Object={}, action: Object) => {
   const {status, resource} = R.path(['meta', 'middleman'], action)
@@ -21,5 +22,8 @@ const extensionFunctions: Extension = {
   reducer,
 }
 
-export default extensionFunctions
+export const isPending = (state:Object, resource:ResourceT) => {
+  return R.path(['api', 'pending', resource.type, 'pending'], state)
+}
 
+export default extensionFunctions

@@ -12,6 +12,7 @@ const transformAction = ({config, extensionData={}}) => {
         ...(config.params || {}),
         cursor,
         limit: mode,
+        paged: true,
       },
     }
   } else if (mode != undefined){
@@ -19,7 +20,7 @@ const transformAction = ({config, extensionData={}}) => {
       ...config,
       params: {
         ...(config.params || {}),
-        all: true,
+        paged: false,
       }
     }
   }
@@ -40,5 +41,10 @@ const extensionFunctions: Extension = {
   reducer,
   transformAction,
 }
+
+// export const hasMore = (state:Object, resource:ResourceT) => {
+//   return !state.api.pagination[resource.type].cursor
+// }
+
 
 export default extensionFunctions

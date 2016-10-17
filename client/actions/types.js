@@ -2,6 +2,14 @@
 import R from 'ramda'
 import type { ResourceType } from '../resources'
 
+const actionTypeCreators: {[name: string]: (type:ResourceType) => string} = {
+  del: (type) => `DELETE_${type}`,
+  save: (type) => `SAVE_${type}`,
+  fetch: (type) => `FETCH_${type}`,
+  change: (type) => `CHANGE_${type}`,
+  create: (type) => `CREATE_${type}`,
+}
+
 const actionsList = [
   'CHANGE_EXPLORER',
   'CHANGE_TEST_MESSAGE',
@@ -13,15 +21,10 @@ const actionsList = [
 
   'RECEIVE_MESSAGE',
   'SEND_MESSAGE',
-]
 
-const actionTypeCreators: {[name: string]: (type:ResourceType) => string} = {
-  del: (type) => `DELETE_${type}`,
-  save: (type) => `SAVE_${type}`,
-  fetch: (type) => `FETCH_${type}`,
-  change: (type) => `CHANGE_${type}`,
-  create: (type) => `CREATE_${type}`,
-}
+  'FETCH_MESSAGES_BY_GROUP',
+  'FETCH_MESSAGES_BY_STORY',
+]
 
 type ActionType = any
 

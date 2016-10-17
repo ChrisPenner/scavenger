@@ -4,7 +4,7 @@ import R from 'ramda'
 import swal from 'sweetalert'
 import { successToast, errorToast } from '../lib/wisp'
 import { push, goBack } from 'react-router-redux'
-import { createActions } from 'redux-actions'
+import { createActions, createAction } from 'redux-actions'
 
 import at from '../actions/types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
@@ -67,6 +67,9 @@ export const {
   at.fetch(Message.type),
   at.fetch(Code.type),
 )
+
+export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
+export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)
 
 // Async
 const dropper = (actionType: string) => (index: number) => (dispatch: Function, getState: Function) => {

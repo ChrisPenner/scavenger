@@ -81,7 +81,7 @@ const load = () => {
   store.dispatch(fetchClue())
   store.dispatch(fetchAnswer())
   store.dispatch(fetchGroup())
-  store.dispatch(fetchMessage())
+  // store.dispatch(fetchMessage())
 }
 
 ReactDOM.render(

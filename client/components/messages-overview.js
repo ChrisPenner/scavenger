@@ -5,14 +5,8 @@ import R from 'ramda'
 import loadingGuard from '../lib/loaded'
 import * as Routes from '../routes'
 import { getGroupsList } from '../selectors'
-import { Group, Message, Story } from '../resources'
+import { Group, Story } from '../resources'
 import type {GroupType} from '../resources'
-
-const getNumMessagesByGroup = R.curry((state, groupUid) => {
-  const messages = Message.selectors.getAll(state)
-  const isFromGroup = R.compose(R.equals(groupUid), R.prop('groupUid'))
-  return R.pickBy(isFromGroup, messages)
-})
 
 const storyMessageStateToProps = state => ({
   storyUids: Story.selectors.getUids(state),
@@ -60,15 +54,13 @@ const StoryMessageOverview = R.compose(
 
 const groupMessageStateToProps = state => ({
   groupList: getGroupsList(state),
-  messageCount: getNumMessagesByGroup(state)
 })
 
 type GroupListProps = {
   groupList: Array<GroupType>,
-  messageCount: (uid: string) => number,
 }
 
-const GroupMessageOverviewComponent = ({groupList, messageCount}: GroupListProps) => {
+const GroupMessageOverviewComponent = ({groupList}: GroupListProps) => {
   const groups = groupList.map(group => {
     return (
       <tr key={group.uid}>
@@ -76,9 +68,6 @@ const GroupMessageOverviewComponent = ({groupList, messageCount}: GroupListProps
         <td>{group.clueUid}</td>
         <td>{group.createdAt}</td>
         <td>{group.completedAt}</td>
-        <td>
-          {R.length(R.keys(messageCount(group.uid)))}
-        </td>
         <td>
           <Link
             to={Routes.groupMessages(group.uid)}
@@ -100,7 +89,6 @@ const GroupMessageOverviewComponent = ({groupList, messageCount}: GroupListProps
             <th>Current Clue</th>
             <th>Date Started</th>
             <th>Date Completed</th>
-            <th>Message Count</th>
             <th></th>
           </tr>
         </thead>

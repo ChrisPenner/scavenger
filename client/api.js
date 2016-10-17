@@ -87,6 +87,36 @@ export const middlemanConfig = {
   [at.del(Story.type)]: del(Story),
   [at.del(Clue.type)]: del(Clue),
   [at.del(Answer.type)]: del(Answer),
+
+  [at.FETCH_MESSAGES_BY_GROUP]: (state, payload) => ({
+    resource: Message.type,
+    type: at.fetch(Message.type),
+    route: Message.api.route(),
+    method: GET,
+    extensions: {
+      paginate: 20,
+      camelize: 'map',
+    },
+    params: {
+      groupUid: payload,
+      sortBy: '-sent',
+    },
+  }),
+
+  [at.FETCH_MESSAGES_BY_STORY]: (state, payload) => ({
+    resource: Message.type,
+    type: at.fetch(Message.type),
+    route: Message.api.route(),
+    method: GET,
+    extensions: {
+      paginate: 20,
+      camelize: 'map',
+    },
+    params: {
+      storyUid: payload,
+      sortBy: '-sent',
+    },
+  }),
 }
 
 export const {
