@@ -4,7 +4,6 @@ import R from 'ramda'
 import { connect } from 'react-redux'
 import { Code } from '../resources'
 import loadingGuard from '../lib/loaded'
-import { fetchCode } from '../actions'
 
 import type { CodeType } from '../resources'
 
@@ -13,17 +12,15 @@ const stateToProps = (state) => ({
 })
 
 const dispatchProps = {
-  fetchCode,
 }
 
 const countUsed = R.compose(R.length, R.filter(R.prop('used')))
 
 type CodeProps = {
   codes: Array<CodeType>,
-  fetchCode: Function,
 }
 
-const CodeComponent = ({codes, fetchCode}: CodeProps) => {
+const CodeComponent = ({codes}: CodeProps) => {
   const codeRows = codes.map(code => {
     return (
       <tr key={code.uid}>
@@ -48,13 +45,6 @@ const CodeComponent = ({codes, fetchCode}: CodeProps) => {
           </thead>
           <tbody>
             {codeRows}
-            <tr> 
-              <td> 
-                <a onClick={() => fetchCode()}> 
-                  Load More
-                </a>
-              </td>
-            </tr>
           </tbody>
           </table>
      </section>
