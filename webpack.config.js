@@ -1,8 +1,8 @@
-var webpack = require("webpack")
-var path = require("path")
+var webpack = require('webpack')
+var path = require('path')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var CircularDependencyPlugin = require('circular-dependency-plugin')
-// var ExtractTextPlugin = require("extract-text-webpack-plugin")
+// var ExtractTextPlugin = require('extract-text-webpack-plugin')
 // var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
@@ -16,11 +16,13 @@ module.exports = {
       './client/css/spinners',
     ],
     'vendor': [
+      'babel-polyfill',
       'react',
       'react-dom',
       'react-redux',
       'react-router',
       'react-router-redux',
+      'redux-saga',
       'redux',
       'redux-thunk',
       'xml2js-es6-promise',
@@ -31,12 +33,11 @@ module.exports = {
     ],
   },
   output: {
-    path: path.resolve(__dirname, "server", "static"),
-    publicPath: "/static/",
-    filename: "[name].[hash].js",
-    sourceMapFilename: "[name].[hash].map.js",
+    path: path.resolve(__dirname, 'server', 'static'),
+    publicPath: '/static/',
+    filename: '[name].[hash].js',
   },
-  devtool: 'sourceMap',
+  devtool: 'inline-source-map',
   devServer: {
     contentBase: path.resolve(__dirname, 'server', 'static'),
     publicPath: '/static/',
@@ -44,13 +45,13 @@ module.exports = {
       index: '/static/index.html'
     },
     proxy: {
-      "/api/*": {
+      '/api/*': {
         target: 'http://localhost:8080',
       },
-      "/admin/*": {
+      '/admin/*': {
         target: 'http://localhost:8080',
       },
-      "/twilio": {
+      '/twilio': {
         target: 'http://localhost:8080',
       },
     }
@@ -60,7 +61,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loaders: ['react-hot', 'babel'],
-        exclude: path.resolve(__dirname, "node_modules"),
+        exclude: path.resolve(__dirname, 'node_modules'),
       },
       {
         test: /\.css$/,
@@ -73,7 +74,7 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ["", ".js", ".jsx", ".css", ".min.css", ".scss"],
+    extensions: ['', '.js', '.jsx', '.css', '.min.css', '.scss'],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -93,4 +94,4 @@ module.exports = {
   //     { from: 'assets' },
   // ]),
   ]
-};
+}
