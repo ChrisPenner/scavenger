@@ -8,7 +8,6 @@ import answers from './answer'
 import groups from './group'
 import messages from './message'
 import explorer from './explorer'
-import ui from './ui'
 import tools from './tools'
 import { wispReducer } from '../lib/wisp'
 import { reducer as api } from '../api'
@@ -24,7 +23,6 @@ export default combineReducers({
   routing: routerReducer,
   explorer,
   tools,
-  ui,
   toasts: wispReducer,
   api,
 })

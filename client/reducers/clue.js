@@ -39,7 +39,7 @@ const reducer: (state: ?Object, action: Object) => ClueReducerT = transform(vali
         transformAnswerUids(({uid}) => R.without([uid]))
       ),
 
-      [at.DROP_ANSWER]: (
+      [at.REORDER_ANSWER]: (
         transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
       ),
 

@@ -52,5 +52,3 @@ export const getStoryMessages = (state: Object, storyUid: string): Array<Message
 export const getExplorer = (state: Object): ExplorerType => state.explorer
 
 export const getToolData = (state: Object): ToolsType => state.tools
-
-export const getDragData = (state: Object): mixed => state.ui.dragData

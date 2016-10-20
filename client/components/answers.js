@@ -7,7 +7,7 @@ import classnames from 'classnames'
 import loadGuard from '../lib/loaded'
 
 import { getAnswersListByClue } from '../selectors'
-import { startDrag, dropAnswer } from '../actions'
+import { startDragAnswer, dropAnswer } from '../actions'
 import { Answer } from '../resources'
 import type { AnswerType } from '../resources'
 import * as Routes from '../routes'
@@ -20,19 +20,19 @@ const stateToProps = (state, {clueUid}) => {
 }
 
 const dispatchProps = {
-  startDrag,
+  startDragAnswer,
   dropAnswer
 }
 
 type AnswersProps = {
-  startDrag: Function,
+  startDragAnswer: Function,
   dropAnswer: Function,
   answers: Array<AnswerType>,
   clueUid: string,
   highlightUid: string,
 }
 
-const Answers = ({answers, clueUid, startDrag, dropAnswer, highlightUid}: AnswersProps) => {
+const Answers = ({answers, clueUid, startDragAnswer, dropAnswer, highlightUid}: AnswersProps) => {
   const answerLinks = answers.map((answer, index) => {
     const classes = classnames('my-list-item', {
       'highlighted': highlightUid === answer.uid,
@@ -43,7 +43,7 @@ const Answers = ({answers, clueUid, startDrag, dropAnswer, highlightUid}: Answer
         className={classes}
         key={answer.uid}
         draggable="true"
-        onDragStart={() => startDrag(answer.uid)}
+        onDragStart={() => startDragAnswer(answer.uid)}
         onDrop={() => dropAnswer(index)}
         onDragOver={(e) => e.preventDefault()}>
       {answer.uid}

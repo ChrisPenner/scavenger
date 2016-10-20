@@ -9,7 +9,7 @@ import { createAction } from 'redux-actions'
 import at from '../actions/types'
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
-import { getExplorer, getDragData } from '../selectors'
+import { getExplorer } from '../selectors'
 import * as Routes from '../routes'
 
 import type { MessageType } from '../resources'
@@ -57,11 +57,6 @@ const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => 
 
 const changer = (path: Array<string>, value: any) => ({path, value})
 
-const dropper = (actionType: string) => (index: number) => (dispatch: Function, getState: Function) => {
-  const uid = getDragData(getState())
-  dispatch({ type: actionType, payload: {uid, index}})
-}
-
 const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
   return dispatch({
     type: at.create(resource.type),
@@ -71,12 +66,20 @@ const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) 
     .catch(() => dispatch(errorToast('Failed to Create')))
 }
 
+export const genericAction = R.curry((type, payload) => ({type, payload}))
+
 export const changeTestMessage = createAction(at.CHANGE_TEST_MESSAGE)
 
 export const receiveMessage = createAction(at.RECEIVE_MESSAGE, R.assoc('source', 'server'))
 
-export const startDrag = createAction(at.START_DRAG)
-export const stopDrag = createAction(at.STOP_DRAG)
+export const startDragClue = createAction(at.START_DRAG_CLUE)
+export const startDragAnswer = createAction(at.START_DRAG_ANSWER)
+
+export const dropClue = createAction(at.DROP_CLUE)
+export const dropAnswer = createAction(at.DROP_ANSWER)
+
+export const reorderClue = createAction(at.REORDER_CLUE)
+export const reorderAnswer = createAction(at.REORDER_ANSWER)
 
 export const changeStory = createAction(at.change(Story.type), changer)
 export const changeClue = createAction(at.change(Clue.type), changer)
@@ -92,9 +95,6 @@ export const fetchCode = createAction(at.fetch(Code.type))
 
 export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
 export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)
-
-export const dropClue = dropper(at.DROP_CLUE)
-export const dropAnswer = dropper(at.DROP_ANSWER)
 
 export const deleteStory = deleter(Story)
 export const deleteClue = deleter(Clue)

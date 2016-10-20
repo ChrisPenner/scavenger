@@ -32,7 +32,7 @@ const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story.ty
     [at.del(Clue.type)]: (
       transformClueUids(({uid}) => R.without([uid]))
     ),
-    [at.DROP_CLUE]: (
+    [at.REORDER_CLUE]: (
       transformClueUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
     ),
   }, DEFAULT_STATE)
