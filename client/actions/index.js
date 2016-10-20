@@ -1,5 +1,4 @@
 /* @flow */
-import xml2js from 'xml2js-es6-promise'
 import R from 'ramda'
 import swal from 'sweetalert'
 import { successToast, errorToast } from '../lib/wisp'
@@ -7,12 +6,9 @@ import { push, goBack } from 'react-router-redux'
 import { createAction } from 'redux-actions'
 
 import at from '../actions/types'
+const { saga } = at
 import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
-import { getExplorer } from '../selectors'
-import * as Routes from '../routes'
-
-import type { MessageType } from '../resources'
 
 export type FSA = {
   type: string,
@@ -70,7 +66,6 @@ export const genericAction = R.curry((type, payload) => ({type, payload}))
 
 export const changeTestMessage = createAction(at.CHANGE_TEST_MESSAGE)
 
-export const receiveMessage = createAction(at.RECEIVE_MESSAGE, R.assoc('source', 'server'))
 
 export const startDragClue = createAction(at.START_DRAG_CLUE)
 export const startDragAnswer = createAction(at.START_DRAG_ANSWER)
@@ -108,49 +103,5 @@ export const saveStory = saver(Story)
 export const saveClue = saver(Clue)
 export const saveAnswer = saver(Answer)
 
-const parseTwiML = xml2js
-const focusMessages = R.lensPath(['Response', 'Message'])
-const focusBody = R.lensPath(['Body', 0])
-const focusMedia = R.lensPath(['Media', 0])
-const focusTo = R.lensPath(['$', 'to'])
-const focusSender = R.lensPath(['$', 'from'])
-const intoMessage: (t: Object) => MessageType = R.applySpec({
-  text: R.view(focusBody),
-  receiver: R.view(focusTo),
-  sender: R.view(focusSender),
-  mediaUrl: R.view(focusMedia),
-})
-
-const makeMessageObjects = R.compose(R.map(intoMessage), R.view(focusMessages))
-
-export const sendMessage = () => (dispatch: Function, getState: Function) => {
-  const {sender, receiver, text, mediaUrl} = getExplorer(getState())
-  dispatch({
-    type: at.SEND_MESSAGE,
-    payload: {
-      receiver,
-      sender,
-      text,
-      mediaUrl: mediaUrl,
-      source: 'user',
-    }
-  })
-
-  // https://www.twilio.com/docs/api/twiml/sms/twilio_request#request-parameters
-  const formData = new FormData()
-  formData.append('From', sender)
-  formData.append('To', receiver)
-  formData.append('Body', text)
-  if(mediaUrl) {
-    formData.append('MediaUrl0', mediaUrl)
-    formData.append('NumMedia', '1')
-  }
-  return fetch(Routes.twilio(), {
-    method: 'POST',
-    body: formData,
-    credentials: 'same-origin',
-  }).then(resp => resp.text())
-    .then(parseTwiML)
-    .then(makeMessageObjects)
-    .then(R.map(R.compose(dispatch, receiveMessage)))
-}
+export const sendMessage = createAction(saga(at.SEND_MESSAGE))
+export const receiveMessage = createAction(at.RECEIVE_MESSAGE, R.assoc('source', 'server'))

@@ -12,15 +12,6 @@ type makeRequestType = {
   payload?:any,
 }
 
-const apiRequest = ({route, method=GET, payload}: makeRequestType) => {
-  const options: Object = {
-    method,
-    credentials: 'same-origin',
-    body: payload && JSON.stringify(payload),
-  }
-  return processResponse(fetch(route, options))
-}
-
 const processResponse = (respPromise) => {
   return respPromise.then(resp => {
     return resp.json().catch(() => {
@@ -32,6 +23,15 @@ const processResponse = (respPromise) => {
     }
     return json
   })
+}
+
+const apiRequest = ({route, method=GET, payload}: makeRequestType) => {
+  const options: Object = {
+    method,
+    credentials: 'same-origin',
+    body: payload && JSON.stringify(payload),
+  }
+  return processResponse(fetch(route, options))
 }
 
 export default (actions: ConfigMap, extensions: ExtensionMap) =>

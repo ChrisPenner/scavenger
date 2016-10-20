@@ -1,5 +1,6 @@
 /* @flow */
 export default {
+  saga: (type:string) => `BEGIN_${type}`,
   del: (type:string) => `DELETE_${type}`,
   save: (type:string) => `SAVE_${type}`,
   fetch: (type:string) => `FETCH_${type}`,
