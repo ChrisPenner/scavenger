@@ -7,7 +7,7 @@ import reducerWrapper from './common'
 import { Clue } from '../resources'
 
 const fakeClueReducer = (state={ default: true }) => state
-const reducer = reducerWrapper(Clue.type, fakeClueReducer)
+const reducer = reducerWrapper(Clue, fakeClueReducer)
 describe('Common Reducer', function() {
 
   it("should return its reducer's default state", function() {

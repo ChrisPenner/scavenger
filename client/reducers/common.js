@@ -1,32 +1,32 @@
 /* @flow */
 import { handleActions } from 'redux-actions'
 import R from 'ramda'
-import type { ResourceType } from '../resources'
+import type { ResourceT } from '../resources'
 import at from '../actions/types'
 
-const baseResourceReducer = (resourceType: ResourceType) => handleActions({
-  [at.fetch(resourceType)]: (
+const baseResourceReducer = (resource: ResourceT) => handleActions({
+  [at.fetch(resource.type)]: (
     (state, {payload}) => ({...state, ...payload})
   ),
 
-  [at.change(resourceType)]: (
+  [at.change(resource.type)]: (
     (state, {payload: {path, value}}) => R.assocPath(path, value, state)
   ),
 
-  [at.save(resourceType)]: (
+  [at.save(resource.type)]: (
     (state, {payload}) => R.assoc(payload.uid, payload, state)
   ),
 
-  [at.create(resourceType)]: (
+  [at.create(resource.type)]: (
     (state, {payload}) => R.assoc(payload.uid, payload, state)
   ),
 
-  [at.del(resourceType)]: (
+  [resource.types.saga.del]: (
     (state, {payload:{uid}}) => R.dissoc(uid, state)
   ),
 })
 
-export default (resourceType: ResourceType, reducer: Function) => (state: any, action: Object) => {
-  const baseResult = baseResourceReducer(resourceType)(state, action)
+export default (resource: ResourceT, reducer: Function) => (state: any, action: Object) => {
+  const baseResult = baseResourceReducer(resource)(state, action)
   return reducer(baseResult, action)
 }

@@ -5,6 +5,6 @@ import commonReducer from './common'
 import { Message } from '../resources'
 
 export const DEFAULT_STATE = {}
-export default commonReducer(Message.type,
+export default commonReducer(Message,
   handleActions({}, DEFAULT_STATE)
 )

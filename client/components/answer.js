@@ -5,16 +5,16 @@ import classnames from 'classnames'
 import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
-import { splitUid, uidsFromParams } from '../utils'
+import { uidsFromParams, splitUid  } from '../utils'
 import { getClueUidsByStory } from '../selectors'
-import { changeAnswer, saveAnswer, deleteAnswer } from '../actions'
+import { changeAnswer, saveAnswer } from '../actions'
 import { Answer, Clue } from '../resources'
 import type { AnswerType } from '../resources'
 
 const dispatchProps = {
   changeAnswer,
   saveAnswer,
-  deleteAnswer: (uid) => deleteAnswer(uid, Clue.route(splitUid(uid).clueUid)),
+  deleteAnswer: Answer.actions.del,
 }
 
 const stateToProps = (state, {params}) => {
@@ -50,7 +50,8 @@ const AnswerComponent = ({answer, clueUids, changeAnswer, saveAnswer, deleteAnsw
         <div className="level">
           <button
             className="button is-danger level-item"
-            onClick={() => deleteAnswer(answer.uid)}>
+            onClick={() => deleteAnswer({uid: answer.uid,route: Clue.route(splitUid(answer.uid).clueUid)})}>
+
             Delete
           </button>
           <button

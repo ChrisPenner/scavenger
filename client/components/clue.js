@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import loadGuard from '../lib/loaded'
 
 import Answers from './answers'
-import { changeClue, saveClue, deleteClue, changeTestMessage } from '../actions'
+import { changeClue, saveClue, changeTestMessage } from '../actions'
 import { getToolData, getAnswersByClue } from '../selectors'
 import { uidsFromParams, splitUid } from '../utils'
 import { Story, Clue, Answer } from '../resources'
@@ -33,7 +33,7 @@ const stateToProps = (state, {params}) => {
 const dispatchProps = {
   saveClue,
   changeClue,
-  deleteClue: (uid) => deleteClue(uid, Story.route(splitUid(uid).storyUid)),
+  deleteClue: Clue.actions.del,
   changeTestMessage,
 }
 
@@ -64,7 +64,7 @@ const ClueComponent = ({answers, clue, changeClue, saveClue, deleteClue, changeT
       <div className="level">
         <button
           className="button is-danger level-item"
-          onClick={() => deleteClue(clue.uid)}>
+          onClick={() => deleteClue({uid: clue.uid, route: Story.route(splitUid(clue.uid).storyUid)})}>
           Delete
         </button>
         <button

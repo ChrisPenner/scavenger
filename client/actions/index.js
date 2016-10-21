@@ -1,8 +1,7 @@
 /* @flow */
 import R from 'ramda'
-import swal from 'sweetalert'
 import { successToast, errorToast } from '../lib/wisp'
-import { push, goBack } from 'react-router-redux'
+import { push } from 'react-router-redux'
 import { createAction } from 'redux-actions'
 
 import at from '../actions/types'
@@ -15,40 +14,6 @@ export type FSA = {
   payload?: any,
   error?: any,
   meta?: any,
-}
-
-const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function) => swal({
-  title: 'Delete?',
-  type: 'warning',
-  showCancelButton: true,
-  closeOnConfirm: false,
-  showLoaderOnConfirm: true,
-}, (confirmed) => {
-  if (confirmed) {
-    dispatch(push(route))
-    return dispatch({
-      type: at.del(resource.type),
-      payload: uid,
-    })
-      .then(() => swal({
-        title: 'Deleted',
-        type: 'success',
-        showConfirmButton: false,
-        timer: 700,
-      }))
-      .catch((message) => {
-        dispatch(goBack())
-        swal('Error', message, 'error')
-      })
-  }
-})
-
-const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
-  return dispatch({
-    type: at.save(resource.type),
-    payload: uid,
-  }).then(() => dispatch(successToast('Saved')))
-  .catch(() => dispatch(errorToast('Failed to Save')))
 }
 
 const changer = (path: Array<string>, value: any) => ({path, value})
@@ -91,17 +56,17 @@ export const fetchCode = createAction(at.fetch(Code.type))
 export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
 export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)
 
-export const deleteStory = deleter(Story)
-export const deleteClue = deleter(Clue)
-export const deleteAnswer = deleter(Answer)
+export const deleteStory = Story.actions.saga.del
+export const deleteClue = Clue.actions.saga.del
+export const deleteAnswer = Answer.actions.saga.del
 
 export const createStory = creator(Story)
 export const createClue = creator(Clue)
 export const createAnswer = creator(Answer)
 
-export const saveStory = saver(Story)
-export const saveClue = saver(Clue)
-export const saveAnswer = saver(Answer)
+export const saveStory = createAction(saga(at.save(Story.type)))
+export const saveClue = createAction(saga(at.save(Clue.type)))
+export const saveAnswer = createAction(saga(at.save(Answer.type)))
 
 export const sendMessage = createAction(saga(at.SEND_MESSAGE))
 export const receiveMessage = createAction(at.RECEIVE_MESSAGE, R.assoc('source', 'server'))

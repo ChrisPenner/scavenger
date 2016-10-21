@@ -14,6 +14,7 @@ module.exports = {
       './client/css/toastr',
       './client/css/sweetalert',
       './client/css/spinners',
+      'sweetalert2/dist/sweetalert2.min.css',
     ],
     'vendor': [
       'react',
