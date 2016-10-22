@@ -4,7 +4,6 @@ import R from 'ramda'
 import classnames from 'classnames'
 import { connect } from 'react-redux'
 import { getGroupMessages, getStoryMessages } from '../selectors'
-import { Message } from '../resources'
 import { fetchGroupMessage, fetchStoryMessage, mkIdentifier } from '../actions'
 import at from '../actions/types'
 import type { MessageType } from '../resources'
@@ -15,7 +14,7 @@ const stateToPropsGroup = (state, {params:{groupUid}}) => {
   return {
     messages: getGroupMessages(state, groupUid),
     identifier: groupUid,
-    isPending: isPending(state, Message.type),
+    isPending: isPending(state, mkIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid)),
     hasMore: hasMore(state, mkIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid)),
   }
 }
@@ -24,7 +23,7 @@ const stateToPropsStory = (state, {params:{storyUid}}) => {
   return {
     messages: getStoryMessages(state, storyUid),
     identifier: storyUid,
-    isPending: isPending(state, Message.type),
+    isPending: isPending(state, mkIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid)),
     hasMore: hasMore(state, mkIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid)),
   }
 }
