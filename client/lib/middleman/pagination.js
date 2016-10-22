@@ -1,6 +1,7 @@
 /* @flow */
 import R from 'ramda'
 import type { Extension } from './extensions'
+import { isInitialized } from './pending'
 
 const transformAction = ({config, extensionData={}}) => {
   const mode = config.extensions && config.extensions.paginate
@@ -41,8 +42,8 @@ const extensionFunctions: Extension = {
   transformAction,
 }
 
-// export const hasMore = (state:Object, resource:ResourceT) => {
-//   return !state.api.pagination[resource.type].cursor
-// }
+export const hasMore = (state:Object, identifier:string) => {
+  return (!isInitialized(state, identifier)) || R.path(['api', 'pagination', identifier, 'cursor'], state)
+}
 
 export default extensionFunctions

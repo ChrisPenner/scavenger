@@ -4,6 +4,7 @@ import pagination from './lib/middleman/pagination'
 import pending from './lib/middleman/pending'
 import camelize from './lib/middleman/camelize'
 import at from './actions/types'
+import { mkIdentifier } from './actions'
 import { Story, Clue, Answer, Group, Message, Code } from './resources'
 import type {ResourceT} from './resources'
 import type { ExtensionMap } from './lib/middleman/extensions'
@@ -89,7 +90,7 @@ export const middlemanConfig = {
   [at.del(Answer.type)]: del(Answer, at.del(Answer.type)),
 
   [at.FETCH_MESSAGES_BY_GROUP]: (state, groupUid) => ({
-    identifier: `${at.FETCH_MESSAGES_BY_GROUP}/${groupUid}`,
+    identifier: mkIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid),
     type: at.fetch(Message.type),
     route: Message.api.route(),
     method: GET,
@@ -104,7 +105,7 @@ export const middlemanConfig = {
   }),
 
   [at.FETCH_MESSAGES_BY_STORY]: (state, storyUid) => ({
-    identifier: `${at.FETCH_MESSAGES_BY_STORY}/${storyUid}`,
+    identifier: mkIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid),
     resource: Message.type,
     type: at.fetch(Message.type),
     route: Message.api.route(),

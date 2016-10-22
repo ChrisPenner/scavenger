@@ -5,15 +5,18 @@ import classnames from 'classnames'
 import { connect } from 'react-redux'
 import { getGroupMessages, getStoryMessages } from '../selectors'
 import { Message } from '../resources'
-import { fetchGroupMessage, fetchStoryMessage } from '../actions'
+import { fetchGroupMessage, fetchStoryMessage, mkIdentifier } from '../actions'
+import at from '../actions/types'
 import type { MessageType } from '../resources'
 import { isPending } from '../lib/middleman/pending'
+import { hasMore } from '../lib/middleman/pagination'
 
 const stateToPropsGroup = (state, {params:{groupUid}}) => {
   return {
     messages: getGroupMessages(state, groupUid),
     identifier: groupUid,
-    isPending: isPending(state, Message),
+    isPending: isPending(state, Message.type),
+    hasMore: hasMore(state, mkIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid)),
   }
 }
 
@@ -21,7 +24,8 @@ const stateToPropsStory = (state, {params:{storyUid}}) => {
   return {
     messages: getStoryMessages(state, storyUid),
     identifier: storyUid,
-    isPending: isPending(state, Message),
+    isPending: isPending(state, Message.type),
+    hasMore: hasMore(state, mkIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid)),
   }
 }
 
@@ -33,8 +37,9 @@ type MessagesProps = {
   identifier: string,
   fetchMore: Function,
   isPending: boolean,
+  hasMore: boolean,
 }
-const Messages = ({messages, identifier, fetchMore, isPending}: MessagesProps) => {
+const Messages = ({messages, identifier, fetchMore, isPending, hasMore}: MessagesProps) => {
   const messageRows = messages.map(({uid, text, mediaUrl, sender, receiver, groupUid, storyUid, sent}) => (
       <tr key={uid}>
         <td>
@@ -93,9 +98,11 @@ const Messages = ({messages, identifier, fetchMore, isPending}: MessagesProps) =
         </tbody>
       </table>
       <div className='columns'>
-        <a className={classnames('button', 'is-primary', 'column', {'is-loading': isPending})}
+        <a className={classnames('button', 'is-primary', 'column', {'is-loading': isPending, 'is-disabled': !hasMore})}
           onClick={() => fetchMore(identifier)}>
-          + Load More
+          {hasMore ? '+ Load More'
+                   : 'Loaded'
+          }
       </a>
       </div>
     </div>

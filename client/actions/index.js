@@ -11,6 +11,7 @@ import { Story, Code, Clue, Answer, Group, Message } from '../resources'
 import type { ResourceT } from '../resources'
 import { getExplorer, getDragData } from '../selectors'
 import * as Routes from '../routes'
+import { isInitialized } from '../lib/middleman/pending'
 
 import type { MessageType } from '../resources'
 
@@ -92,6 +93,28 @@ export const fetchCode = createAction(at.fetch(Code.type))
 
 export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
 export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)
+
+export const mkIdentifier = (...args: any) => {
+  return R.join('/', args)
+}
+
+const initializer = (actionCreator: Function, ...args: Array<string>) => (...payload: Array<string>) => (dispatch:Function, getState:Function) => {
+  const state = getState()
+  const identifier = mkIdentifier(...args, ...payload)
+  if(isInitialized(state, identifier)){
+    return
+  }
+  dispatch(actionCreator(...payload))
+}
+
+export const initStories = initializer(fetchStory, Story.type)
+export const initClues = initializer(fetchClue, Clue.type)
+export const initAnswers = initializer(fetchAnswer, Answer.type)
+export const initGroups = initializer(fetchGroup, Group.type)
+export const initCodes = initializer(fetchCode, Code.type)
+
+export const initGroupMessages = initializer(fetchGroupMessage, at.FETCH_MESSAGES_BY_GROUP)
+export const initStoryMessages = initializer(fetchStoryMessage, at.FETCH_MESSAGES_BY_STORY)
 
 export const dropClue = dropper(at.DROP_CLUE)
 export const dropAnswer = dropper(at.DROP_ANSWER)

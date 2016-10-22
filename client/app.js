@@ -18,7 +18,7 @@ import Answer from './components/answer'
 import CreateAnswer from './components/create-answer'
 import * as Routes from './routes'
 import * as Res from './resources'
-import { fetchStory, fetchClue, fetchAnswer, fetchCode, fetchGroup, fetchMessage } from './actions'
+import { initStories, initClues, initAnswers, initGroupMessages, initStoryMessages, initGroups, initCodes } from './actions'
 import Explorer from './components/explorer'
 import { GroupMessages, StoryMessages, } from './components/messages'
 import MessageOverview from './components/messages-overview'
@@ -75,13 +75,10 @@ const My404 = () => (
   </div>
 )
 
-const load = () => {
-  store.dispatch(fetchStory())
-  store.dispatch(fetchCode())
-  store.dispatch(fetchClue())
-  store.dispatch(fetchAnswer())
-  store.dispatch(fetchGroup())
-  // store.dispatch(fetchMessage())
+const loadStories = () => {
+  store.dispatch(initStories())
+  store.dispatch(initClues())
+  store.dispatch(initAnswers())
 }
 
 ReactDOM.render(
@@ -90,37 +87,45 @@ ReactDOM.render(
       <Route
         path="/"
         component={App}
-        onEnter={load}>
+      >
         <IndexRedirect to={Res.Story.route(Routes.INDEX)} />
         <Route
           path={Res.Story.route(Routes.INDEX)}
+          onEnter={loadStories}
           components={{ story: Stories }} />
         <Route
           path={Res.Group.route(Routes.GROUP_UID_PARAM)}
           components={{ main: Groups }} />
         <Route
           path={Res.Message.route(Routes.INDEX)}
+          onEnter={() => store.dispatch(initGroups())}
           components={{ main: MessageOverview }} />
         <Route
           path={Routes.groupMessages(Routes.GROUP_UID_PARAM)}
+          onEnter={({params:{groupUid}}) => store.dispatch(initGroupMessages(groupUid))}
           components={{ main: GroupMessages }} />
         <Route
           path={Routes.storyMessages(Routes.STORY_UID_PARAM)}
+          onEnter={({params:{storyUid}}) => store.dispatch(initStoryMessages(storyUid))}
           components={{ main: StoryMessages }} />
         <Route
           path={Routes.explorer()}
           components={{ main: Explorer }} />
         <Route
-          path={Res.Story.route(Routes.STORY_UID_PARAM)}
-          components={{ story: Story }} />
-        <Route
           path={Res.Code.route(Routes.INDEX)}
+          onEnter={() => store.dispatch(initCodes())}
           components={{ main: Codes }} />
         <Route
+          path={Res.Story.route(Routes.STORY_UID_PARAM)}
+          onEnter={loadStories}
+          components={{ story: Story }} />
+        <Route
           path={Res.Clue.route(Routes.CLUE_UID_PARAM)}
+          onEnter={loadStories}
           components={{ story: Story, clue: Clue }} />
         <Route
           path={Res.Answer.route(Routes.ANSWER_UID_PARAM)}
+          onEnter={loadStories}
           components={{ story: Story, clue: Clue, answer: Answer }} />
         <Route
           path={Routes.createStory()}

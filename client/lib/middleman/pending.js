@@ -22,8 +22,12 @@ const extensionFunctions: Extension = {
   reducer,
 }
 
-export const isPending = (state:Object, resource:ResourceT) => {
-  return R.path(['api', 'pending', resource.type, 'pending'], state)
+export const isPending = (state:Object, identifier:string) => {
+  return R.path(['api', 'pending', identifier, 'pending'], state)
+}
+
+export const isInitialized = (state:Object, identifier:string) => {
+  return R.path(['api', 'pending', identifier, 'initialized'], state)
 }
 
 export default extensionFunctions

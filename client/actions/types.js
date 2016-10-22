@@ -8,6 +8,7 @@ const actionTypeCreators: {[name: string]: (type:ResourceType) => string} = {
   fetch: (type) => `FETCH_${type}`,
   change: (type) => `CHANGE_${type}`,
   create: (type) => `CREATE_${type}`,
+  init: (type) => `INIT_${type}`,
 }
 
 const actionsList = [
