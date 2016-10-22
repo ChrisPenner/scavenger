@@ -15,7 +15,7 @@ const extensions: ExtensionMap = {
   camelize,
 }
 
-const fetchAll = (resource: ResourceT, identifier: string) => () => ({
+const fetchAll = (resource: ResourceT<*>, identifier: string) => () => ({
   identifier,
   route: resource.api.route(),
   method: GET,
@@ -25,7 +25,7 @@ const fetchAll = (resource: ResourceT, identifier: string) => () => ({
   },
 })
 
-const save = (resource: ResourceT, identifier: string) => (state, uid) => ({
+const save = (resource: ResourceT<*>, identifier: string) => (state, uid) => ({
   identifier,
   route: resource.api.route(uid),
   method: PUT,
@@ -35,7 +35,7 @@ const save = (resource: ResourceT, identifier: string) => (state, uid) => ({
   },
 })
 
-const create = (resource: ResourceT, identifier: string) => (state, payload) => ({
+const create = (resource: ResourceT<*>, identifier: string) => (state, payload) => ({
   identifier,
   route: resource.api.route(payload.uid),
   method: PUT,
@@ -45,7 +45,7 @@ const create = (resource: ResourceT, identifier: string) => (state, payload) => 
   },
 })
 
-const del = (resource: ResourceT, identifier: string) => (state, uid) => ({
+const del = (resource: ResourceT<*>, identifier: string) => (state, uid) => ({
   identifier,
   route: resource.api.route(uid),
   method: DELETE,
@@ -108,6 +108,11 @@ export const middlemanConfig = {
       sortBy: '-sent',
     },
   }),
+}
+
+export type APIState = {
+  explorer: Object,
+  pending: Object,
 }
 
 export const {

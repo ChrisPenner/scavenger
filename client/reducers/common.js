@@ -3,7 +3,7 @@ import { handleActions } from 'redux-actions'
 import R from 'ramda'
 import type { ResourceT } from '../resources'
 
-const baseResourceReducer = (resource: ResourceT) => handleActions({
+const baseResourceReducer = (resource: ResourceT<*>) => handleActions({
   [resource.types.fetch]: (
     (state, {payload}) => ({...state, ...payload})
   ),
@@ -25,7 +25,7 @@ const baseResourceReducer = (resource: ResourceT) => handleActions({
   ),
 })
 
-export default (resource: ResourceT, reducer: Function) => (state: any, action: Object) => {
+export default (resource: ResourceT<*>, reducer: Function) => (state: any, action: Object) => {
   const baseResult = baseResourceReducer(resource)(state, action)
   return reducer(baseResult, action)
 }

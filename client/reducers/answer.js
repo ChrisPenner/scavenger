@@ -8,15 +8,15 @@ import { Answer, Clue, Story } from '../resources'
 import type { AnswerType } from '../resources'
 import { phoneNumber } from '../lib/validators'
 
-type AnswerReducerT = {[id:string]: AnswerType}
+export type AnswerState = {[id:string]: AnswerType}
 
 const validate = R.map(R.evolve({
   receiver: phoneNumber
 }))
 
-const DEFAULT_STATE: AnswerReducerT = {}
+const DEFAULT_STATE: AnswerState = {}
 
-const reducer: (state: ?Object, action: Object) => AnswerReducerT = transform(validate,
+const reducer: (state: ?AnswerState, action: Object) => AnswerState = transform(validate,
   commonReducer(Answer,
     handleActions({
       [Clue.types.del]: (state, {payload: {uid}}) => {

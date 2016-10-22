@@ -1,6 +1,7 @@
 /* @flow */
 import R from 'ramda'
 
+import type {State} from './reducers'
 export type ResourceType = string
 
 export type StoryType = {
@@ -110,16 +111,16 @@ const answerFactory = (args: Object): AnswerType => ({
   ...args,
 })
 
-export type ResourceT = {
-  route: Function,
+export type ResourceT<K> = {
+  route: (uid:?string) => string,  
   api: {
-    route: Function,
+    route: (uid:?string) => string,
   },
   new: Function,
   type: ResourceType,
   selectors: {
-    get: Function,
-    getAll: (state: Object) => {[key:string]: Object},
+    get: (state: State) => K,
+    getAll: (state: Object) => {[key:string]: K},
     getUids: (state: Object) => Array<string>,
   },
   types: {
@@ -132,7 +133,7 @@ export type ResourceT = {
   }
 }
 
-const addRoutes = ({route, ...resource}): ResourceT => {
+const addRoutes = ({route, ...resource}): ResourceT<*> => {
   const baseRoute = (uid?: string) => `${route}${uid ? uid : ''}`
   return {
     ...resource,
@@ -143,7 +144,7 @@ const addRoutes = ({route, ...resource}): ResourceT => {
   }
 }
 
-const addSelectors = (resource): ResourceT => {
+const addSelectors = (resource): ResourceT<*> => {
   const key = resource.type
   const selectors = {
     get: R.curry((state, uid) => R.path([key, uid], state)),
@@ -153,7 +154,7 @@ const addSelectors = (resource): ResourceT => {
   return R.assoc('selectors', selectors, resource)
 }
 
-const addTypes = (resource): ResourceT => {
+const addTypes = (resource): ResourceT<*> => {
   const type = resource.type
   const types = {
     del: `DELETE_${type}`,
@@ -166,7 +167,7 @@ const addTypes = (resource): ResourceT => {
   return R.assoc('types', types, resource)
 }
 
-const addInfo = (resource): ResourceT => R.compose(
+const addInfo = (resource): ResourceT<*> => R.compose(
   addTypes,
   addSelectors,
   addRoutes

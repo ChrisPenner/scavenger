@@ -43,8 +43,9 @@ export const toast = (options: Object) => (title: string, message: ?string) => (
 export const successToast = toast({type: 'success'})
 export const errorToast = toast({type: 'error'})
 
-const DEFAULT_STATE = {}
-export const wispReducer: (state: any, action: Object) => any = handleActions({
+export type WispState = {[id: string]: optionsT}
+const DEFAULT_STATE:WispState = {}
+export const wispReducer: (state: optionsT, action: Object) => optionsT = handleActions({
   [CREATE_TOAST]: (state, { payload }) => R.assoc(payload.id, payload, state),
   [HIDE_TOAST]: (state, { payload }) => R.dissoc(payload.id, state),
 }, DEFAULT_STATE)

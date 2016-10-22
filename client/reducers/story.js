@@ -8,8 +8,6 @@ import { Story, Clue } from '../resources'
 import type { StoryType } from '../resources'
 import { splitUid } from '../utils'
 
-type StoryReducerT = {[id:string]: StoryType}
-
 const transformClueUids = R.curry((fn, state, {payload}) => {
   const storyUid = splitUid(payload.uid).storyUid
   return R.evolve({
@@ -19,9 +17,10 @@ const transformClueUids = R.curry((fn, state, {payload}) => {
   }, state)
 })
 
-export const DEFAULT_STATE: StoryReducerT = {}
+export type StoryState = {[id:string]: StoryType}
+export const DEFAULT_STATE: StoryState = {}
 
-const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story,
+const reducer: (state: ?StoryState, action: Object) => StoryState = commonReducer(Story,
   handleActions({
     [Clue.types.save]: (
       transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))

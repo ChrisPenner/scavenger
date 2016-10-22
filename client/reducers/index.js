@@ -13,6 +13,17 @@ import tools from './tools'
 import { wispReducer } from '../lib/wisp'
 import { reducer as api } from '../api'
 import { Story, Clue, Code, Answer, Group, Message } from '../resources'
+import type { StoryState } from './story'
+import type { ClueState } from './clue'
+import type { AnswerState } from './answer'
+import type { GroupState } from './group'
+import type { MessageState } from './message'
+import type { CodeState } from './code'
+import type { ExplorerState } from './explorer'
+import type { ToolsState } from './tools'
+import type { UIState } from './ui'
+import type { WispState } from '../lib/wisp'
+import type { APIState } from '../api'
 
 export default combineReducers({
   [Story.type]: stories,
@@ -29,3 +40,18 @@ export default combineReducers({
   api,
 })
 
+export type State = {
+  Story: StoryState,
+  Clue: ClueState,
+  Answer: AnswerState,
+  Group: GroupState,
+  Message: MessageState,
+  Code: CodeState,
+  routing: any,
+  explorer: ExplorerState,
+  tools: ToolsState,
+  ui: UIState,
+  toasts: WispState,
+  api: APIState,
+
+}

@@ -10,7 +10,7 @@ import type { ClueType } from '../resources'
 import commonReducer from './common'
 import { phoneNumber } from '../lib/validators'
 
-type ClueReducerT = {[id:string]: ClueType}
+export type ClueState = {[id:string]: ClueType}
 
 const validate = R.map(R.evolve({
   sender: phoneNumber
@@ -26,9 +26,9 @@ const transformAnswerUids = R.curry((fn, state, {payload}) => {
   }, state)
 })
 
-const DEFAULT_STATE: ClueReducerT = {}
+const DEFAULT_STATE: ClueState = {}
 
-const reducer: (state: ?Object, action: Object) => ClueReducerT = transform(validate,
+const reducer: (state: ?ClueState, action: Object) => ClueState = transform(validate,
   commonReducer(Clue,
     handleActions({
       [Answer.types.save]: (

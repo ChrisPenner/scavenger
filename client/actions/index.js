@@ -22,7 +22,7 @@ export type FSA = {
   meta?: any,
 }
 
-const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispatch: Function) => swal({
+const deleter = (resource: ResourceT<*>) => (uid: string, route: ?string) => (dispatch: Function) => swal({
   title: 'Delete?',
   type: 'warning',
   showCancelButton: true,
@@ -48,7 +48,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   }
 })
 
-const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
+const saver = (resource: ResourceT<*>) => (uid: string) => (dispatch: Function) => {
   return dispatch({
     type: resource.types.save,
     payload: uid,
@@ -63,7 +63,7 @@ const dropper = (actionType: string) => (index: number) => (dispatch: Function, 
   dispatch({ type: actionType, payload: {uid, index}})
 }
 
-const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
+const creator = (resource: ResourceT<*>) => (payload: any) => (dispatch: Function) => {
   return dispatch({
     type: resource.types.create,
     payload,

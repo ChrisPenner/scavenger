@@ -6,14 +6,14 @@ import at from '../actions/types'
 
 import type { MessageType } from '../resources'
 
-export type ExplorerType = {
+export type ExplorerState = {
   text: string,
   receiver: string,
   sender: string,
   mediaUrl: '',
   texts: Array<MessageType>
 }
-const DEFAULT_STATE = {
+const DEFAULT_STATE: ExplorerState = {
   text: '',
   receiver: 'server',
   sender: 'testing',
@@ -23,7 +23,7 @@ const DEFAULT_STATE = {
 
 const addMessage = (state, {payload}) => R.evolve({ texts: R.prepend(payload)}, state)
 
-const reducer: (s: ?Object, a: Object) => ExplorerType = handleActions({
+const reducer: (s: ?Object, a: Object) => ExplorerState = handleActions({
   [at.CHANGE_EXPLORER]: (state, {payload: {path, value}}) => (
     R.assocPath(path, value, state)
   ),
