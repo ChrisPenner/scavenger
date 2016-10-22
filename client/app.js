@@ -98,7 +98,10 @@ ReactDOM.render(
           components={{ main: Groups }} />
         <Route
           path={Res.Message.route(Routes.INDEX)}
-          onEnter={() => store.dispatch(initGroups())}
+          onEnter={() => {
+            store.dispatch(initGroups())
+            store.dispatch(initStories())
+          }}
           components={{ main: MessageOverview }} />
         <Route
           path={Routes.groupMessages(Routes.GROUP_UID_PARAM)}
