@@ -3,7 +3,6 @@ import { expect } from 'chai'
 import R from 'ramda'
 import { applyThunk } from '../lib/redux-test'
 
-import at from '../actions/types'
 import reducer from './story'
 import { createClue, dropClue } from '../actions'
 import { Story, Clue } from '../resources'
@@ -39,7 +38,7 @@ describe('Story Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.create(Clue.type), function() {
+  describe(Clue.types.create, function() {
     it('should add a clue to the story', function() {
       const newClueUid = `${startStory.uid}:NEWCLUE`
       const newClue = Clue.new({

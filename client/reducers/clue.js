@@ -29,13 +29,13 @@ const transformAnswerUids = R.curry((fn, state, {payload}) => {
 const DEFAULT_STATE: ClueReducerT = {}
 
 const reducer: (state: ?Object, action: Object) => ClueReducerT = transform(validate,
-  commonReducer(Clue.type,
+  commonReducer(Clue,
     handleActions({
-      [at.save(Answer.type)]: (
+      [Answer.types.save]: (
         transformAnswerUids(({uid}) => R.compose(R.uniq, R.append(uid)))
       ),
 
-      [at.del(Answer.type)]: (
+      [Answer.types.del]: (
         transformAnswerUids(({uid}) => R.without([uid]))
       ),
 
@@ -43,7 +43,7 @@ const reducer: (state: ?Object, action: Object) => ClueReducerT = transform(vali
         transformAnswerUids(({index, uid}) => R.compose(R.insert(index, uid), R.without([uid])))
       ),
 
-      [at.del(Story.type)]: (state, {payload: {uid}}) => {
+      [Story.types.del]: (state, {payload: {uid}}) => {
         const notEqualsStoryUid = R.compose(R.not, R.equals(uid), R.prop('storyUid'))
         return R.pickBy(notEqualsStoryUid, state)
       },

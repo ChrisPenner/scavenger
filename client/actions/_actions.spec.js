@@ -19,7 +19,7 @@ describe('Actions', function() {
       store.dispatch(saveStory('my-uid')).then(() => {
         const actions = store.getActions()
         const types = R.map(R.prop('type'), actions)
-        expect(types).to.eql([at.save(Story.type), CREATE_TOAST])
+        expect(types).to.eql([Story.types.save, CREATE_TOAST])
       }).then(done).catch(done)
     })
   })
@@ -29,7 +29,7 @@ describe('Actions', function() {
       store.dispatch(createStory('my-uid')).then(() => {
         const actions = store.getActions()
         const types = R.map(R.prop('type'), actions)
-        expect(types).to.eql([at.create(Story.type), CALL_HISTORY_METHOD, CREATE_TOAST])
+        expect(types).to.eql([Story.types.create, CALL_HISTORY_METHOD, CREATE_TOAST])
       }).then(done).catch(done)
     })
   })

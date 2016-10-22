@@ -25,17 +25,6 @@ const fetchAll = (resource: ResourceT, identifier: string) => () => ({
   },
 })
 
-// const fetchPage = (resource: ResourceT) => () => ({
-//   resource: resource.type,
-//   route: resource.api.route(),
-//   method: GET,
-//   extensions: {
-//     paginate: 10,
-//     camelize: true,
-//   },
-// })
-
-
 const save = (resource: ResourceT, identifier: string) => (state, uid) => ({
   identifier,
   route: resource.api.route(uid),
@@ -69,29 +58,29 @@ const del = (resource: ResourceT, identifier: string) => (state, uid) => ({
 })
 
 export const middlemanConfig = {
-  [at.fetch(Story.type)]: fetchAll(Story, Story.type),
-  [at.fetch(Clue.type)]: fetchAll(Clue, Clue.type),
-  [at.fetch(Answer.type)]: fetchAll(Answer, Answer.type),
+  [Story.types.fetch]: fetchAll(Story, Story.type),
+  [Clue.types.fetch]: fetchAll(Clue, Clue.type),
+  [Answer.types.fetch]: fetchAll(Answer, Answer.type),
 
-  [at.fetch(Group.type)]: fetchAll(Group, Group.type),
-  [at.fetch(Message.type)]: fetchAll(Message, Message.type),
-  [at.fetch(Code.type)]: fetchAll(Code, Code.type),
+  [Group.types.fetch]: fetchAll(Group, Group.type),
+  [Message.types.fetch]: fetchAll(Message, Message.type),
+  [Code.types.fetch]: fetchAll(Code, Code.type),
 
-  [at.save(Story.type)]: save(Story, at.save(Story.type)),
-  [at.save(Clue.type)]: save(Clue, at.save(Clue.type)),
-  [at.save(Answer.type)]: save(Answer, at.save(Answer.type)),
+  [Story.types.save]: save(Story, Story.types.save),
+  [Clue.types.save]: save(Clue, Clue.types.save),
+  [Answer.types.save]: save(Answer, Answer.types.save),
 
-  [at.create(Story.type)]: create(Story, at.create(Story.type)),
-  [at.create(Clue.type)]: create(Clue, at.create(Clue.type)),
-  [at.create(Answer.type)]: create(Answer, at.create(Answer.type)),
+  [Story.types.create]: create(Story, Story.types.create),
+  [Clue.types.create]: create(Clue, Clue.types.create),
+  [Answer.types.create]: create(Answer, Answer.types.create),
 
-  [at.del(Story.type)]: del(Story, at.del(Story.type)),
-  [at.del(Clue.type)]: del(Clue, at.del(Clue.type)),
-  [at.del(Answer.type)]: del(Answer, at.del(Answer.type)),
+  [Story.types.del]: del(Story, Story.types.del),
+  [Clue.types.del]: del(Clue, Clue.types.del),
+  [Answer.types.del]: del(Answer, Answer.types.del),
 
   [at.FETCH_MESSAGES_BY_GROUP]: (state, groupUid) => ({
     identifier: mkIdentifier(at.FETCH_MESSAGES_BY_GROUP, groupUid),
-    type: at.fetch(Message.type),
+    type: Message.types.fetch,
     route: Message.api.route(),
     method: GET,
     extensions: {
@@ -107,7 +96,7 @@ export const middlemanConfig = {
   [at.FETCH_MESSAGES_BY_STORY]: (state, storyUid) => ({
     identifier: mkIdentifier(at.FETCH_MESSAGES_BY_STORY, storyUid),
     resource: Message.type,
-    type: at.fetch(Message.type),
+    type: Message.types.fetch,
     route: Message.api.route(),
     method: GET,
     extensions: {

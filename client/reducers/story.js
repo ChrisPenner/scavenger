@@ -21,15 +21,15 @@ const transformClueUids = R.curry((fn, state, {payload}) => {
 
 export const DEFAULT_STATE: StoryReducerT = {}
 
-const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story.type,
+const reducer: (s: ?Object, a: Object) => StoryReducerT = commonReducer(Story,
   handleActions({
-    [at.save(Clue.type)]: (
+    [Clue.types.save]: (
       transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))
     ),
-    [at.create(Clue.type)]: (
+    [Clue.types.create]: (
       transformClueUids(({uid}) => R.compose(R.uniq, R.append(uid)))
     ),
-    [at.del(Clue.type)]: (
+    [Clue.types.del]: (
       transformClueUids(({uid}) => R.without([uid]))
     ),
     [at.DROP_CLUE]: (

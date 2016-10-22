@@ -3,7 +3,6 @@ import { expect } from 'chai'
 import R from 'ramda'
 import { applyThunk } from '../lib/redux-test'
 
-import at from '../actions/types'
 import reducer from './clue'
 import { saveAnswer, dropAnswer } from '../actions'
 import { Clue, Answer, Story } from '../resources'
@@ -30,7 +29,7 @@ describe('Clue Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.save(Answer.type), function() {
+  describe(Answer.types.save, function() {
     it('should add an answer to the clue', function() {
       const newAnswer = Answer.new({
         uid: 'STORY:CLUE:NEWANSWER',
@@ -72,17 +71,17 @@ describe('Clue Reducer', function() {
     })
   })
 
-  describe(at.del(Story.type), function() {
+  describe(Story.types.del, function() {
     it('should delete the clue if its story is deleted', function() {
-      const action = {type: at.del(Story.type), payload: {uid: startClue.storyUid}}
+      const action = {type: Story.types.del, payload: {uid: startClue.storyUid}}
       const newState = reducer(startClues, action)
       expect(newState).to.eql({})
     })
   })
 
-  describe(at.del(Answer.type), function() {
+  describe(Answer.types.del, function() {
     it('should delete the answer from answerUids', function() {
-      const action = {type: at.del(Answer.type), payload: {uid: answerUid}}
+      const action = {type: Answer.types.del, payload: {uid: answerUid}}
       const newState = reducer(startClues, action)
       expect(newState[startClue.uid].answerUids).to.not.contain(answerUid)
     })

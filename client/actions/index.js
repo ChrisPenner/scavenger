@@ -32,7 +32,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
   if (confirmed) {
     dispatch(push(route))
     return dispatch({
-      type: at.del(resource.type),
+      type: resource.types.del,
       payload: uid,
     })
       .then(() => swal({
@@ -50,7 +50,7 @@ const deleter = (resource: ResourceT) => (uid: string, route: ?string) => (dispa
 
 const saver = (resource: ResourceT) => (uid: string) => (dispatch: Function) => {
   return dispatch({
-    type: at.save(resource.type),
+    type: resource.types.save,
     payload: uid,
   }).then(() => dispatch(successToast('Saved')))
   .catch(() => dispatch(errorToast('Failed to Save')))
@@ -65,7 +65,7 @@ const dropper = (actionType: string) => (index: number) => (dispatch: Function, 
 
 const creator = (resource: ResourceT) => (payload: any) => (dispatch: Function) => {
   return dispatch({
-    type: at.create(resource.type),
+    type: resource.types.create,
     payload,
   }).then(() => dispatch(push(resource.route(payload.uid))))
     .then(R.tap(() => dispatch(successToast('Created'))))
@@ -79,17 +79,17 @@ export const receiveMessage = createAction(at.RECEIVE_MESSAGE, R.assoc('source',
 export const startDrag = createAction(at.START_DRAG)
 export const stopDrag = createAction(at.STOP_DRAG)
 
-export const changeStory = createAction(at.change(Story.type), changer)
-export const changeClue = createAction(at.change(Clue.type), changer)
-export const changeAnswer = createAction(at.change(Answer.type), changer)
+export const changeStory = createAction(Story.types.change, changer)
+export const changeClue = createAction(Clue.types.change, changer)
+export const changeAnswer = createAction(Answer.types.change, changer)
 export const changeExplorer = createAction(at.CHANGE_EXPLORER, changer)
 
-export const fetchStory = createAction(at.fetch(Story.type))
-export const fetchClue = createAction(at.fetch(Clue.type))
-export const fetchAnswer = createAction(at.fetch(Answer.type))
-export const fetchGroup = createAction(at.fetch(Group.type))
-export const fetchMessage = createAction(at.fetch(Message.type))
-export const fetchCode = createAction(at.fetch(Code.type))
+export const fetchStory = createAction(Story.types.fetch)
+export const fetchClue = createAction(Clue.types.fetch)
+export const fetchAnswer = createAction(Answer.types.fetch)
+export const fetchGroup = createAction(Group.types.fetch)
+export const fetchMessage = createAction(Message.types.fetch)
+export const fetchCode = createAction(Code.types.fetch)
 
 export const fetchGroupMessage = createAction(at.FETCH_MESSAGES_BY_GROUP)
 export const fetchStoryMessage = createAction(at.FETCH_MESSAGES_BY_STORY)

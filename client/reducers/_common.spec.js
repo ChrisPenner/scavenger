@@ -1,13 +1,12 @@
 /* @flow */
 import { expect } from 'chai'
 
-import at from '../actions/types'
 import { changeClue } from '../actions'
 import reducerWrapper from './common'
 import { Clue } from '../resources'
 
 const fakeClueReducer = (state={ default: true }) => state
-const reducer = reducerWrapper(Clue.type, fakeClueReducer)
+const reducer = reducerWrapper(Clue, fakeClueReducer)
 describe('Common Reducer', function() {
 
   it("should return its reducer's default state", function() {
@@ -25,7 +24,7 @@ describe('Common Reducer', function() {
 
   describe('SAVE_*', function() {
     it('should replace state with payload', function() {
-      const action = { type: at.save(Clue.type), payload: {uid: 42 }}
+      const action = { type: Clue.types.save, payload: {uid: 42 }}
       const newState = reducer({}, action)
       expect(newState).to.eql({'42': {uid: 42}})
     })
@@ -41,7 +40,7 @@ describe('Common Reducer', function() {
 
   describe('DELETE_*', function() {
     it('should delete resource at uid', function() {
-      const action = { type: at.del(Clue.type), payload: { uid: 'myuid' } }
+      const action = { type: Clue.types.del, payload: { uid: 'myuid' } }
       const newState = reducer({ myuid: 42 }, action)
       expect(newState).to.eql({})
     })

@@ -1,7 +1,6 @@
 /* @flow */
 import { expect } from 'chai'
 
-import at from '../actions/types'
 import reducer from './answer'
 import { Answer, Clue, Story } from '../resources'
 
@@ -21,17 +20,17 @@ describe('Answer Reducer', function() {
     expect(reducer(undefined, {})).to.not.equal(undefined)
   })
 
-  describe(at.del(Clue.type), function() {
+  describe(Clue.types.del, function() {
     it('should delete the answer if its clue is deleted', function() {
-      const action = {type: at.del(Clue.type), payload: {uid: startAnswer.clueUid}}
+      const action = {type: Clue.types.del, payload: {uid: startAnswer.clueUid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     })
   })
 
-  describe(at.del(Story.type), function() {
+  describe(Story.types.del, function() {
     it('should delete the answer if its story is deleted', function() {
-      const action = {type: at.del(Story.type), payload: {uid: startAnswer.storyUid}}
+      const action = {type: Story.types.del, payload: {uid: startAnswer.storyUid}}
       const newState = reducer(startAnswers, action)
       expect(newState).to.eql({})
     })

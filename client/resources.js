@@ -122,6 +122,14 @@ export type ResourceT = {
     getAll: (state: Object) => {[key:string]: Object},
     getUids: (state: Object) => Array<string>,
   },
+  types: {
+    del: string,
+    save: string,
+    fetch: string,
+    change: string,
+    create: string,
+    init: string,
+  }
 }
 
 const addRoutes = ({route, ...resource}): ResourceT => {
@@ -141,12 +149,25 @@ const addSelectors = (resource): ResourceT => {
     get: R.curry((state, uid) => R.path([key, uid], state)),
     getAll: (state) => R.prop(key, state),
     getUids: (state) => R.keys(R.prop(key, state)),
-
   }
   return R.assoc('selectors', selectors, resource)
 }
 
+const addTypes = (resource): ResourceT => {
+  const type = resource.type
+  const types = {
+    del: `DELETE_${type}`,
+    save: `SAVE_${type}`,
+    fetch: `FETCH_${type}`,
+    change: `CHANGE_${type}`,
+    create: `CREATE_${type}`,
+    init: `INIT_${type}`,
+  }
+  return R.assoc('types', types, resource)
+}
+
 const addInfo = (resource): ResourceT => R.compose(
+  addTypes,
   addSelectors,
   addRoutes
 )(resource)
