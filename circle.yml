@@ -17,5 +17,5 @@ dependencies:
 
 test:
   override:
-    - npm test
-    - nosetests server/test/
+    - npm run test:js
+    - npm run test:server
