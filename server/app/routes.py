@@ -3,7 +3,7 @@ from webapp2_extras.routes import PathPrefixRoute
 
 from app.backup import BackupHandler
 from app.generate_codes import GenerateCodesHandler
-from webapp2_extensions import ResourceRoutes
+from rest_up import ResourceRoutes
 
 from scavenger import TwilioHandler
 from app.models.story import Story

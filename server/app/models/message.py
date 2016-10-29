@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from google.appengine.ext import ndb
-from webapp2_extensions import serialize_datetime
+from rest_up import serialize_datetime
 
 class Message(ndb.Model):
 

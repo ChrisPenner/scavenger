@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from google.appengine.ext import ndb
 
-from webapp2_extensions import serialize_key, serialize_datetime
+from rest_up import serialize_key, serialize_datetime
 
 from app.models.clue import Clue
 from app.models.story import Story

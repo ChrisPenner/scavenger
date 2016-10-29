@@ -1,6 +1,6 @@
 import re
 
-from webapp2_extensions import UserFacingError
+from rest_up import UserFacingError
 def not_empty(prop, value):
     if not value:
         raise UserFacingError(u'{} must not be empty'.format(prop._name))
