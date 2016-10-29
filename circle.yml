@@ -1,3 +1,9 @@
+checkout:
+  post:
+    # Initialize submodules
+    - git submodule sync --recursive
+    - git submodule update --recursive --init
+
 machine:
   environment:
     # Add app engine sdk to pythonpath for local unit tests.
