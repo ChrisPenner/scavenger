@@ -7,7 +7,7 @@ import { CALL_HISTORY_METHOD } from 'react-router-redux'
 import at from '../actions/types'
 import { saveStory, createStory, dropAnswer, dropClue} from './'
 import { Story } from '../resources'
-import {  CREATE_TOAST } from 'wisp-react-redux'
+import {  CREATE_WISP } from 'wisp-react-redux'
 
 describe('Actions', function() {
   const initialState = {}
@@ -19,7 +19,7 @@ describe('Actions', function() {
       store.dispatch(saveStory('my-uid')).then(() => {
         const actions = store.getActions()
         const types = R.map(R.prop('type'), actions)
-        expect(types).to.eql([Story.types.save, CREATE_TOAST])
+        expect(types).to.eql([Story.types.save, CREATE_WISP])
       }).then(done).catch(done)
     })
   })
@@ -29,7 +29,7 @@ describe('Actions', function() {
       store.dispatch(createStory('my-uid')).then(() => {
         const actions = store.getActions()
         const types = R.map(R.prop('type'), actions)
-        expect(types).to.eql([Story.types.create, CALL_HISTORY_METHOD, CREATE_TOAST])
+        expect(types).to.eql([Story.types.create, CALL_HISTORY_METHOD, CREATE_WISP])
       }).then(done).catch(done)
     })
   })
