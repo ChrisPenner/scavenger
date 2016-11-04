@@ -10,7 +10,7 @@ import messages from './message'
 import explorer from './explorer'
 import ui from './ui'
 import tools from './tools'
-import { wispReducer } from '../lib/wisp'
+import { wispReducer } from 'wisp-react-redux'
 import { reducer as api } from '../api'
 import { Story, Clue, Code, Answer, Group, Message } from '../resources'
 import type { StoryState } from './story'
@@ -22,7 +22,7 @@ import type { CodeState } from './code'
 import type { ExplorerState } from './explorer'
 import type { ToolsState } from './tools'
 import type { UIState } from './ui'
-import type { WispState } from '../lib/wisp'
+// import type { WispState } from 'wisp-react-redux'
 import type { APIState } from '../api'
 
 export default combineReducers({
@@ -36,7 +36,7 @@ export default combineReducers({
   explorer,
   tools,
   ui,
-  toasts: wispReducer,
+  wisps: wispReducer,
   api,
 })
 
@@ -51,7 +51,7 @@ export type State = {
   explorer: ExplorerState,
   tools: ToolsState,
   ui: UIState,
-  toasts: WispState,
+  toasts: any,
   api: APIState,
 
 }

@@ -7,7 +7,7 @@ import { CALL_HISTORY_METHOD } from 'react-router-redux'
 import at from '../actions/types'
 import { saveStory, createStory, dropAnswer, dropClue} from './'
 import { Story } from '../resources'
-import {  CREATE_TOAST } from '../lib/wisp'
+import {  CREATE_TOAST } from 'wisp-react-redux'
 
 describe('Actions', function() {
   const initialState = {}

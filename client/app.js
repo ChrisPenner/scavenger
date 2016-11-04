@@ -22,7 +22,7 @@ import { initStories, initClues, initAnswers, initGroupMessages, initStoryMessag
 import Explorer from './components/explorer'
 import { GroupMessages, StoryMessages, } from './components/messages'
 import MessageOverview from './components/messages-overview'
-import { Toasts } from './lib/wisp'
+import { Wisps } from 'wisp-react-redux'
 
 type appArgs = {main: ReactClass<*>, story: ReactClass<*>, clue: ReactClass<*>, answer: ReactClass<*>}
 const App = ({main, story, clue, answer}: appArgs) => {
@@ -55,7 +55,7 @@ const App = ({main, story, clue, answer}: appArgs) => {
           </Link>
         </div>
       </nav>
-      <Toasts/>
+      <Wisps/>
       <section className="section is-fullwidth">
         {main ? main : (
           <Animate className="columns" transitionName="card" transitionEnterTimeout={200} transitionLeaveTimeout={200}>

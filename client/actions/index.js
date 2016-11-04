@@ -2,7 +2,7 @@
 import xml2js from 'xml2js-es6-promise'
 import R from 'ramda'
 import swal from 'sweetalert'
-import { successToast, errorToast } from '../lib/wisp'
+import { successWisp, errorWisp } from 'wisp-react-redux'
 import { push, goBack } from 'react-router-redux'
 import { createAction } from 'redux-actions'
 
@@ -52,8 +52,8 @@ const saver = (resource: ResourceT<*>) => (uid: string) => (dispatch: Function) 
   return dispatch({
     type: resource.types.save,
     payload: uid,
-  }).then(() => dispatch(successToast('Saved')))
-  .catch(() => dispatch(errorToast('Failed to Save')))
+  }).then(() => dispatch(successWisp({title: 'Saved'})))
+  .catch(() => dispatch(errorWisp({title: 'Failed to Save'})))
 }
 
 const changer = (path: Array<string>, value: any) => ({path, value})
@@ -68,8 +68,8 @@ const creator = (resource: ResourceT<*>) => (payload: any) => (dispatch: Functio
     type: resource.types.create,
     payload,
   }).then(() => dispatch(push(resource.route(payload.uid))))
-    .then(R.tap(() => dispatch(successToast('Created'))))
-    .catch(() => dispatch(errorToast('Failed to Create')))
+    .then(R.tap(() => dispatch(successWisp({title: 'Created' }))))
+    .catch(() => dispatch(errorWisp({title: 'Failed to Create' })))
 }
 
 export const changeTestMessage = createAction(at.CHANGE_TEST_MESSAGE)
