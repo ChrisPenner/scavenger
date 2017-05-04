@@ -1,4 +1,5 @@
 import re
+import datetime
 from google.appengine.ext import ndb
 
 import wordcode
@@ -12,6 +13,9 @@ class StoryCode(ndb.Model):
     uid = ndb.ComputedProperty(lambda s: StoryCode.gen_key(s.word_string))
     used = ndb.BooleanProperty(default=False)
     single_use = ndb.BooleanProperty(default=False)
+    create_date = ndb.DateTimeProperty(auto_now_add=True)
+    used_date = ndb.DateTimeProperty(auto_now_add=False)
+    group_uid = ndb.StringProperty()
 
     @staticmethod
     def gen_key(words):
@@ -30,6 +34,11 @@ class StoryCode(ndb.Model):
         if self.single_use:
             self.used = True
             self.put()
+        #effectively last used for multi-use codes
+        self.used_date = datetime.datetime.now()
+
+    def set_group_uid(self, group_uid):
+        self.group_uid = group_uid
 
 
 def generate_codes(story_uid, amount, single_use):
