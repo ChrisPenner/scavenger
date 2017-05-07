@@ -22,7 +22,6 @@ module.exports = {
       'react-redux',
       'react-router',
       'react-router-redux',
-      'redux-saga',
       'redux',
       'redux-thunk',
       'xml2js-es6-promise',

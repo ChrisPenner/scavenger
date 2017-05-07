@@ -20,6 +20,7 @@
     "babel-plugin-transform-export-default-name": "^1.0.4",
     "babel-plugin-transform-flow-strip-types": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "6.8.0",
+    "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "6.9.0",
     "babel-preset-react": "6.11.1",
     "circular-dependency-plugin": "^1.1.0",
