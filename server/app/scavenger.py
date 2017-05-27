@@ -183,6 +183,7 @@ def get_next_clue(message, answers):
 def answer(message, user, group):
     clue = group.clue
     if clue.is_endpoint:
+        group.completed_at = datetime.now()
         return Result(response_type=CLUE, messages=[Message(text=group.story.end_message)], user=user, group=group)
     answers = group.clue.answers
     next_clue, answer_data = get_next_clue(message, answers)
