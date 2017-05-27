@@ -1,3 +1,0 @@
-[submodule "server/lib/rest_up"]
-	path = server/lib/rest_up
-	url = https://github.com/ChrisPenner/REST-UP
