@@ -23,4 +23,21 @@ npm start # In one terminal window
 npm run backend # In another terminal window
 ```
 
-Then navigate to [localhost:8080](http://localhost:8080)
+Then navigate to [localhost:8080](http://localhost:8080) to authenticate
+You'll find all of your local datastore objects in [localhost:8000](http://localhost:8000)
+Manage your running app here [localhost:3000](http://localhost:3000)
+
+## Deploying it
+
+If you're fortune enough to have nose installed and working correctly you can simply run the following command
+
+```
+npm run deploy
+```
+
+Otherwise you're gonna want to build and then deploy via bash
+
+```
+npm run build
+bash ./deploy.sh
+```
