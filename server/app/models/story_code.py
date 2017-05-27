@@ -1,5 +1,4 @@
 import re
-import datetime
 from google.appengine.ext import ndb
 
 import wordcode
