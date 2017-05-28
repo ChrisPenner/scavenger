@@ -19,7 +19,7 @@ class Group(ndb.Model):
     completed_at = ndb.DateTimeProperty()
     clue_uid = ndb.StringProperty(required=True)
     user_keys = ndb.KeyProperty('User', repeated=True)
-    word_string = ndb.StringProperty(required=False) #story_code / activation_code
+    word_string = ndb.StringProperty(required=False,default="") #story_code / activation_code
 
     @property
     def users(self):
