@@ -42,6 +42,3 @@ def generate_codes(story_uid, amount, single_use):
             codes.append(code)
             code.put()
     return codes
-
-
-
