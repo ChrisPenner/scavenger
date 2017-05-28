@@ -131,7 +131,7 @@ def start_story(message, user, group):
     
     return Result(
         response_type=INFO,
-        messages=[INTRO_INSTRUCTIONS, start_clue],
+        messages=[start_clue],
         user=user,
         group=group,
     )
