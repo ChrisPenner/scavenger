@@ -110,7 +110,7 @@ def repeat_clue(message, user, group):
 
 
 def start_story(message, user, group):
-    match = regex_dotall(r'^start (?P<code>.+)', message.text.lower())
+    match = regex_dotall(r'^(?:start|review) (?P<code>.+)', message.text.lower())
     if not match:
         logging.info("No start code provided")
         return Result(response_type=INFO, messages=[START_INSTRUCTIONS], user=user, group=group)
