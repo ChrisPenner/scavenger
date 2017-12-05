@@ -72,7 +72,7 @@ def format_message(message, user, group):
 
 def determine_message_type(message):
     text = message.lower()
-    if text.startswith('start'):
+    if text.startswith('start') or text.startswith('review'):
         return START_STORY
     elif text.startswith('join'):
         return JOIN_GROUP
