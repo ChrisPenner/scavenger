@@ -1,6 +1,6 @@
 from app.models.message import Message
 
-HOW_TO_START = Message(text="Text 'start' and then your three word code to start an adventure!")
+HOW_TO_START = Message(text="Text in your code to activate the message service")
 STORY_NOT_FOUND = Message(text="Sorry, I can't find anything for that code,\n"
                           "Try texting\n\nstart three word code\n\n"
                           "Or ask the person who gave you the code for help!")
