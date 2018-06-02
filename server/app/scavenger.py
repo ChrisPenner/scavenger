@@ -216,6 +216,7 @@ class TwilioHandler(RequestHandler):
         )
 
         from_phone = self.request.get('From')
+        to_phone = self.request.get('To')
         logging.info('Received text from %s with media: %s message:\n%s', from_phone, user_message.media_url, user_message.text)
 
         user = User.get_by_id(from_phone)
@@ -240,7 +241,7 @@ class TwilioHandler(RequestHandler):
         user_message.put()
 
         ndb.put_multi([Message(receiver=from_phone,
-                               sender=m.sender or None,
+                               sender=to_phone,
                                text=m.text,
                                media_url=m.media_url,
                                group_uid= group.uid if group else None,
